@@ -1,0 +1,477 @@
+.database-schema-modal {
+  background: white;
+  border-radius: 12px;
+  width: 90vw;
+  max-width: 1200px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid #e5e7eb;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: white;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.close-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.pdf-download-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(10px);
+}
+
+.pdf-download-button:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-1px);
+}
+
+.pdf-download-button:disabled {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.5);
+  cursor: not-allowed;
+  transform: none;
+}
+
+.modal-content {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.schema-summary {
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid #e5e7eb;
+  background: #f9fafb;
+}
+
+.summary-stats {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 1rem;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.stat-label {
+  font-size: 0.875rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.stat-value {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+/* Color Legend Styles */
+.color-legend {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.color-legend h4 {
+  margin: 0 0 1rem 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.legend-items {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.75rem;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.legend-item .column-name {
+  min-width: 80px;
+  font-size: 0.75rem;
+  padding: 4px 8px;
+  margin: 0;
+}
+
+.legend-description {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.search-container {
+  margin-top: 1rem;
+}
+
+.search-input {
+  width: 100%;
+  max-width: 400px;
+  padding: 0.75rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.schema-content {
+  flex: 1;
+  overflow: auto;
+  padding: 1.5rem 2rem;
+}
+
+.tables-list h3 {
+  margin: 0 0 1rem 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.table-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  margin-bottom: 0.75rem;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.table-item:hover {
+  border-color: #667eea;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+}
+
+.table-item.selected {
+  border-color: #667eea;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+}
+
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  background: #f9fafb;
+  border-radius: 8px 8px 0 0;
+}
+
+.table-item.selected .table-header {
+  background: #eff6ff;
+}
+
+.table-name {
+  font-weight: 600;
+  color: #1f2937;
+  font-size: 1rem;
+}
+
+.table-info {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.column-count,
+.row-count {
+  background: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #e5e7eb;
+}
+
+.table-details {
+  padding: 1rem 1.25rem;
+  background: white;
+  border-top: 1px solid #e5e7eb;
+}
+
+.columns-header {
+  display: grid;
+  grid-template-columns: 2fr 2fr 2fr 1fr;
+  gap: 1rem;
+  padding: 0.75rem 0;
+  border-bottom: 2px solid #e5e7eb;
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.875rem;
+}
+
+.column-row {
+  display: grid;
+  grid-template-columns: 2fr 2fr 2fr 1fr;
+  gap: 1rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #f3f4f6;
+  font-size: 0.875rem;
+  align-items: center;
+}
+
+.column-row:last-child {
+  border-bottom: none;
+}
+
+.column-name {
+  font-weight: 500;
+  color: #1f2937;
+}
+
+.column-type {
+  color: #6b7280;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+}
+
+.column-constraints {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.constraint-badge {
+  padding: 0.125rem 0.375rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.constraint-badge.primary-key {
+  background: #10b981;
+  color: white;
+}
+
+.constraint-badge.foreign-key {
+  background: #3b82f6;
+  color: white;
+}
+
+.constraint-badge.unique {
+  background: #f59e0b;
+  color: white;
+}
+
+.reference-info {
+  font-size: 0.75rem;
+  color: #6b7280;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+}
+
+.column-default {
+  color: #6b7280;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 0.75rem;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  border-top: 1px solid #e5e7eb;
+  background: #f9fafb;
+}
+
+.loading-spinner,
+.error-message {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem;
+  font-size: 1rem;
+  color: #6b7280;
+}
+
+.error-message {
+  color: #dc2626;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .database-schema-modal {
+    width: 95vw;
+    max-height: 95vh;
+  }
+  
+  .modal-header,
+  .schema-summary,
+  .schema-content,
+  .modal-footer {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  .summary-stats {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .table-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .table-info {
+    gap: 0.5rem;
+  }
+  
+  .columns-header,
+  .column-row {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+  
+  .columns-header {
+    display: none;
+  }
+  
+  .column-row {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1rem 0;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  
+  .modal-footer {
+    flex-direction: column;
+    gap: 1rem;
+  }
+}
+
+/* Enhanced column styling based on type and commonality */
+.column-row {
+  transition: background-color 0.2s ease;
+  border-radius: 6px;
+  margin: 2px 0;
+}
+
+.column-row:hover {
+  background-color: #f8fafc;
+}
+
+.column-name {
+  font-weight: 500;
+  padding: 8px 12px;
+  border-radius: 4px;
+  margin: 2px 0;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+/* Primary key columns - Green background */
+.column-name.primary-key {
+  background-color: #dcfce7;
+  color: #166534;
+  border-left: 4px solid #10b981;
+  font-weight: 700;
+}
+
+/* Common field colors - distinct colors for fields that appear in multiple tables */
+.column-name.common-id {
+  background-color: #dbeafe;
+  color: #1e40af;
+  border-left: 4px solid #3b82f6;
+}
+
+.column-name.common-name {
+  background-color: #fef3c7;
+  color: #92400e;
+  border-left: 4px solid #f59e0b;
+}
+
+.column-name.common-date {
+  background-color: #e0e7ff;
+  color: #3730a3;
+  border-left: 4px solid #6366f1;
+}
+
+.column-name.common-status {
+  background-color: #fce7f3;
+  color: #be185d;
+  border-left: 4px solid #ec4899;
+}
+
+.column-name.common-user {
+  background-color: #ecfdf5;
+  color: #065f46;
+  border-left: 4px solid #059669;
+}
+
+.column-name.common-file {
+  background-color: #fef2f2;
+  color: #991b1b;
+  border-left: 4px solid #ef4444;
+}
+
+/* Foreign key columns */
+.column-name.foreign-key {
+  background-color: #eff6ff;
+  color: #1e40af;
+  border-left: 4px solid #2563eb;
+}
+
+/* Regular columns */
+.column-name.regular {
+  background-color: #f8fafc;
+  color: #374151;
+  border-left: 4px solid #d1d5db;
+}

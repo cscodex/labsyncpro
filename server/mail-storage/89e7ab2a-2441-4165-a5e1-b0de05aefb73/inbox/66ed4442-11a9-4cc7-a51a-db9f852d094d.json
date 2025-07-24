@@ -1,0 +1,16 @@
+{
+  "id": "66ed4442-11a9-4cc7-a51a-db9f852d094d",
+  "from": {
+    "email": "system@labsyncpro.com",
+    "name": "LabSyncPro System"
+  },
+  "to": {
+    "email": "dr.sarah.johnson@school.edu",
+    "name": "Dr. Sarah Johnson"
+  },
+  "subject": "Welcome to LabSyncPro Mail System!",
+  "content": "\n          <p>Hello Dr. Sarah,</p>\n          <p>Your personal mailbox is now ready! You can:</p>\n          <ul>\n            <li>Send and receive emails from other LabSyncPro users</li>\n            <li>Organize your emails in folders</li>\n            <li>Access your mailbox from anywhere</li>\n          </ul>\n          <p>Best regards,<br>The LabSyncPro Team</p>\n        ",
+  "type": "system",
+  "timestamp": "2025-07-06T10:06:38.399Z",
+  "read": false
+}

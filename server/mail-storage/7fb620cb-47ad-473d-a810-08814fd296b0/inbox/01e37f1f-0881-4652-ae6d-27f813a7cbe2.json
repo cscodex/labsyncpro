@@ -1,0 +1,16 @@
+{
+  "id": "01e37f1f-0881-4652-ae6d-27f813a7cbe2",
+  "from": {
+    "email": "senior.drew@student.edu",
+    "name": "Drew Vape1"
+  },
+  "to": {
+    "email": "admin@labsyncpro.com",
+    "name": "Admin C13"
+  },
+  "subject": "reset password",
+  "content": "reset password",
+  "type": "internal",
+  "timestamp": "2025-07-06T15:32:06.660Z",
+  "read": true
+}

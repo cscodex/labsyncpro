@@ -1,0 +1,106 @@
+version: '3.8'
+
+services:
+  # Main Mail Server
+  mailserver:
+    image: ghcr.io/docker-mailserver/docker-mailserver:latest
+    container_name: labsync-mailserver
+    hostname: mail.labsync.local
+    domainname: labsync.local
+    ports:
+      - "25:25"     # SMTP
+      - "143:143"   # IMAP
+      - "587:587"   # SMTP Submission
+      - "993:993"   # IMAPS
+      - "110:110"   # POP3
+      - "995:995"   # POP3S
+    volumes:
+      - ./docker-data/dms/mail-data/:/var/mail/
+      - ./docker-data/dms/mail-state/:/var/mail-state/
+      - ./docker-data/dms/mail-logs/:/var/log/mail/
+      - ./docker-data/dms/config/:/tmp/docker-mailserver/
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - ENABLE_SPAMASSASSIN=1
+      - ENABLE_CLAMAV=0
+      - ENABLE_FAIL2BAN=1
+      - ENABLE_POSTGREY=0
+      - ONE_DIR=1
+      - DMS_DEBUG=0
+      - PERMIT_DOCKER=network
+      - SSL_TYPE=self-signed
+      - SPOOF_PROTECTION=1
+      - ENABLE_SRS=1
+      - POSTMASTER_ADDRESS=admin@labsync.local
+      - ENABLE_UPDATE_CHECK=0
+    cap_add:
+      - NET_ADMIN
+      - SYS_PTRACE
+    restart: always
+    networks:
+      - mailnet
+
+  # Database for Roundcube
+  roundcube-db:
+    image: mariadb:10.11
+    container_name: labsync-roundcube-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: roundcube_root_pass
+      MYSQL_DATABASE: roundcube
+      MYSQL_USER: roundcube
+      MYSQL_PASSWORD: roundcube_pass
+    volumes:
+      - ./docker-data/mysql:/var/lib/mysql
+    networks:
+      - mailnet
+
+  # Roundcube Webmail
+  roundcube:
+    image: roundcube/roundcubemail:latest
+    container_name: labsync-roundcube
+    restart: always
+    ports:
+      - "8080:80"
+    environment:
+      ROUNDCUBEMAIL_DB_TYPE: mysql
+      ROUNDCUBEMAIL_DB_HOST: roundcube-db
+      ROUNDCUBEMAIL_DB_NAME: roundcube
+      ROUNDCUBEMAIL_DB_USER: roundcube
+      ROUNDCUBEMAIL_DB_PASSWORD: roundcube_pass
+      ROUNDCUBEMAIL_DEFAULT_HOST: mailserver
+      ROUNDCUBEMAIL_DEFAULT_PORT: 143
+      ROUNDCUBEMAIL_SMTP_SERVER: mailserver
+      ROUNDCUBEMAIL_SMTP_PORT: 587
+      ROUNDCUBEMAIL_UPLOAD_MAX_FILESIZE: 25M
+    depends_on:
+      - roundcube-db
+      - mailserver
+    volumes:
+      - ./docker-data/roundcube/www:/var/www/html
+      - ./docker-data/roundcube/config:/var/roundcube/config
+    networks:
+      - mailnet
+
+  # Admin Interface (optional)
+  postfixadmin:
+    image: postfixadmin:latest
+    container_name: labsync-postfixadmin
+    restart: always
+    ports:
+      - "8081:80"
+    environment:
+      POSTFIXADMIN_DB_TYPE: mysql
+      POSTFIXADMIN_DB_HOST: roundcube-db
+      POSTFIXADMIN_DB_NAME: postfixadmin
+      POSTFIXADMIN_DB_USER: roundcube
+      POSTFIXADMIN_DB_PASSWORD: roundcube_pass
+      POSTFIXADMIN_SETUP_PASSWORD: admin123
+    depends_on:
+      - roundcube-db
+    networks:
+      - mailnet
+
+networks:
+  mailnet:
+    driver: bridge

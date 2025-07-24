@@ -1,0 +1,16 @@
+{
+  "id": "10f7ea0f-fb51-4eb4-93eb-b4d83f9ba80b",
+  "from": {
+    "email": "admin@labsyncpro.com",
+    "name": "Admin C13"
+  },
+  "to": {
+    "email": "dr.sarah.johnson@school.edu",
+    "name": "Dr. Sarah Johnson"
+  },
+  "subject": "Test Email from Admin",
+  "content": "<h3>Hello Dr. Johnson!</h3><p>This is a test email to verify our internal mail system is working perfectly.</p><p>You should be able to see this email in your webmail inbox when you login to LabSyncPro.</p><p>Best regards,<br>Admin</p>",
+  "type": "internal",
+  "timestamp": "2025-07-06T14:35:31.109Z",
+  "read": false
+}

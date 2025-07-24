@@ -1,0 +1,16 @@
+{
+  "id": "0e57c76b-4907-4bb5-8f32-ef362a15f149",
+  "from": {
+    "email": "admin@labsyncpro.com",
+    "name": "Admin C13"
+  },
+  "to": {
+    "email": "dr.sarah.johnson@school.edu",
+    "name": "Dr. Sarah Johnson"
+  },
+  "subject": "Welcome to the new mail system!",
+  "content": "<p>Dear Dr. Johnson,</p><p>I hope this email finds you well. I wanted to inform you that our new internal mail system is now live!</p><p>You can now send and receive emails directly within LabSyncPro. This will help us communicate more efficiently about lab schedules, assignments, and other important matters.</p><p>Best regards,<br>Admin</p>",
+  "type": "internal",
+  "timestamp": "2025-07-06T10:07:33.318Z",
+  "read": false
+}

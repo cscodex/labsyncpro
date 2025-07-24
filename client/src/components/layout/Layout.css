@@ -1,0 +1,406 @@
+.layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #f8fafc;
+}
+
+/* Header */
+.header {
+  background: white;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 0 24px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 1000;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+  min-width: 0; /* Allow flex item to shrink */
+}
+
+.nav-wrapper {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+}
+
+.sidebar-toggle {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 6px;
+  transition: background-color 0.2s;
+}
+
+.sidebar-toggle:hover {
+  background-color: #f1f5f9;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #667eea;
+  margin: 0;
+}
+
+/* Current Page Indicator for Desktop */
+.current-page-indicator {
+  display: none;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #334155;
+  margin-left: 2rem;
+}
+
+/* Sidebar Header */
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid #e2e8f0;
+  background: #f8fafc;
+}
+
+.sidebar-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #334155;
+  margin: 0;
+}
+
+.sidebar-close-btn {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  color: #64748b;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.sidebar-close-btn:hover {
+  background: #e2e8f0;
+  color: #334155;
+}
+
+
+
+.desktop-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #64748b;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.desktop-nav-item:hover {
+  background: #f1f5f9;
+  color: #334155;
+}
+
+.desktop-nav-item.active {
+  background: #667eea;
+  color: white;
+}
+
+.desktop-nav-item .nav-icon {
+  font-size: 1rem;
+}
+
+.desktop-nav-item .nav-label {
+  font-size: 0.9rem;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.user-name {
+  font-weight: 600;
+  color: #1a202c;
+  font-size: 0.9rem;
+}
+
+.user-role {
+  font-size: 0.8rem;
+  color: #718096;
+  text-transform: capitalize;
+}
+
+.user-menu {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.profile-link {
+  color: #667eea;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 8px 12px;
+  border-radius: 6px;
+  transition: background-color 0.2s;
+}
+
+.profile-link:hover {
+  background-color: #f1f5f9;
+}
+
+.logout-button {
+  background: #e53e3e;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.logout-button:hover {
+  background: #c53030;
+}
+
+/* Sidebar */
+.sidebar {
+  position: fixed;
+  top: 64px;
+  left: 0;
+  width: 320px;
+  height: calc(100vh - 64px);
+  background: white;
+  border-right: 1px solid #e2e8f0;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+  z-index: 999;
+  overflow-y: auto;
+  box-shadow: 2px 0 15px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-open {
+  transform: translateX(0);
+}
+
+.sidebar-nav {
+  padding: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  color: #4a5568;
+  text-decoration: none;
+  transition: all 0.2s;
+  border-left: 3px solid transparent;
+  margin: 0 8px;
+  border-radius: 8px;
+}
+
+.nav-item:hover {
+  background-color: #f7fafc;
+  color: #667eea;
+}
+
+.nav-item.active {
+  background-color: #edf2f7;
+  color: #667eea;
+  border-left-color: #667eea;
+  font-weight: 600;
+}
+
+.nav-icon {
+  font-size: 1.2rem;
+  width: 20px;
+  text-align: center;
+}
+
+.nav-label {
+  font-size: 0.95rem;
+}
+
+/* Main Content */
+.main-content {
+  flex: 1;
+  margin-left: 0;
+  transition: margin-left 0.3s ease;
+  overflow: hidden;
+}
+
+.content-wrapper {
+  padding: 24px;
+  height: calc(100vh - 64px);
+  overflow-y: auto;
+}
+
+/* Sidebar Overlay */
+.sidebar-overlay {
+  position: fixed;
+  top: 64px;
+  left: 0;
+  width: 100vw;
+  height: calc(100vh - 64px);
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 998;
+}
+
+/* Desktop Styles */
+@media (min-width: 1024px) {
+  /* Show current page indicator */
+  .current-page-indicator {
+    display: block;
+  }
+
+  /* Keep sidebar toggle visible for desktop */
+  .sidebar-toggle {
+    display: flex;
+  }
+
+  /* Sidebar overlay not needed on desktop when sidebar is open */
+  .sidebar-overlay {
+    display: none;
+  }
+
+  /* Adjust main content */
+  .main-content {
+    margin-left: 0;
+    transition: margin-left 0.3s ease;
+  }
+
+  /* Adjust main content when sidebar is open on desktop */
+  .main-content.sidebar-open {
+    margin-left: 320px;
+  }
+
+  .layout {
+    flex-direction: column;
+  }
+}
+
+/* Tablet Styles */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .sidebar {
+    position: relative;
+    top: 0;
+    transform: translateX(0);
+    height: calc(100vh - 64px);
+  }
+
+  .main-content {
+    margin-left: 250px;
+  }
+
+  .sidebar-toggle {
+    display: none;
+  }
+
+  .sidebar-overlay {
+    display: none;
+  }
+
+  .layout {
+    flex-direction: row;
+  }
+
+  .layout > .sidebar {
+    order: 1;
+  }
+
+  .layout > .main-content {
+    order: 2;
+    flex: 1;
+    margin-left: 0;
+  }
+
+  .header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 64px;
+    left: 0;
+  }
+
+  .main-content {
+    margin-top: 64px;
+    margin-left: 250px;
+  }
+}
+
+/* Mobile Responsive */
+@media (max-width: 767px) {
+  .header {
+    padding: 0 16px;
+  }
+
+  .user-info {
+    display: none;
+  }
+
+  .content-wrapper {
+    padding: 16px;
+  }
+
+  .logo {
+    font-size: 1.3rem;
+  }
+
+  /* Ensure desktop nav is hidden on mobile */
+  .desktop-nav {
+    display: none;
+  }
+}
+
+/* Large Desktop Adjustments */
+@media (min-width: 1200px) {
+  .desktop-nav {
+    gap: 12px;
+    margin-left: 3rem;
+  }
+
+  .desktop-nav-item {
+    padding: 10px 20px;
+    font-size: 1rem;
+  }
+
+  .desktop-nav-item .nav-icon {
+    font-size: 1.1rem;
+  }
+}

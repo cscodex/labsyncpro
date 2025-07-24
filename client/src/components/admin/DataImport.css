@@ -1,0 +1,272 @@
+.data-import {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.page-header h1 {
+  color: #1f2937;
+  margin-bottom: 0.5rem;
+}
+
+.page-header p {
+  color: #6b7280;
+  font-size: 1.1rem;
+}
+
+.import-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid #e5e7eb;
+  overflow-x: auto;
+}
+
+.tab-button {
+  background: none;
+  border: none;
+  padding: 1rem 1.5rem;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+  white-space: nowrap;
+  font-size: 1rem;
+  color: #6b7280;
+}
+
+.tab-button:hover {
+  color: #374151;
+  background: #f9fafb;
+}
+
+.tab-button.active {
+  color: #3b82f6;
+  border-bottom-color: #3b82f6;
+  background: #eff6ff;
+}
+
+.import-content {
+  margin-bottom: 3rem;
+}
+
+.import-section {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+}
+
+.import-header {
+  margin-bottom: 2rem;
+}
+
+.import-header h3 {
+  color: #1f2937;
+  margin-bottom: 0.5rem;
+  font-size: 1.5rem;
+}
+
+.import-header p {
+  color: #6b7280;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.import-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.template-download,
+.file-upload {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.btn-secondary {
+  background: #6b7280;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.btn-secondary:hover {
+  background: #4b5563;
+}
+
+.template-info {
+  font-size: 0.875rem;
+  color: #6b7280;
+  font-style: italic;
+}
+
+.upload-label {
+  cursor: pointer;
+}
+
+.file-input {
+  display: none;
+}
+
+.upload-button {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: 2px dashed transparent;
+}
+
+.upload-button:hover {
+  background: #2563eb;
+  border-color: #3b82f6;
+}
+
+.import-result {
+  background: #f9fafb;
+  border-radius: 8px;
+  padding: 1.5rem;
+  border: 1px solid #e5e7eb;
+}
+
+.result-summary h4 {
+  color: #1f2937;
+  margin-bottom: 1rem;
+}
+
+.result-stats {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.stat {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+.stat.success {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.stat.error {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.stat:not(.success):not(.error) {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.result-errors {
+  margin-top: 1rem;
+}
+
+.result-errors h5 {
+  color: #dc2626;
+  margin-bottom: 0.5rem;
+}
+
+.result-errors ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.result-errors li {
+  background: #fee2e2;
+  color: #991b1b;
+  padding: 0.5rem;
+  margin-bottom: 0.25rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+}
+
+.import-instructions {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+}
+
+.import-instructions h3 {
+  color: #1f2937;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.instructions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.instruction-card {
+  background: #f9fafb;
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.instruction-card h4 {
+  color: #1f2937;
+  margin-bottom: 0.75rem;
+  font-size: 1.1rem;
+}
+
+.instruction-card p {
+  color: #6b7280;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .data-import {
+    padding: 1rem;
+  }
+
+  .import-actions {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .result-stats {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .instructions-grid {
+    grid-template-columns: 1fr;
+  }
+}

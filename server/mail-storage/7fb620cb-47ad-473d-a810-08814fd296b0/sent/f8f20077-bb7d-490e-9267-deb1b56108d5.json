@@ -1,0 +1,16 @@
+{
+  "id": "f8f20077-bb7d-490e-9267-deb1b56108d5",
+  "from": {
+    "email": "admin@labsyncpro.com",
+    "name": "Admin C13"
+  },
+  "to": {
+    "email": "bella.baker@student.edu",
+    "name": "Bella Baker"
+  },
+  "subject": "computer science",
+  "content": "hi",
+  "type": "internal",
+  "timestamp": "2025-07-06T15:36:24.136Z",
+  "read": true
+}

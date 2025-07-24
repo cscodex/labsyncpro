@@ -1,0 +1,11 @@
+first_name,last_name,email,employee_id,department,password,phone,office_location
+Dr. John,Anderson,john.anderson@university.edu,EMP001,Computer Science,instructor123,+1-555-0101,CS Building Room 201
+Prof. Sarah,Johnson,sarah.johnson@university.edu,EMP002,Computer Science,instructor123,+1-555-0102,CS Building Room 203
+Dr. Michael,Williams,michael.williams@university.edu,EMP003,Computer Science,instructor123,+1-555-0103,CS Building Room 205
+Prof. Emily,Brown,emily.brown@university.edu,EMP004,Information Technology,instructor123,+1-555-0104,IT Building Room 301
+Dr. David,Davis,david.davis@university.edu,EMP005,Information Technology,instructor123,+1-555-0105,IT Building Room 303
+Prof. Lisa,Miller,lisa.miller@university.edu,EMP006,Networking,instructor123,+1-555-0106,Network Lab Building Room 101
+Dr. James,Wilson,james.wilson@university.edu,EMP007,Networking,instructor123,+1-555-0107,Network Lab Building Room 103
+Prof. Jennifer,Moore,jennifer.moore@university.edu,EMP008,Computer Science,instructor123,+1-555-0108,CS Building Room 207
+Dr. Robert,Taylor,robert.taylor@university.edu,EMP009,Information Technology,instructor123,+1-555-0109,IT Building Room 305
+Prof. Amanda,Anderson,amanda.anderson@university.edu,EMP010,Computer Science,instructor123,+1-555-0110,CS Building Room 209

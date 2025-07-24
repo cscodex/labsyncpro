@@ -1,0 +1,31 @@
+computer_name,computer_number,lab_name,specifications,is_functional,purchase_date,warranty_expiry,notes
+CL1-PC-001,1,Computer Lab 1,"Intel i5-12400, 16GB RAM, 512GB SSD, Windows 11",true,2023-01-15,2026-01-15,Primary workstation
+CL1-PC-002,2,Computer Lab 1,"Intel i5-12400, 16GB RAM, 512GB SSD, Windows 11",true,2023-01-15,2026-01-15,Primary workstation
+CL1-PC-003,3,Computer Lab 1,"Intel i5-12400, 16GB RAM, 512GB SSD, Windows 11",true,2023-01-15,2026-01-15,Primary workstation
+CL1-PC-004,4,Computer Lab 1,"Intel i5-12400, 16GB RAM, 512GB SSD, Windows 11",true,2023-01-15,2026-01-15,Primary workstation
+CL1-PC-005,5,Computer Lab 1,"Intel i5-12400, 16GB RAM, 512GB SSD, Windows 11",true,2023-01-15,2026-01-15,Primary workstation
+CL1-PC-006,6,Computer Lab 1,"Intel i5-12400, 16GB RAM, 512GB SSD, Windows 11",true,2023-01-15,2026-01-15,Primary workstation
+CL1-PC-007,7,Computer Lab 1,"Intel i5-12400, 16GB RAM, 512GB SSD, Windows 11",true,2023-01-15,2026-01-15,Primary workstation
+CL1-PC-008,8,Computer Lab 1,"Intel i5-12400, 16GB RAM, 512GB SSD, Windows 11",true,2023-01-15,2026-01-15,Primary workstation
+CL1-PC-009,9,Computer Lab 1,"Intel i5-12400, 16GB RAM, 512GB SSD, Windows 11",true,2023-01-15,2026-01-15,Primary workstation
+CL1-PC-010,10,Computer Lab 1,"Intel i5-12400, 16GB RAM, 512GB SSD, Windows 11",true,2023-01-15,2026-01-15,Primary workstation
+CL1-PC-011,11,Computer Lab 1,"Intel i5-12400, 16GB RAM, 512GB SSD, Windows 11",true,2023-01-15,2026-01-15,Primary workstation
+CL1-PC-012,12,Computer Lab 1,"Intel i5-12400, 16GB RAM, 512GB SSD, Windows 11",true,2023-01-15,2026-01-15,Primary workstation
+CL1-PC-013,13,Computer Lab 1,"Intel i5-12400, 16GB RAM, 512GB SSD, Windows 11",true,2023-01-15,2026-01-15,Primary workstation
+CL1-PC-014,14,Computer Lab 1,"Intel i5-12400, 16GB RAM, 512GB SSD, Windows 11",true,2023-01-15,2026-01-15,Primary workstation
+CL1-PC-015,15,Computer Lab 1,"Intel i5-12400, 16GB RAM, 512GB SSD, Windows 11",true,2023-01-15,2026-01-15,Primary workstation
+CL2-PC-001,1,Computer Lab 2,"Intel i7-12700, 32GB RAM, 1TB SSD, Windows 11",true,2023-02-01,2026-02-01,High-performance workstation
+CL2-PC-002,2,Computer Lab 2,"Intel i7-12700, 32GB RAM, 1TB SSD, Windows 11",true,2023-02-01,2026-02-01,High-performance workstation
+CL2-PC-003,3,Computer Lab 2,"Intel i7-12700, 32GB RAM, 1TB SSD, Windows 11",true,2023-02-01,2026-02-01,High-performance workstation
+CL2-PC-004,4,Computer Lab 2,"Intel i7-12700, 32GB RAM, 1TB SSD, Windows 11",true,2023-02-01,2026-02-01,High-performance workstation
+CL2-PC-005,5,Computer Lab 2,"Intel i7-12700, 32GB RAM, 1TB SSD, Windows 11",true,2023-02-01,2026-02-01,High-performance workstation
+CL2-PC-006,6,Computer Lab 2,"Intel i7-12700, 32GB RAM, 1TB SSD, Windows 11",false,2023-02-01,2026-02-01,Under maintenance - RAM issue
+CL2-PC-007,7,Computer Lab 2,"Intel i7-12700, 32GB RAM, 1TB SSD, Windows 11",true,2023-02-01,2026-02-01,High-performance workstation
+CL2-PC-008,8,Computer Lab 2,"Intel i7-12700, 32GB RAM, 1TB SSD, Windows 11",true,2023-02-01,2026-02-01,High-performance workstation
+CL2-PC-009,9,Computer Lab 2,"Intel i7-12700, 32GB RAM, 1TB SSD, Windows 11",true,2023-02-01,2026-02-01,High-performance workstation
+CL2-PC-010,10,Computer Lab 2,"Intel i7-12700, 32GB RAM, 1TB SSD, Windows 11",true,2023-02-01,2026-02-01,High-performance workstation
+NL1-PC-001,1,Networking Lab 1,"Intel i5-11400, 8GB RAM, 256GB SSD, Windows 11",true,2022-09-15,2025-09-15,Network simulation workstation
+NL1-PC-002,2,Networking Lab 1,"Intel i5-11400, 8GB RAM, 256GB SSD, Windows 11",true,2022-09-15,2025-09-15,Network simulation workstation
+NL1-PC-003,3,Networking Lab 1,"Intel i5-11400, 8GB RAM, 256GB SSD, Windows 11",true,2022-09-15,2025-09-15,Network simulation workstation
+NL1-PC-004,4,Networking Lab 1,"Intel i5-11400, 8GB RAM, 256GB SSD, Windows 11",true,2022-09-15,2025-09-15,Network simulation workstation
+NL1-PC-005,5,Networking Lab 1,"Intel i5-11400, 8GB RAM, 256GB SSD, Windows 11",true,2022-09-15,2025-09-15,Network simulation workstation

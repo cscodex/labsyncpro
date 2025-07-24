@@ -1,0 +1,16 @@
+{
+  "id": "f3a164bd-9a2a-4aaf-b9ff-299721e682df",
+  "from": {
+    "email": "notifications@labsyncpro.com",
+    "name": "LabSyncPro Notifications"
+  },
+  "to": {
+    "email": "dr.robert.wilson@school.edu",
+    "name": "Dr. Robert Wilson"
+  },
+  "subject": "Your account is active",
+  "content": "\n          <p>Hello Dr. Robert,</p>\n          <p>This is a notification that your LabSyncPro account is active and ready to use.</p>\n          <p>You can now access all features of the system.</p>\n          <p>If you have any questions, please contact your administrator.</p>\n        ",
+  "type": "notification",
+  "timestamp": "2025-07-06T10:06:38.402Z",
+  "read": false
+}
