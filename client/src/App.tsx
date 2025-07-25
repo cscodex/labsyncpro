@@ -18,6 +18,7 @@ import AssignmentCreation from './components/assignments/AssignmentCreation';
 import AssignmentManagement from './components/assignments/AssignmentManagement';
 
 import StudentSubmissions from './components/student/StudentSubmissions';
+import ApiTest from './components/debug/ApiTest';
 import StudentGroups from './components/student/StudentGroups';
 import GradesRouter from './components/grades/GradesRouter';
 import GroupsRouter from './components/groups/GroupsRouter';
@@ -177,6 +178,7 @@ const App: React.FC = () => {
           <div className="App">
             <AppRoutes />
             <NotificationContainer />
+            <ApiTest />
           </div>
         </Router>
       </NotificationProvider>
