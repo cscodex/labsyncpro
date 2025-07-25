@@ -1,6 +1,6 @@
 # LabSyncPro - Laboratory Management System
 
-A comprehensive laboratory management system designed for educational institutions to manage computer labs, student assignments, scheduling, submissions, and grading.
+A comprehensive laboratory management system built with React, Node.js, and Supabase for educational institutions to manage computer labs, text-based coding assignments, schedules, and student activities. Students submit their code and output through copy-paste interface instead of file uploads.
 
 ## 🚀 Features
 

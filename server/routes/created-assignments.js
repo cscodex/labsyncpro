@@ -2,39 +2,9 @@ const express = require('express');
 const router = express.Router();
 const { query } = require('../config/database');
 const { authenticateToken } = require('../middleware/auth');
-const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
+const FileUploadService = require('../services/fileUploadService');
 
-// Configure multer for file uploads
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    const uploadDir = 'uploads/assignments';
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
-    cb(null, uploadDir);
-  },
-  filename: function (req, file, cb) {
-    // Generate unique filename
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, 'assignment-' + uniqueSuffix + path.extname(file.originalname));
-  }
-});
-
-const upload = multer({
-  storage: storage,
-  limits: {
-    fileSize: 10 * 1024 * 1024 // 10MB limit
-  },
-  fileFilter: function (req, file, cb) {
-    if (file.mimetype === 'application/pdf') {
-      cb(null, true);
-    } else {
-      cb(new Error('Only PDF files are allowed'));
-    }
-  }
-});
+// No file upload needed for text-based assignments
 
 // Get all created assignments
 router.get('/', authenticateToken, async (req, res) => {
@@ -96,10 +66,20 @@ router.get('/', authenticateToken, async (req, res) => {
   }
 });
 
-// Create a new assignment
-router.post('/', authenticateToken, upload.single('pdf_file'), async (req, res) => {
+// Create a new text-based assignment
+router.post('/', authenticateToken, async (req, res) => {
   try {
-    const { name, description, status } = req.body;
+    const {
+      name,
+      description,
+      status,
+      assignment_content,
+      expected_output,
+      programming_language,
+      difficulty_level,
+      time_limit_minutes,
+      max_attempts
+    } = req.body;
     const userId = req.user?.id;
 
     if (!name) {
@@ -116,36 +96,45 @@ router.post('/', authenticateToken, upload.single('pdf_file'), async (req, res) 
       });
     }
 
-    let pdfFilename = null;
-    let pdfFileSize = null;
-
-    if (req.file) {
-      pdfFilename = req.file.filename;
-      pdfFileSize = req.file.size;
-    }
-
+    // Create text-based assignment
     const result = await query(`
       INSERT INTO created_assignments (
-        name, description, pdf_filename, pdf_file_size,
-        creation_date, status, created_by
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7)
+        name,
+        description,
+        assignment_content,
+        expected_output,
+        programming_language,
+        difficulty_level,
+        time_limit_minutes,
+        max_attempts,
+        creation_date,
+        status,
+        created_by
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
       RETURNING *
     `, [
       name,
       description || null,
-      pdfFilename,
-      pdfFileSize,
-      new Date().toISOString().split('T')[0], // Always use current date
+      assignment_content || 'Assignment content will be provided by instructor',
+      expected_output || null,
+      programming_language || 'python',
+      difficulty_level || 'beginner',
+      time_limit_minutes || 60,
+      max_attempts || 3,
+      new Date().toISOString().split('T')[0],
       status || 'draft',
       userId
     ]);
 
+    const assignment = result.rows[0];
+
     res.status(201).json({
       success: true,
-      assignment: result.rows[0]
+      assignment: assignment,
+      message: 'Text-based assignment created successfully'
     });
   } catch (error) {
-    console.error('Error creating assignment:', error);
+    console.error('❌ Error creating assignment:', error);
     res.status(500).json({
       success: false,
       error: 'Failed to create assignment'

@@ -1,4 +1,5 @@
 const { Pool } = require('pg');
+const { supabase, testSupabaseConnection } = require('./supabase');
 require('dotenv').config();
 
 // Database configuration
@@ -11,6 +12,10 @@ const dbConfig = {
   max: 20, // Maximum number of clients in the pool
   idleTimeoutMillis: 30000, // Close idle clients after 30 seconds
   connectionTimeoutMillis: 2000, // Return an error after 2 seconds if connection could not be established
+  // Supabase SSL configuration
+  ssl: process.env.DB_HOST && process.env.DB_HOST.includes('supabase.co') ? {
+    rejectUnauthorized: false
+  } : false
 };
 
 // Create connection pool
@@ -25,8 +30,19 @@ pool.on('error', (err, client) => {
 // Test database connection
 const testConnection = async () => {
   try {
+    // Test Supabase connection first if using Supabase
+    if (process.env.SUPABASE_URL) {
+      const supabaseConnected = await testSupabaseConnection();
+      if (!supabaseConnected) {
+        console.log('⚠️ Supabase connection failed, falling back to direct PostgreSQL...');
+      } else {
+        console.log('🚀 Using Supabase as database provider');
+      }
+    }
+
+    // Test PostgreSQL connection
     const client = await pool.connect();
-    console.log('✅ Database connected successfully');
+    console.log('✅ PostgreSQL connected successfully');
 
     // Test query
     const result = await client.query('SELECT NOW()');
@@ -89,7 +105,9 @@ testConnection();
 
 module.exports = {
   pool,
+  supabase, // Export Supabase client
   query,
   transaction,
-  testConnection
+  testConnection,
+  testSupabaseConnection
 };

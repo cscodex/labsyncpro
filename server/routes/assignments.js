@@ -4,6 +4,8 @@ const multer = require('multer');
 const path = require('path');
 const { query } = require('../config/database');
 const { authenticateToken } = require('../middleware/auth');
+const { assignmentUpload } = require('../config/googleDrive');
+const FileUploadService = require('../services/fileUploadService');
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({

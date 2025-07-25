@@ -1,0 +1,59 @@
+services:
+  # Backend API Service
+  - type: web
+    name: labsyncpro-api
+    env: node
+    plan: free
+    buildCommand: cd server && npm install
+    startCommand: cd server && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: DB_HOST
+        fromDatabase:
+          name: labsyncpro-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: labsyncpro-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: labsyncpro-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: labsyncpro-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: labsyncpro-db
+          property: password
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRE
+        value: 7d
+      - key: CLIENT_URL
+        value: https://labsyncpro.onrender.com
+      - key: MAX_TEXT_LENGTH
+        value: 10000
+      - key: MAX_OUTPUT_LENGTH
+        value: 5000
+
+  # Frontend Static Site
+  - type: static
+    name: labsyncpro-frontend
+    buildCommand: cd client && npm install && npm run build
+    staticPublishPath: client/dist
+    envVars:
+      - key: VITE_API_URL
+        value: https://labsyncpro-api.onrender.com/api
+
+databases:
+  # PostgreSQL Database (or use external Supabase)
+  - name: labsyncpro-db
+    databaseName: labsyncpro
+    user: labsyncpro_user
+    plan: free

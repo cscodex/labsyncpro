@@ -7,7 +7,8 @@
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "server": "cd server && npm run dev",
     "client": "cd client && npm run dev",
-    "build": "cd client && npm run build",
+    "build": "cd client && npm install && npm run build",
+    "start": "cd server && npm start",
     "install-server": "cd server && npm install",
     "install-client": "cd client && npm install",
     "install-all": "npm run install-server && npm run install-client",
@@ -20,7 +21,13 @@
     "laboratory",
     "management",
     "education",
-    "scheduling"
+    "assignments",
+    "students",
+    "react",
+    "nodejs",
+    "postgresql",
+    "supabase",
+    "text-submissions"
   ],
   "author": "LabSyncPro Team",
   "license": "MIT",
@@ -28,8 +35,14 @@
     "concurrently": "^8.2.2"
   },
   "dependencies": {
-    "imapflow": "^1.0.189",
-    "multer": "^2.0.1",
     "uuid": "^11.1.0"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/LabSyncPro.git"
   }
 }
