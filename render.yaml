@@ -4,7 +4,7 @@ services:
     name: labsyncpro-api
     env: node
     plan: free
-    buildCommand: cd server && npm install
+    buildCommand: npm install && cd server && npm install
     startCommand: cd server && npm start
     envVars:
       - key: NODE_ENV
