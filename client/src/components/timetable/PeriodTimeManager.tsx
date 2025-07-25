@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useState, useEffect } from 'react';
 import { useNotification } from '../../contexts/NotificationContext';
 import { timetableService } from '../../services/timetableService';

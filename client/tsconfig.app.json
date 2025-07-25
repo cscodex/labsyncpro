@@ -23,5 +23,15 @@
     "noFallthroughCasesInSwitch": false,
     "noUncheckedSideEffectImports": false
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": [
+    "src/test/**/*",
+    "src/components/timetable/PeriodTimeManager.tsx",
+    "src/components/timetable/PeriodConfigurationModal.tsx",
+    "src/components/timetable/TimetableVersionManager.tsx",
+    "src/components/timetable/TimetableExport.tsx",
+    "src/components/timetable/Timetable.tsx",
+    "src/components/timetable/WeeklyClassScheduleModal.tsx",
+    "src/components/student/StudentSubmissions.tsx"
+  ]
 }

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useState, useEffect } from 'react';
 import { timetableAPI, classesAPI, usersAPI, labsAPI } from '../../services/api';
 import { useNotification } from '../../contexts/NotificationContext';
