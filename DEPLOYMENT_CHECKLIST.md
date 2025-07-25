@@ -72,14 +72,27 @@ Click "Environment" and add these variables:
 ```
 NODE_ENV=production
 PORT=10000
+
+# Supabase Database Connection
 DB_HOST=db.xxxxxxxxxxxxx.supabase.co
 DB_PORT=5432
 DB_NAME=postgres
 DB_USER=postgres
 DB_PASSWORD=[your supabase password]
+
+# Supabase API Keys
+SUPABASE_URL=https://xxxxxxxxxxxxx.supabase.co
+SUPABASE_ANON_KEY=[your public anon key]
+SUPABASE_SERVICE_ROLE_KEY=[your secret service role key]
+
+# JWT Configuration
 JWT_SECRET=[generate a random 32+ character string]
 JWT_EXPIRE=7d
+
+# CORS Configuration
 CLIENT_URL=https://labsyncpro-frontend.onrender.com
+
+# Text Submission Limits
 MAX_TEXT_LENGTH=10000
 MAX_OUTPUT_LENGTH=5000
 ```
@@ -105,6 +118,8 @@ MAX_OUTPUT_LENGTH=5000
 ### 4.2 Set Frontend Environment Variables
 ```
 VITE_API_URL=https://labsyncpro-api.onrender.com/api
+VITE_SUPABASE_URL=https://xxxxxxxxxxxxx.supabase.co
+VITE_SUPABASE_ANON_KEY=[your public anon key]
 ```
 
 ### 4.3 Deploy Frontend
