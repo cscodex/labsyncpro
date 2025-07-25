@@ -143,7 +143,7 @@ router.post('/', authenticateToken, async (req, res) => {
 });
 
 // Update an assignment
-router.put('/:id', authenticateToken, upload.single('pdf_file'), async (req, res) => {
+router.put('/:id', authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
     const { name, description, status } = req.body;
@@ -184,25 +184,7 @@ router.put('/:id', authenticateToken, upload.single('pdf_file'), async (req, res
       paramIndex++;
     }
 
-    // Handle file upload
-    if (req.file) {
-      // Delete old file if it exists
-      const oldAssignment = existingAssignment.rows[0];
-      if (oldAssignment.pdf_filename) {
-        const oldFilePath = path.join('uploads/assignments', oldAssignment.pdf_filename);
-        if (fs.existsSync(oldFilePath)) {
-          fs.unlinkSync(oldFilePath);
-        }
-      }
-
-      updateFields.push(`pdf_filename = $${paramIndex}`);
-      updateValues.push(req.file.filename);
-      paramIndex++;
-
-      updateFields.push(`pdf_file_size = $${paramIndex}`);
-      updateValues.push(req.file.size);
-      paramIndex++;
-    }
+    // No file upload for text-based assignments
 
     updateFields.push(`updated_at = CURRENT_TIMESTAMP`);
     updateValues.push(id);
@@ -276,14 +258,7 @@ router.delete('/:id', authenticateToken, async (req, res) => {
       });
     }
 
-    // Delete associated file
-    const assignment = existingAssignment.rows[0];
-    if (assignment.pdf_filename) {
-      const filePath = path.join('uploads/assignments', assignment.pdf_filename);
-      if (fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath);
-      }
-    }
+    // No files to delete for text-based assignments
 
     // Delete assignment from database
     await query('DELETE FROM created_assignments WHERE id = $1', [id]);
@@ -301,46 +276,6 @@ router.delete('/:id', authenticateToken, async (req, res) => {
   }
 });
 
-// Download assignment PDF
-router.get('/:id/download', authenticateToken, async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    const assignment = await query(`
-      SELECT pdf_filename, name FROM created_assignments WHERE id = $1
-    `, [id]);
-
-    if (assignment.rows.length === 0) {
-      return res.status(404).json({
-        success: false,
-        error: 'Assignment not found'
-      });
-    }
-
-    const assignmentData = assignment.rows[0];
-    if (!assignmentData.pdf_filename) {
-      return res.status(404).json({
-        success: false,
-        error: 'No PDF file found for this assignment'
-      });
-    }
-
-    const filePath = path.join('uploads/assignments', assignmentData.pdf_filename);
-    if (!fs.existsSync(filePath)) {
-      return res.status(404).json({
-        success: false,
-        error: 'PDF file not found on server'
-      });
-    }
-
-    res.download(filePath, `${assignmentData.name}.pdf`);
-  } catch (error) {
-    console.error('Error downloading assignment:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Failed to download assignment'
-    });
-  }
-});
+// No download route needed for text-based assignments
 
 module.exports = router;
