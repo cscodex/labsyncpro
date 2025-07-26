@@ -103,6 +103,101 @@ async function fixDatabase() {
     console.log('Admin: admin@labsyncpro.com / admin123');
     console.log('Instructor: instructor@labsyncpro.com / admin123');
 
+    // Add some sample data for dashboard
+    console.log('\n➕ Adding sample data...');
+
+    // Add sample labs
+    const { data: labs, error: labsError } = await supabase
+      .from('labs')
+      .upsert([
+        {
+          name: 'Computer Lab 1',
+          total_computers: 25,
+          total_seats: 50,
+          location: 'Science Building - Ground Floor'
+        },
+        {
+          name: 'Computer Lab 2',
+          total_computers: 30,
+          total_seats: 50,
+          location: 'Science Building - First Floor'
+        }
+      ], {
+        onConflict: 'name'
+      })
+      .select();
+
+    if (labsError) {
+      console.error('❌ Error adding labs:', labsError);
+    } else {
+      console.log('✅ Sample labs added successfully!');
+    }
+
+    // Add sample classes
+    const { data: classes, error: classesError } = await supabase
+      .from('classes')
+      .upsert([
+        {
+          class_code: '11 NM A',
+          grade: 11,
+          stream: 'NM',
+          section: 'A',
+          description: 'Grade 11 Non-Medical Section A'
+        },
+        {
+          class_code: '12 COM B',
+          grade: 12,
+          stream: 'COM',
+          section: 'B',
+          description: 'Grade 12 Commerce Section B'
+        }
+      ], {
+        onConflict: 'class_code'
+      })
+      .select();
+
+    if (classesError) {
+      console.error('❌ Error adding classes:', classesError);
+    } else {
+      console.log('✅ Sample classes added successfully!');
+    }
+
+    // Add sample students
+    const studentPassword = await bcrypt.hash('student123', 10);
+    const { data: students, error: studentsError } = await supabase
+      .from('users')
+      .upsert([
+        {
+          email: 'student1@labsyncpro.com',
+          password_hash: studentPassword,
+          first_name: 'Alice',
+          last_name: 'Johnson',
+          role: 'student',
+          student_id: '20240001',
+          is_active: true
+        },
+        {
+          email: 'student2@labsyncpro.com',
+          password_hash: studentPassword,
+          first_name: 'Bob',
+          last_name: 'Smith',
+          role: 'student',
+          student_id: '20240002',
+          is_active: true
+        }
+      ], {
+        onConflict: 'email'
+      })
+      .select();
+
+    if (studentsError) {
+      console.error('❌ Error adding students:', studentsError);
+    } else {
+      console.log('✅ Sample students added successfully!');
+    }
+
+    console.log('\n🎉 Database setup completed with sample data!');
+
   } catch (error) {
     console.error('❌ Error fixing database:', error);
   }
