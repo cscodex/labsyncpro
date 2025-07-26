@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { query } = require('../config/database');
+const { supabase } = require('../config/supabase');
 const { authenticateToken } = require('../middleware/auth');
 const FileUploadService = require('../services/fileUploadService');
 
@@ -19,27 +19,40 @@ router.get('/', authenticateToken, async (req, res) => {
       queryParams.push(status);
     }
 
-    const assignments = await query(`
-      SELECT
-        ca.id,
-        ca.name,
-        ca.description,
-        ca.pdf_filename,
-        ca.pdf_file_size,
-        ca.creation_date,
-        ca.status,
-        ca.created_at,
-        ca.updated_at,
-        CONCAT(u.first_name, ' ', u.last_name) as instructor_name,
-        u.id as created_by
-      FROM created_assignments ca
-      LEFT JOIN users u ON ca.created_by = u.id
-      ${whereClause}
-      ORDER BY ca.created_at DESC
-    `, queryParams);
+    let query = supabase
+      .from('created_assignments')
+      .select(`
+        id,
+        name,
+        description,
+        pdf_filename,
+        pdf_file_size,
+        creation_date,
+        status,
+        created_at,
+        updated_at,
+        created_by,
+        users!created_assignments_created_by_fkey (
+          id,
+          first_name,
+          last_name
+        )
+      `)
+      .order('created_at', { ascending: false });
+
+    if (status) {
+      query = query.eq('status', status);
+    }
+
+    const { data: assignments, error } = await query;
+
+    if (error) {
+      console.error('Supabase error:', error);
+      return res.status(500).json({ error: 'Failed to fetch created assignments' });
+    }
 
     // Map the data to match frontend expectations (camelCase)
-    const mappedAssignments = assignments.rows.map(assignment => ({
+    const mappedAssignments = assignments.map(assignment => ({
       id: assignment.id,
       name: assignment.name,
       description: assignment.description,
@@ -49,12 +62,12 @@ router.get('/', authenticateToken, async (req, res) => {
       status: assignment.status,
       createdAt: assignment.created_at,
       updatedAt: assignment.updated_at,
-      instructorName: assignment.instructor_name,
+      instructorName: assignment.users ? `${assignment.users.first_name} ${assignment.users.last_name}` : 'Unknown',
       createdBy: assignment.created_by
     }));
 
     res.json({
-      success: true,
+      message: 'Created assignments retrieved successfully',
       assignments: mappedAssignments
     });
   } catch (error) {
@@ -97,36 +110,28 @@ router.post('/', authenticateToken, async (req, res) => {
     }
 
     // Create text-based assignment
-    const result = await query(`
-      INSERT INTO created_assignments (
+    const { data: assignment, error } = await supabase
+      .from('created_assignments')
+      .insert({
         name,
-        description,
-        assignment_content,
-        expected_output,
-        programming_language,
-        difficulty_level,
-        time_limit_minutes,
-        max_attempts,
-        creation_date,
-        status,
-        created_by
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
-      RETURNING *
-    `, [
-      name,
-      description || null,
-      assignment_content || 'Assignment content will be provided by instructor',
-      expected_output || null,
-      programming_language || 'python',
-      difficulty_level || 'beginner',
-      time_limit_minutes || 60,
-      max_attempts || 3,
-      new Date().toISOString().split('T')[0],
-      status || 'draft',
-      userId
-    ]);
+        description: description || null,
+        assignment_content: assignment_content || 'Assignment content will be provided by instructor',
+        expected_output: expected_output || null,
+        programming_language: programming_language || 'python',
+        difficulty_level: difficulty_level || 'beginner',
+        time_limit_minutes: time_limit_minutes || 60,
+        max_attempts: max_attempts || 3,
+        creation_date: new Date().toISOString().split('T')[0],
+        status: status || 'draft',
+        created_by: userId
+      })
+      .select()
+      .single();
 
-    const assignment = result.rows[0];
+    if (error) {
+      console.error('Supabase error creating assignment:', error);
+      return res.status(500).json({ error: 'Failed to create assignment' });
+    }
 
     res.status(201).json({
       success: true,
@@ -150,85 +155,61 @@ router.put('/:id', authenticateToken, async (req, res) => {
     const userId = req.user.id;
 
     // Check if assignment exists and user has permission
-    const existingAssignment = await query(`
-      SELECT * FROM created_assignments 
-      WHERE id = $1 AND (created_by = $2 OR $3 = 'admin')
-    `, [id, userId, req.user.role]);
+    const { data: existingAssignment, error: fetchError } = await supabase
+      .from('created_assignments')
+      .select('*')
+      .eq('id', id)
+      .or(`created_by.eq.${userId},and(created_by.neq.${userId})`)
+      .single();
 
-    if (existingAssignment.rows.length === 0) {
+    if (fetchError || !existingAssignment) {
       return res.status(404).json({
         success: false,
         error: 'Assignment not found or access denied'
       });
     }
 
-    let updateFields = [];
-    let updateValues = [];
-    let paramIndex = 1;
-
-    if (name !== undefined) {
-      updateFields.push(`name = $${paramIndex}`);
-      updateValues.push(name);
-      paramIndex++;
+    // Check permission
+    if (existingAssignment.created_by !== userId && req.user.role !== 'admin') {
+      return res.status(403).json({
+        success: false,
+        error: 'Access denied'
+      });
     }
 
-    if (description !== undefined) {
-      updateFields.push(`description = $${paramIndex}`);
-      updateValues.push(description);
-      paramIndex++;
+    // Prepare update data
+    const updateData = {};
+    if (name !== undefined) updateData.name = name;
+    if (description !== undefined) updateData.description = description;
+    if (status !== undefined) updateData.status = status;
+
+    // Add updated timestamp
+    updateData.updated_at = new Date().toISOString();
+
+    // Update assignment
+    const { data: updatedAssignment, error: updateError } = await supabase
+      .from('created_assignments')
+      .update(updateData)
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (updateError) {
+      console.error('Supabase error updating assignment:', updateError);
+      return res.status(500).json({ error: 'Failed to update assignment' });
     }
 
+    // TODO: Handle assignment distributions when that table is created in Supabase
     if (status !== undefined) {
-      updateFields.push(`status = $${paramIndex}`);
-      updateValues.push(status);
-      paramIndex++;
-    }
-
-    // No file upload for text-based assignments
-
-    updateFields.push(`updated_at = CURRENT_TIMESTAMP`);
-    updateValues.push(id);
-
-    const updateQuery = `
-      UPDATE created_assignments 
-      SET ${updateFields.join(', ')}
-      WHERE id = $${paramIndex}
-      RETURNING *
-    `;
-
-    const result = await query(updateQuery, updateValues);
-
-    // Handle assignment distributions based on status change
-    if (status !== undefined) {
-      const oldStatus = existingAssignment.rows[0].status;
+      const oldStatus = existingAssignment.status;
       const newStatus = status;
-
       console.log(`Assignment ${id} status change: ${oldStatus} -> ${newStatus}`);
-
-      // If assignment is changed to draft or archived, remove all distributions
-      if ((newStatus === 'draft' || newStatus === 'archived') && oldStatus === 'published') {
-        const deleteResult = await query(`
-          DELETE FROM assignment_distributions
-          WHERE assignment_id = $1
-          RETURNING id
-        `, [id]);
-
-        console.log(`Removed ${deleteResult.rows.length} distributions for assignment ${id} due to status change to ${newStatus}`);
-      } else if (newStatus === 'draft' || newStatus === 'archived') {
-        // Also remove distributions if changing from any status to draft/archived
-        const deleteResult = await query(`
-          DELETE FROM assignment_distributions
-          WHERE assignment_id = $1
-          RETURNING id
-        `, [id]);
-
-        console.log(`Removed ${deleteResult.rows.length} distributions for assignment ${id} due to status change to ${newStatus} (from ${oldStatus})`);
-      }
+      // Distribution logic will be implemented when assignment_distributions table exists
     }
 
     res.json({
       success: true,
-      assignment: result.rows[0]
+      assignment: updatedAssignment
     });
   } catch (error) {
     console.error('Error updating assignment:', error);
@@ -246,22 +227,37 @@ router.delete('/:id', authenticateToken, async (req, res) => {
     const userId = req.user.id;
 
     // Check if assignment exists and user has permission
-    const existingAssignment = await query(`
-      SELECT * FROM created_assignments 
-      WHERE id = $1 AND (created_by = $2 OR $3 = 'admin')
-    `, [id, userId, req.user.role]);
+    const { data: existingAssignment, error: fetchError } = await supabase
+      .from('created_assignments')
+      .select('*')
+      .eq('id', id)
+      .single();
 
-    if (existingAssignment.rows.length === 0) {
+    if (fetchError || !existingAssignment) {
       return res.status(404).json({
         success: false,
-        error: 'Assignment not found or access denied'
+        error: 'Assignment not found'
       });
     }
 
-    // No files to delete for text-based assignments
+    // Check permission
+    if (existingAssignment.created_by !== userId && req.user.role !== 'admin') {
+      return res.status(403).json({
+        success: false,
+        error: 'Access denied'
+      });
+    }
 
     // Delete assignment from database
-    await query('DELETE FROM created_assignments WHERE id = $1', [id]);
+    const { error: deleteError } = await supabase
+      .from('created_assignments')
+      .delete()
+      .eq('id', id);
+
+    if (deleteError) {
+      console.error('Supabase error deleting assignment:', deleteError);
+      return res.status(500).json({ error: 'Failed to delete assignment' });
+    }
 
     res.json({
       success: true,

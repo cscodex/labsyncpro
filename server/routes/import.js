@@ -2,6 +2,7 @@ const express = require('express');
 const multer = require('multer');
 const csv = require('csv-parser');
 const fs = require('fs');
+const path = require('path');
 const bcrypt = require('bcrypt');
 const { query } = require('../config/database');
 const { authenticateToken, requireRole } = require('../middleware/auth');
@@ -20,6 +21,37 @@ const upload = multer({
   },
   limits: {
     fileSize: 10 * 1024 * 1024 // 10MB limit
+  }
+});
+
+// Download template files
+router.get('/templates/:type', authenticateToken, requireRole(['admin']), async (req, res) => {
+  try {
+    const { type } = req.params;
+
+    // Validate template type
+    const validTypes = ['students', 'computers', 'instructors'];
+    if (!validTypes.includes(type)) {
+      return res.status(400).json({ error: 'Invalid template type' });
+    }
+
+    const templatePath = path.join(__dirname, '../public/templates', `${type}_import_template.csv`);
+
+    // Check if template file exists
+    if (!fs.existsSync(templatePath)) {
+      return res.status(404).json({ error: 'Template file not found' });
+    }
+
+    // Set headers for download
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', `attachment; filename="${type}_import_template.csv"`);
+
+    // Send file
+    res.sendFile(path.resolve(templatePath));
+
+  } catch (error) {
+    console.error('Download template error:', error);
+    res.status(500).json({ error: 'Failed to download template' });
   }
 });
 

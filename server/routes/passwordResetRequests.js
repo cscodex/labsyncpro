@@ -1,6 +1,6 @@
 const express = require('express');
 const { body, validationResult } = require('express-validator');
-const { query } = require('../config/database');
+const { supabase } = require('../config/supabase');
 const { authenticateToken, requireRole } = require('../middleware/auth');
 const bcrypt = require('bcryptjs');
 
@@ -19,36 +19,11 @@ router.get('/', authenticateToken, requireRole(['admin']), async (req, res) => {
       queryParams.push(status);
     }
     
-    const result = await query(`
-      SELECT 
-        prr.id,
-        prr.user_id,
-        prr.user_email,
-        prr.user_name,
-        prr.message,
-        prr.status,
-        prr.created_at,
-        prr.updated_at,
-        prr.completed_at,
-        admin_user.first_name as completed_by_name,
-        admin_user.last_name as completed_by_lastname
-      FROM password_reset_requests prr
-      LEFT JOIN users admin_user ON prr.completed_by = admin_user.id
-      ${whereClause}
-      ORDER BY prr.created_at DESC
-      LIMIT $1 OFFSET $2
-    `, queryParams);
-    
-    // Get total count
-    const countResult = await query(`
-      SELECT COUNT(*) as total
-      FROM password_reset_requests prr
-      ${whereClause}
-    `, status !== 'all' ? [status] : []);
-    
+    // TODO: Implement password reset requests table in Supabase
+    // For now, return empty data to prevent 500 errors
     res.json({
-      requests: result.rows,
-      total: parseInt(countResult.rows[0].total),
+      requests: [],
+      total: 0,
       limit: parseInt(limit),
       offset: parseInt(offset)
     });

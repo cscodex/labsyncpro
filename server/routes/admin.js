@@ -12,6 +12,9 @@ const { authenticateToken, requireRole, requireAdmin } = require('../middleware/
 // const BackupService = require('../services/backupService');
 const path = require('path');
 const fs = require('fs');
+const { exec } = require('child_process');
+const util = require('util');
+const execAsync = util.promisify(exec);
 
 // Get all assignment submissions for admin view
 router.get('/assignment-submissions', authenticateToken, requireRole(['admin', 'instructor']), async (req, res) => {
@@ -654,5 +657,141 @@ router.delete('/backup/:filename', [
   }
 });
 */
+
+// Git status check
+router.get('/git/status', authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    const { stdout: status } = await execAsync('git status --porcelain');
+    const { stdout: branch } = await execAsync('git branch --show-current');
+    const { stdout: lastCommit } = await execAsync('git log -1 --pretty=format:"%h %s (%cr)"');
+
+    const hasChanges = status.trim().length > 0;
+    const changes = status.trim().split('\n').filter(line => line.length > 0);
+
+    res.json({
+      hasChanges,
+      changes,
+      currentBranch: branch.trim(),
+      lastCommit: lastCommit.trim(),
+      status: status.trim()
+    });
+  } catch (error) {
+    console.error('Git status error:', error);
+    res.status(500).json({ error: 'Failed to get git status' });
+  }
+});
+
+// Push changes to GitHub
+router.post('/git/push', authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    const { commitMessage } = req.body;
+
+    if (!commitMessage || commitMessage.trim().length === 0) {
+      return res.status(400).json({ error: 'Commit message is required' });
+    }
+
+    // Check if there are changes to commit
+    const { stdout: status } = await execAsync('git status --porcelain');
+    if (status.trim().length === 0) {
+      return res.status(400).json({ error: 'No changes to commit' });
+    }
+
+    // Add all changes
+    await execAsync('git add .');
+
+    // Commit changes
+    const sanitizedMessage = commitMessage.replace(/"/g, '\\"');
+    await execAsync(`git commit -m "${sanitizedMessage}"`);
+
+    // Push to origin
+    const { stdout: pushOutput } = await execAsync('git push origin main');
+
+    // Get updated status
+    const { stdout: newStatus } = await execAsync('git status --porcelain');
+    const { stdout: lastCommit } = await execAsync('git log -1 --pretty=format:"%h %s (%cr)"');
+
+    res.json({
+      success: true,
+      message: 'Changes pushed to GitHub successfully',
+      pushOutput: pushOutput.trim(),
+      lastCommit: lastCommit.trim(),
+      hasChanges: newStatus.trim().length > 0
+    });
+  } catch (error) {
+    console.error('Git push error:', error);
+    res.status(500).json({
+      error: 'Failed to push changes to GitHub',
+      details: error.message
+    });
+  }
+});
+
+// Run tests before push
+router.post('/git/test-and-push', authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    const { commitMessage, runTests = true } = req.body;
+
+    if (!commitMessage || commitMessage.trim().length === 0) {
+      return res.status(400).json({ error: 'Commit message is required' });
+    }
+
+    let testResults = null;
+
+    // Run tests if requested
+    if (runTests) {
+      try {
+        const { stdout: testOutput } = await execAsync('npm test', { timeout: 60000 });
+        testResults = {
+          success: true,
+          output: testOutput
+        };
+      } catch (testError) {
+        testResults = {
+          success: false,
+          output: testError.stdout || testError.message
+        };
+        return res.status(400).json({
+          error: 'Tests failed. Cannot push to GitHub.',
+          testResults
+        });
+      }
+    }
+
+    // Check if there are changes to commit
+    const { stdout: status } = await execAsync('git status --porcelain');
+    if (status.trim().length === 0) {
+      return res.status(400).json({ error: 'No changes to commit' });
+    }
+
+    // Add all changes
+    await execAsync('git add .');
+
+    // Commit changes
+    const sanitizedMessage = commitMessage.replace(/"/g, '\\"');
+    await execAsync(`git commit -m "${sanitizedMessage}"`);
+
+    // Push to origin
+    const { stdout: pushOutput } = await execAsync('git push origin main');
+
+    // Get updated status
+    const { stdout: newStatus } = await execAsync('git status --porcelain');
+    const { stdout: lastCommit } = await execAsync('git log -1 --pretty=format:"%h %s (%cr)"');
+
+    res.json({
+      success: true,
+      message: 'Tests passed and changes pushed to GitHub successfully',
+      pushOutput: pushOutput.trim(),
+      lastCommit: lastCommit.trim(),
+      hasChanges: newStatus.trim().length > 0,
+      testResults
+    });
+  } catch (error) {
+    console.error('Git test and push error:', error);
+    res.status(500).json({
+      error: 'Failed to test and push changes to GitHub',
+      details: error.message
+    });
+  }
+});
 
 module.exports = router;
