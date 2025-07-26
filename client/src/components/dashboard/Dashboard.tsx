@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { schedulesAPI, submissionsAPI, gradesAPI, dashboardAPI } from '../../services/api';
 import StudentDashboard from '../student/StudentDashboard';
+import LoadingSpinner from '../common/LoadingSpinner';
 import './Dashboard.css';
 
 interface DashboardStats {
@@ -144,9 +145,10 @@ const Dashboard: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="dashboard-loading">
-        <div className="loading-spinner">Loading dashboard...</div>
-      </div>
+      <LoadingSpinner
+        size="large"
+        message="Loading dashboard..."
+      />
     );
   }
 

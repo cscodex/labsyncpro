@@ -21,6 +21,7 @@ import StudentSubmissions from './components/student/StudentSubmissions';
 import ApiTest from './components/debug/ApiTest';
 import KeepAlive from './components/monitoring/KeepAlive';
 import StudentGroups from './components/student/StudentGroups';
+import LoadingSpinner from './components/common/LoadingSpinner';
 import GradesRouter from './components/grades/GradesRouter';
 import GroupsRouter from './components/groups/GroupsRouter';
 import Users from './components/users/Users';
@@ -38,9 +39,11 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
 
   if (loading) {
     return (
-      <div className="loading-container">
-        <div className="loading-spinner">Loading...</div>
-      </div>
+      <LoadingSpinner
+        size="large"
+        message="Authenticating..."
+        fullScreen={true}
+      />
     );
   }
 
@@ -52,9 +55,11 @@ const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
   if (loading) {
     return (
-      <div className="loading-container">
-        <div className="loading-spinner">Loading...</div>
-      </div>
+      <LoadingSpinner
+        size="large"
+        message="Loading LabSyncPro..."
+        fullScreen={true}
+      />
     );
   }
 
@@ -172,6 +177,8 @@ const AppRoutes: React.FC = () => {
 };
 
 const App: React.FC = () => {
+  const isDevelopment = import.meta.env.MODE === 'development';
+
   return (
     <AuthProvider>
       <NotificationProvider>
@@ -179,7 +186,7 @@ const App: React.FC = () => {
           <div className="App">
             <AppRoutes />
             <NotificationContainer />
-            <ApiTest />
+            {isDevelopment && <ApiTest />}
             <KeepAlive />
           </div>
         </Router>

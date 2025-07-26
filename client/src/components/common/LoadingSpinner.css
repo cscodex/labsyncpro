@@ -1,0 +1,72 @@
+/* Loading Spinner Container */
+.loading-spinner-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  min-height: 200px;
+}
+
+.loading-spinner-container.fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  z-index: 9999;
+  min-height: 100vh;
+}
+
+/* Loading Content */
+.loading-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  text-align: center;
+}
+
+/* Loading Message */
+.loading-message {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  color: #64748b;
+  margin-top: 0.5rem;
+  animation: fade-in-out 2s ease-in-out infinite;
+}
+
+/* Animations */
+@keyframes fade-in-out {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .loading-spinner-container {
+    padding: 1rem;
+    min-height: 150px;
+  }
+  
+  .loading-message {
+    font-size: 14px;
+  }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+  .loading-spinner-container.fullscreen {
+    background: rgba(15, 23, 42, 0.95);
+  }
+  
+  .loading-message {
+    color: #94a3b8;
+  }
+}

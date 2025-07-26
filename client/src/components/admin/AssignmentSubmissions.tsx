@@ -328,11 +328,13 @@ const AssignmentSubmissions: React.FC = () => {
     }
   };
 
-  // Debug logging
-  console.log('Current submissions state:', submissions);
-  console.log('Submissions length:', submissions.length);
-  if (submissions.length > 0) {
-    console.log('First submission:', submissions[0]);
+  // Debug logging (development only)
+  if (import.meta.env.MODE === 'development') {
+    console.log('Current submissions state:', submissions);
+    console.log('Submissions length:', submissions.length);
+    if (submissions.length > 0) {
+      console.log('First submission:', submissions[0]);
+    }
   }
 
   // Filter submissions

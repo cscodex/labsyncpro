@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import LabSyncProLogo from '../common/LabSyncProLogo';
 import './Layout.css';
 
 const Layout: React.FC = () => {
@@ -86,7 +87,9 @@ const Layout: React.FC = () => {
           >
             ☰
           </button>
-          <h1 className="logo">LabSyncPro</h1>
+          <div className="header-logo">
+            <LabSyncProLogo size="small" animated={true} showText={true} />
+          </div>
 
           {/* Current Page Indicator for Desktop */}
           <div className="current-page-indicator">

@@ -70,7 +70,7 @@ const query = async (text, params) => {
     const res = await pool.query(text, params);
     const duration = Date.now() - start;
 
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.NODE_ENV === 'development' && process.env.DEBUG_QUERIES === 'true') {
       console.log('📊 Query executed:', {
         text: text.substring(0, 100) + (text.length > 100 ? '...' : ''),
         duration: `${duration}ms`,

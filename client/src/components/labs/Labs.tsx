@@ -88,8 +88,10 @@ const Labs: React.FC = () => {
 
         setLabs(transformedLabs);
       } catch (error) {
-        console.error('Error fetching labs:', error);
-        console.warn('Using demo data for labs');
+        if (import.meta.env.MODE === 'development') {
+          console.error('Error fetching labs:', error);
+          console.warn('Using demo data for labs');
+        }
         setLabs(demoLabs);
       } finally {
         setLoading(false);
