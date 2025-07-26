@@ -57,6 +57,7 @@ const Login: React.FC = () => {
               value={formData.email}
               onChange={handleChange}
               required
+              autoComplete="email"
               placeholder="Enter your email"
             />
           </div>

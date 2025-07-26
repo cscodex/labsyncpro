@@ -11,6 +11,7 @@ interface PasswordInputProps {
   minLength?: number;
   className?: string;
   disabled?: boolean;
+  autoComplete?: string;
 }
 
 const PasswordInput: React.FC<PasswordInputProps> = ({
@@ -22,7 +23,8 @@ const PasswordInput: React.FC<PasswordInputProps> = ({
   required = false,
   minLength,
   className = "",
-  disabled = false
+  disabled = false,
+  autoComplete = "current-password"
 }) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -42,6 +44,7 @@ const PasswordInput: React.FC<PasswordInputProps> = ({
         required={required}
         minLength={minLength}
         disabled={disabled}
+        autoComplete={autoComplete}
         className="password-input"
       />
       <button
