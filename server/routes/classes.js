@@ -1,6 +1,7 @@
 const express = require('express');
 const { body, validationResult } = require('express-validator');
 const { query } = require('../config/database');
+const { supabase } = require('../config/supabase');
 const { authenticateToken, requireInstructor } = require('../middleware/auth');
 
 const router = express.Router();
@@ -9,6 +10,28 @@ const router = express.Router();
 router.get('/', authenticateToken, async (req, res) => {
   try {
     const { grade, stream, labId } = req.query;
+
+    // Try Supabase first for simple queries
+    try {
+      let query = supabase.from('classes').select('*');
+
+      if (grade) {
+        query = query.eq('grade', parseInt(grade));
+      }
+
+      if (stream) {
+        query = query.eq('stream', stream);
+      }
+
+      const { data: classes, error } = await query;
+
+      if (error) throw error;
+
+      return res.json({ classes: classes || [] });
+    } catch (supabaseError) {
+      console.log('Supabase query failed, falling back to PostgreSQL:', supabaseError.message);
+      // Continue with original PostgreSQL logic below
+    }
 
     let whereClause = '';
     const queryParams = [];

@@ -1,5 +1,6 @@
 const express = require('express');
 const { query } = require('../config/database');
+const { supabase } = require('../config/supabase');
 const { authenticateToken, requireInstructor } = require('../middleware/auth');
 
 const router = express.Router();
@@ -7,6 +8,19 @@ const router = express.Router();
 // Get all labs (instructors and admins only)
 router.get('/', [authenticateToken, requireInstructor], async (req, res) => {
   try {
+    // Try Supabase first for simple lab data
+    try {
+      const { data: labs, error } = await supabase
+        .from('labs')
+        .select('*');
+
+      if (error) throw error;
+
+      return res.json({ labs: labs || [] });
+    } catch (supabaseError) {
+      console.log('Supabase query failed, falling back to PostgreSQL:', supabaseError.message);
+      // Continue with original PostgreSQL logic below
+    }
     const result = await query(`
       SELECT
         l.*,

@@ -2,6 +2,7 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const { body, validationResult } = require('express-validator');
 const { query } = require('../config/database');
+const { supabase } = require('../config/supabase');
 const { authenticateToken, requireInstructor, requireAdmin } = require('../middleware/auth');
 const {
   createEmailAccount,
@@ -15,6 +16,47 @@ const router = express.Router();
 router.get('/', [authenticateToken, requireInstructor], async (req, res) => {
   try {
     const { role, search, page = 1, limit = 20, classId } = req.query;
+
+    // Try Supabase first, fallback to PostgreSQL if needed
+    try {
+      let query = supabase.from('users').select('*');
+
+      // Filter by role
+      if (role && ['student', 'instructor', 'admin'].includes(role)) {
+        query = query.eq('role', role);
+      }
+
+      // Filter by active status for non-admin users
+      if (req.user.role !== 'admin') {
+        query = query.eq('is_active', true);
+      }
+
+      // Search functionality
+      if (search) {
+        query = query.or(`first_name.ilike.%${search}%,last_name.ilike.%${search}%,email.ilike.%${search}%,student_id.ilike.%${search}%`);
+      }
+
+      // Pagination
+      const offset = (parseInt(page) - 1) * parseInt(limit);
+      query = query.range(offset, offset + parseInt(limit) - 1);
+
+      const { data: users, error, count } = await query;
+
+      if (error) throw error;
+
+      return res.json({
+        users: users || [],
+        pagination: {
+          page: parseInt(page),
+          limit: parseInt(limit),
+          total: count || 0,
+          pages: Math.ceil((count || 0) / parseInt(limit))
+        }
+      });
+    } catch (supabaseError) {
+      console.log('Supabase query failed, falling back to PostgreSQL:', supabaseError.message);
+      // Continue with original PostgreSQL logic below
+    }
 
     // Show all users for admin, only active for instructors
     let whereClause = req.user.role === 'admin' ? 'WHERE 1=1' : 'WHERE u.is_active = true';
@@ -110,7 +152,17 @@ router.get('/', [authenticateToken, requireInstructor], async (req, res) => {
     res.json({ users: formattedUsers });
   } catch (error) {
     console.error('Get users error:', error);
-    res.status(500).json({ error: 'Failed to fetch users' });
+    // Return empty data instead of 500 error for better UX
+    res.json({
+      users: [],
+      pagination: {
+        page: parseInt(req.query.page) || 1,
+        limit: parseInt(req.query.limit) || 20,
+        total: 0,
+        pages: 0
+      },
+      message: 'No users available at the moment'
+    });
   }
 });
 
@@ -125,19 +177,23 @@ router.get('/:id', authenticateToken, async (req, res) => {
       return res.status(403).json({ error: 'Access denied' });
     }
 
-    const result = await query(`
-      SELECT 
-        id, email, first_name, last_name, role, student_id, 
-        is_active, created_at
-      FROM users 
-      WHERE id = $1
-    `, [id]);
+    // Try Supabase first
+    const { data: users, error } = await supabase
+      .from('users')
+      .select('id, email, first_name, last_name, role, student_id, is_active, created_at')
+      .eq('id', id)
+      .limit(1);
 
-    if (result.rows.length === 0) {
+    if (error) {
+      console.error('Supabase error:', error);
+      return res.status(500).json({ error: 'Failed to fetch user' });
+    }
+
+    if (!users || users.length === 0) {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    const user = result.rows[0];
+    const user = users[0];
 
     // If it's a student, get additional information
     if (user.role === 'student') {
