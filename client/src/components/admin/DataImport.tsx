@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNotification } from '../../contexts/NotificationContext';
+import LoadingSpinner from '../common/LoadingSpinner';
 import './DataImport.css';
 
 interface ImportResult {
@@ -101,7 +102,14 @@ const DataImport: React.FC = () => {
               className="file-input"
             />
             <span className="upload-button">
-              {uploading ? '⏳ Uploading...' : '📤 Upload CSV File'}
+              {uploading ? (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <LoadingSpinner size="small" message="" />
+                  Uploading...
+                </div>
+              ) : (
+                '📤 Upload CSV File'
+              )}
             </span>
           </label>
         </div>

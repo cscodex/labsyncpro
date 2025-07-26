@@ -10,6 +10,7 @@ import TimetableWeeklyView from './TimetableWeeklyView';
 import ScheduleModal from './ScheduleModal';
 import WeeklyClassScheduleModal from './WeeklyClassScheduleModal';
 import TimetableExport from './TimetableExport';
+import LoadingSpinner from '../common/LoadingSpinner';
 import './ComprehensiveTimetable.css';
 
 interface ComprehensiveTimetableProps {
@@ -199,12 +200,10 @@ const ComprehensiveTimetable: React.FC<ComprehensiveTimetableProps> = ({ userRol
   // Render loading state
   if (loading) {
     return (
-      <div className="comprehensive-timetable loading">
-        <div className="loading-spinner">
-          <div className="spinner"></div>
-          <p>Loading timetable...</p>
-        </div>
-      </div>
+      <LoadingSpinner
+        size="large"
+        message="Loading timetable..."
+      />
     );
   }
 

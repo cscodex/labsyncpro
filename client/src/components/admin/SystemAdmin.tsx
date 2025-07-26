@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Database, 
-  Shield, 
-  Activity, 
-  HardDrive, 
-  Users, 
-  Mail, 
-  Download, 
+import {
+  Database,
+  Shield,
+  Activity,
+  HardDrive,
+  Users,
+  Mail,
+  Download,
   Upload,
   RefreshCw,
   AlertTriangle,
@@ -15,6 +15,7 @@ import {
   Clock,
   BarChart3
 } from 'lucide-react';
+import LoadingSpinner from '../common/LoadingSpinner';
 import './SystemAdmin.css';
 
 interface SystemStats {
@@ -163,10 +164,10 @@ const SystemAdmin: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="system-admin-loading">
-        <RefreshCw className="animate-spin" size={32} />
-        <p>Loading system statistics...</p>
-      </div>
+      <LoadingSpinner
+        size="large"
+        message="Loading system statistics..."
+      />
     );
   }
 

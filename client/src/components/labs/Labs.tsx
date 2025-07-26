@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { labsAPI } from '../../services/api';
 import ComputerInventory from '../inventory/ComputerInventory';
+import LoadingSpinner from '../common/LoadingSpinner';
 import './Labs.css';
 
 interface Lab {
@@ -149,10 +150,10 @@ const Labs: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="labs-loading">
-        <div className="loading-spinner"></div>
-        <p>Loading labs...</p>
-      </div>
+      <LoadingSpinner
+        size="large"
+        message="Loading labs..."
+      />
     );
   }
 

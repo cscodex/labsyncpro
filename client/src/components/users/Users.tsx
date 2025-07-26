@@ -4,6 +4,7 @@ import { useNotification } from '../../contexts/NotificationContext';
 import { useConfirmation } from '../../hooks/useConfirmation';
 import { useAuth } from '../../contexts/AuthContext';
 import { usersAPI, authAPI } from '../../services/api';
+import LoadingSpinner from '../common/LoadingSpinner';
 import './Users.css';
 
 interface User {
@@ -264,12 +265,10 @@ const Users: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="users">
-        <div className="users-loading">
-          <div className="loading-spinner"></div>
-          <p>Loading users...</p>
-        </div>
-      </div>
+      <LoadingSpinner
+        size="large"
+        message="Loading users..."
+      />
     );
   }
 

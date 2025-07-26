@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNotification } from '../../contexts/NotificationContext';
 import { gradesAPI } from '../../services/api';
+import LoadingSpinner from '../common/LoadingSpinner';
 import './StudentGrades.css';
 
 interface Grade {
@@ -142,9 +143,10 @@ const StudentGrades: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="student-grades loading">
-        <div className="loading-spinner">Loading your grades...</div>
-      </div>
+      <LoadingSpinner
+        size="large"
+        message="Loading your grades..."
+      />
     );
   }
 

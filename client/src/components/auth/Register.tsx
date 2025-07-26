@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import PasswordInput from '../common/PasswordInput';
+import LabSyncProLogo from '../common/LabSyncProLogo';
 import './Auth.css';
 
 const Register: React.FC = () => {
@@ -71,7 +72,7 @@ const Register: React.FC = () => {
     <div className="auth-container">
       <div className="auth-card">
         <div className="auth-header">
-          <h1>LabSyncPro</h1>
+          <LabSyncProLogo size="large" animated={true} showText={true} />
           <h2>Create Account</h2>
           <p>Join LabSyncPro to manage your lab activities.</p>
         </div>
@@ -185,7 +186,14 @@ const Register: React.FC = () => {
             className="auth-button"
             disabled={loading}
           >
-            {loading ? 'Creating Account...' : 'Create Account'}
+            {loading ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center' }}>
+                <LabSyncProLogo size="small" animated={true} showText={false} />
+                Creating Account...
+              </div>
+            ) : (
+              'Create Account'
+            )}
           </button>
         </form>
 

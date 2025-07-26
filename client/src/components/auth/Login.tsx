@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import PasswordInput from '../common/PasswordInput';
+import LabSyncProLogo from '../common/LabSyncProLogo';
 import './Auth.css';
 
 const Login: React.FC = () => {
@@ -40,7 +41,7 @@ const Login: React.FC = () => {
     <div className="auth-container">
       <div className="auth-card">
         <div className="auth-header">
-          <h1>LabSyncPro</h1>
+          <LabSyncProLogo size="large" animated={true} showText={true} />
           <h2>Sign In</h2>
           <p>Welcome back! Please sign in to your account.</p>
         </div>
@@ -84,7 +85,14 @@ const Login: React.FC = () => {
             className="auth-button"
             disabled={loading}
           >
-            {loading ? 'Signing In...' : 'Sign In'}
+            {loading ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center' }}>
+                <LabSyncProLogo size="small" animated={true} showText={false} />
+                Signing In...
+              </div>
+            ) : (
+              'Sign In'
+            )}
           </button>
         </form>
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNotification } from '../../contexts/NotificationContext';
+import LoadingSpinner from '../common/LoadingSpinner';
 import './AssignmentSubmissions.css';
 
 interface AssignmentSubmission {
@@ -357,10 +358,10 @@ const AssignmentSubmissions: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="assignment-submissions-loading">
-        <div className="loading-spinner"></div>
-        <p>Loading assignment submissions...</p>
-      </div>
+      <LoadingSpinner
+        size="large"
+        message="Loading assignment submissions..."
+      />
     );
   }
 

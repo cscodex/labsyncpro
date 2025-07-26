@@ -4,18 +4,7 @@
   min-height: 100vh;
 }
 
-.student-dashboard.loading {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 60vh;
-}
-
-.loading-spinner {
-  font-size: 1.2rem;
-  color: #667eea;
-  text-align: center;
-}
+/* Legacy loading styles - replaced by LabSyncProLogo component */
 
 /* Dashboard Header */
 .dashboard-header {
