@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import LoadingSpinner from './common/LoadingSpinner';
 
 interface Email {
   id: string;
@@ -302,7 +303,7 @@ const SimpleWebmail: React.FC = () => {
 
           <div style={{ height: 'calc(100vh - 120px)', overflowY: 'auto' }}>
             {loading ? (
-              <div style={{ padding: '20px', textAlign: 'center' }}>Loading...</div>
+              <LoadingSpinner size="medium" message="Loading emails..." />
             ) : emails.length === 0 ? (
               <div style={{ padding: '20px', textAlign: 'center', color: '#666' }}>
                 No emails in {currentFolder}

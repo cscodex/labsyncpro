@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNotification } from '../../contexts/NotificationContext';
+import LoadingSpinner from '../common/LoadingSpinner';
+import LabSyncProLogo from '../common/LabSyncProLogo';
 import Pagination from '../common/Pagination';
 import './Assignments.css';
 
@@ -166,11 +168,10 @@ const AssignmentCreation: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="assignments">
-        <div className="loading-container">
-          <div className="loading-spinner">Loading assignments...</div>
-        </div>
-      </div>
+      <LoadingSpinner
+        size="large"
+        message="Loading assignments..."
+      />
     );
   }
 
@@ -564,7 +565,14 @@ const CreateAssignmentModal: React.FC<CreateAssignmentModalProps> = ({
               Cancel
             </button>
             <button type="submit" className="btn btn-primary" disabled={loading}>
-              {loading ? 'Creating...' : 'Create Assignment'}
+              {loading ? (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center' }}>
+                  <LabSyncProLogo size="small" animated={true} showText={false} />
+                  Creating...
+                </div>
+              ) : (
+                'Create Assignment'
+              )}
             </button>
           </div>
         </form>
@@ -772,7 +780,14 @@ const EditAssignmentModal: React.FC<EditAssignmentModalProps> = ({
               Cancel
             </button>
             <button type="submit" className="btn btn-primary" disabled={loading}>
-              {loading ? 'Updating...' : 'Update Assignment'}
+              {loading ? (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center' }}>
+                  <LabSyncProLogo size="small" animated={true} showText={false} />
+                  Updating...
+                </div>
+              ) : (
+                'Update Assignment'
+              )}
             </button>
           </div>
         </form>

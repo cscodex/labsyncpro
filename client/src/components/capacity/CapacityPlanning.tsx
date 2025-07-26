@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNotification } from '../../contexts/NotificationContext';
 import { useConfirmation } from '../../hooks/useConfirmation';
+import LoadingSpinner from '../common/LoadingSpinner';
 import './CapacityPlanning.css';
 
 interface Lab {
@@ -625,7 +626,12 @@ const CapacityPlanning: React.FC = () => {
   };
 
   if (loading) {
-    return <div className="loading">Loading capacity planning...</div>;
+    return (
+      <LoadingSpinner
+        size="large"
+        message="Loading capacity planning..."
+      />
+    );
   }
 
   const selectedLabData = Array.isArray(labs) ? labs.find(lab => lab.id === selectedLab) : undefined;

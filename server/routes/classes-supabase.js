@@ -96,8 +96,12 @@ router.post('/', [
     const { data: newClass, error } = await supabase
       .from('classes')
       .insert({
+        id: uuidv4(),
         name,
-        description: description || null
+        description: description || null,
+        grade: grade || null,
+        stream: stream || null,
+        section: section || null
       })
       .select()
       .single();

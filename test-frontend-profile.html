@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Profile Update</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
+        button { background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .result { margin-top: 20px; padding: 10px; border-radius: 4px; }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Profile Update Test</h1>
+    <p>This page tests the profile update functionality directly.</p>
+
+    <div class="form-group">
+        <label for="email">Email:</label>
+        <input type="email" id="email" value="admin@labsyncpro.com">
+    </div>
+
+    <div class="form-group">
+        <label for="password">Password:</label>
+        <input type="password" id="password" value="admin123">
+    </div>
+
+    <button onclick="testLogin()">1. Test Login</button>
+
+    <div id="loginResult"></div>
+
+    <hr style="margin: 30px 0;">
+
+    <h2>Profile Update Test</h2>
+    
+    <div class="form-group">
+        <label for="firstName">First Name:</label>
+        <input type="text" id="firstName" value="System Admin">
+    </div>
+
+    <div class="form-group">
+        <label for="lastName">Last Name:</label>
+        <input type="text" id="lastName" value="Test Update">
+    </div>
+
+    <button onclick="testProfileUpdate()" id="updateBtn" disabled>2. Test Profile Update</button>
+
+    <div id="updateResult"></div>
+
+    <hr style="margin: 30px 0;">
+
+    <h2>Classes Test</h2>
+    
+    <button onclick="testClasses()" id="classesBtn" disabled>3. Test Classes CRUD</button>
+
+    <div id="classesResult"></div>
+
+    <script>
+        let authToken = '';
+        let userId = '';
+
+        async function testLogin() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const resultDiv = document.getElementById('loginResult');
+
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    authToken = data.token;
+                    userId = data.user.id;
+                    resultDiv.innerHTML = `
+                        <div class="result success">
+                            <strong>✅ Login Successful!</strong><br>
+                            User: ${data.user.firstName} ${data.user.lastName}<br>
+                            Role: ${data.user.role}<br>
+                            Token: ${authToken.substring(0, 20)}...
+                        </div>
+                    `;
+                    document.getElementById('updateBtn').disabled = false;
+                    document.getElementById('classesBtn').disabled = false;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="result error">
+                            <strong>❌ Login Failed!</strong><br>
+                            Error: ${data.error || 'Unknown error'}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <strong>❌ Network Error!</strong><br>
+                        Error: ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        async function testProfileUpdate() {
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const resultDiv = document.getElementById('updateResult');
+
+            if (!authToken) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <strong>❌ No Auth Token!</strong><br>
+                        Please login first.
+                    </div>
+                `;
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/users/${userId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({ firstName, lastName })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <div class="result success">
+                            <strong>✅ Profile Update Successful!</strong><br>
+                            Updated: ${data.user.first_name} ${data.user.last_name}<br>
+                            Updated At: ${new Date(data.user.updated_at).toLocaleString()}
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="result error">
+                            <strong>❌ Profile Update Failed!</strong><br>
+                            Error: ${data.error || 'Unknown error'}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <strong>❌ Network Error!</strong><br>
+                        Error: ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        async function testClasses() {
+            const resultDiv = document.getElementById('classesResult');
+
+            if (!authToken) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <strong>❌ No Auth Token!</strong><br>
+                        Please login first.
+                    </div>
+                `;
+                return;
+            }
+
+            try {
+                // Test GET classes
+                const getResponse = await fetch('/api/classes', {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                const getClasses = await getResponse.json();
+
+                // Test CREATE class
+                const createResponse = await fetch('/api/classes', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({
+                        name: `Test Class ${Date.now()}`,
+                        description: 'Test class created from frontend test'
+                    })
+                });
+
+                const newClass = await createResponse.json();
+
+                if (getResponse.ok && createResponse.ok) {
+                    resultDiv.innerHTML = `
+                        <div class="result success">
+                            <strong>✅ Classes CRUD Working!</strong><br>
+                            GET: Found ${getClasses.classes?.length || 0} classes<br>
+                            CREATE: Created class "${newClass.class?.name}"<br>
+                            ID: ${newClass.class?.id}
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="result error">
+                            <strong>❌ Classes CRUD Failed!</strong><br>
+                            GET Error: ${getClasses.error || 'OK'}<br>
+                            CREATE Error: ${newClass.error || 'OK'}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <strong>❌ Network Error!</strong><br>
+                        Error: ${error.message}
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>
