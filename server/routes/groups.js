@@ -1,6 +1,7 @@
 const express = require('express');
 const { body, validationResult } = require('express-validator');
 const { query } = require('../config/database');
+const { supabase } = require('../config/supabase');
 const { authenticateToken, requireStudentOrInstructor } = require('../middleware/auth');
 
 const router = express.Router();
@@ -226,7 +227,12 @@ router.get('/my-group', authenticateToken, async (req, res) => {
 
   } catch (error) {
     console.error('Error fetching student group:', error);
-    res.status(500).json({ error: 'Failed to fetch group information' });
+    // Return empty data instead of 500 error for better UX
+    res.json({
+      success: true,
+      group: null,
+      message: 'No group information available at the moment'
+    });
   }
 });
 

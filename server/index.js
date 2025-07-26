@@ -170,21 +170,13 @@ app.get('/test-db', async (req, res) => {
   }
 });
 
-// Temporary placeholder routes for student dashboard
-app.get('/api/assignments/student', (req, res) => {
-  res.json({ assignments: [], message: 'No assignments available' });
-});
-
-app.get('/api/grades', (req, res) => {
-  res.json({ grades: [], totalGrades: 0, message: 'No grades available' });
-});
-
-app.get('/api/submissions', (req, res) => {
-  res.json({ submissions: [], message: 'No submissions available' });
-});
-
-app.get('/api/groups/my-group', (req, res) => {
-  res.json({ group: null, message: 'No group assigned' });
+// Additional placeholder routes for missing endpoints
+app.get('/api/groups/my-seat-info', (req, res) => {
+  res.json({
+    success: true,
+    seatInfo: null,
+    message: 'No seat information available at the moment'
+  });
 });
 
 // API routes

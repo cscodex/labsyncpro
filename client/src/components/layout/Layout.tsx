@@ -101,15 +101,6 @@ const Layout: React.FC = () => {
             </span>
             <span className="user-role">{user?.role}</span>
           </div>
-
-          <div className="user-menu">
-            <Link to="/profile" className="profile-link">
-              Profile
-            </Link>
-            <button onClick={handleLogout} className="logout-button">
-              Logout
-            </button>
-          </div>
         </div>
       </header>
 
@@ -143,6 +134,18 @@ const Layout: React.FC = () => {
             </Link>
           ))}
         </nav>
+
+        {/* Sidebar Footer with User Actions */}
+        <div className="sidebar-footer">
+          <Link to="/profile" className="nav-item profile-nav">
+            <span className="nav-icon">👤</span>
+            <span className="nav-label">Profile</span>
+          </Link>
+          <button onClick={handleLogout} className="nav-item logout-nav">
+            <span className="nav-icon">🚪</span>
+            <span className="nav-label">Logout</span>
+          </button>
+        </div>
       </aside>
 
       {/* Main Content */}

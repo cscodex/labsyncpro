@@ -203,6 +203,8 @@
   z-index: 999;
   overflow-y: auto;
   box-shadow: 2px 0 15px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
 }
 
 .sidebar-open {
@@ -403,4 +405,35 @@
   .desktop-nav-item .nav-icon {
     font-size: 1.1rem;
   }
+}
+
+/* Sidebar Footer */
+.sidebar-footer {
+  margin-top: auto;
+  padding: 1rem 0;
+  border-top: 1px solid #e2e8f0;
+  background: #f8fafc;
+}
+
+.profile-nav,
+.logout-nav {
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  text-decoration: none;
+}
+
+.logout-nav:hover {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+.profile-nav:hover {
+  background-color: #eff6ff;
+  color: #2563eb;
 }
