@@ -95,13 +95,30 @@ app.use('/uploads', express.static('uploads'));
 // Static files for templates
 app.use('/templates', express.static('public/templates'));
 
-// Health check endpoint
-app.get('/health', (req, res) => {
-  res.status(200).json({
-    status: 'OK',
-    timestamp: new Date().toISOString(),
-    uptime: process.uptime()
-  });
+// Health check endpoint with database connectivity
+app.get('/health', async (req, res) => {
+  try {
+    // Test database connection
+    const dbTest = await query('SELECT 1 as test');
+    const dbStatus = dbTest.rows[0]?.test === 1 ? 'connected' : 'error';
+
+    res.status(200).json({
+      status: 'OK',
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime(),
+      database: dbStatus,
+      environment: process.env.NODE_ENV,
+      version: '1.0.0'
+    });
+  } catch (error) {
+    res.status(503).json({
+      status: 'ERROR',
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime(),
+      database: 'disconnected',
+      error: error.message
+    });
+  }
 });
 
 // API routes

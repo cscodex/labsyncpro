@@ -19,6 +19,7 @@ import AssignmentManagement from './components/assignments/AssignmentManagement'
 
 import StudentSubmissions from './components/student/StudentSubmissions';
 import ApiTest from './components/debug/ApiTest';
+import KeepAlive from './components/monitoring/KeepAlive';
 import StudentGroups from './components/student/StudentGroups';
 import GradesRouter from './components/grades/GradesRouter';
 import GroupsRouter from './components/groups/GroupsRouter';
@@ -179,6 +180,7 @@ const App: React.FC = () => {
             <AppRoutes />
             <NotificationContainer />
             <ApiTest />
+            <KeepAlive />
           </div>
         </Router>
       </NotificationProvider>

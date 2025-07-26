@@ -1,0 +1,37 @@
+name: Keep Services Alive
+
+on:
+  schedule:
+    # Run every 10 minutes
+    - cron: '*/10 * * * *'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  keep-alive:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Ping Backend
+      run: |
+        echo "🔄 Pinging backend..."
+        response=$(curl -s -o /dev/null -w "%{http_code}" https://labsyncpro.onrender.com/health)
+        if [ $response -eq 200 ]; then
+          echo "✅ Backend is alive (HTTP $response)"
+        else
+          echo "⚠️ Backend returned HTTP $response"
+        fi
+    
+    - name: Ping Frontend
+      run: |
+        echo "🔄 Pinging frontend..."
+        response=$(curl -s -o /dev/null -w "%{http_code}" https://labsyncpro-frontend.onrender.com)
+        if [ $response -eq 200 ]; then
+          echo "✅ Frontend is alive (HTTP $response)"
+        else
+          echo "⚠️ Frontend returned HTTP $response"
+        fi
+    
+    - name: Summary
+      run: |
+        echo "📊 Keep-alive check completed at $(date)"
+        echo "🎯 This prevents Render free services from spinning down"
