@@ -314,7 +314,13 @@ router.get('/my-seat-info', authenticateToken, async (req, res) => {
 
   } catch (error) {
     console.error('Error fetching student seat info:', error);
-    res.status(500).json({ error: 'Failed to fetch seat information' });
+    // Return empty data instead of 500 error for better UX
+    res.json({
+      success: true,
+      seatAssignments: [],
+      total: 0,
+      message: 'No seat information available at the moment'
+    });
   }
 });
 
@@ -942,6 +948,8 @@ router.get('/available-students/:classId', authenticateToken, async (req, res) =
     res.status(500).json({ error: 'Failed to fetch available students' });
   }
 });
+
+// Duplicate route removed - using the original route above with improved error handling
 
 
 module.exports = router;

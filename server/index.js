@@ -170,14 +170,7 @@ app.get('/test-db', async (req, res) => {
   }
 });
 
-// Additional placeholder routes for missing endpoints
-app.get('/api/groups/my-seat-info', (req, res) => {
-  res.json({
-    success: true,
-    seatInfo: null,
-    message: 'No seat information available at the moment'
-  });
-});
+// Placeholder routes moved to individual route files for proper handling
 
 // API routes
 app.use('/api/auth', authRoutes);
