@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNotification } from '../../contexts/NotificationContext';
 import { useConfirmation } from '../../hooks/useConfirmation';
+import LoadingSpinner from '../common/LoadingSpinner';
 import './Groups.css';
 
 interface Student {
@@ -573,7 +574,12 @@ const Groups: React.FC = () => {
   };
 
   if (loading) {
-    return <div className="loading">Loading groups...</div>;
+    return (
+      <LoadingSpinner
+        size="large"
+        message="Loading groups..."
+      />
+    );
   }
 
   return (
@@ -869,7 +875,7 @@ const Groups: React.FC = () => {
                     </div>
 
                     {loadingStudents ? (
-                      <div className="loading-students">Loading students...</div>
+                      <LoadingSpinner size="small" message="Loading students..." />
                     ) : availableStudents.length === 0 ? (
                       <div className="no-students">
                         No available students in this class

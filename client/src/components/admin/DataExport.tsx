@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNotification } from '../../contexts/NotificationContext';
+import LoadingSpinner from '../common/LoadingSpinner';
 import './DataExport.css';
 
 interface ExportFilters {
@@ -222,7 +223,14 @@ const DataExport: React.FC = () => {
           onClick={() => handleExport(type)}
           disabled={exporting}
         >
-          {exporting ? '⏳ Exporting...' : `📥 Export ${title}`}
+          {exporting ? (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center' }}>
+              <LoadingSpinner size="small" message="" />
+              Exporting...
+            </div>
+          ) : (
+            `📥 Export ${title}`
+          )}
         </button>
       </div>
 

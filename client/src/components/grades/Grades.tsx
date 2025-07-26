@@ -4,6 +4,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import ExportButton from '../common/ExportButton';
 import GradeScaleModal from './GradeScaleModal';
 import GradeAnalytics from './GradeAnalytics';
+import LoadingSpinner from '../common/LoadingSpinner';
 import './Grades.css';
 
 interface Grade {
@@ -329,10 +330,10 @@ const Grades: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="grades-loading">
-        <div className="loading-spinner"></div>
-        <p>Loading grades...</p>
-      </div>
+      <LoadingSpinner
+        size="large"
+        message="Loading grades..."
+      />
     );
   }
 

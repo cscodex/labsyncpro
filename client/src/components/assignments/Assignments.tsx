@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import LoadingSpinner from '../common/LoadingSpinner';
+import LabSyncProLogo from '../common/LabSyncProLogo';
 import './Assignments.css';
 
 interface AssignmentStats {
@@ -222,10 +224,10 @@ const Assignments: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="assignments-loading">
-        <div className="loading-spinner"></div>
-        <p>Loading assignments...</p>
-      </div>
+      <LoadingSpinner
+        size="large"
+        message="Loading assignments..."
+      />
     );
   }
 
@@ -1341,7 +1343,14 @@ const CreateAssignmentModal: React.FC<CreateAssignmentModalProps> = ({ onClose, 
               Cancel
             </button>
             <button type="submit" className="btn btn-primary" disabled={loading}>
-              {loading ? 'Creating...' : 'Create Assignment'}
+              {loading ? (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center' }}>
+                  <LabSyncProLogo size="small" animated={true} showText={false} />
+                  Creating...
+                </div>
+              ) : (
+                'Create Assignment'
+              )}
             </button>
           </div>
         </form>
@@ -1550,7 +1559,14 @@ const EditAssignmentModal: React.FC<EditAssignmentModalProps> = ({ assignment, o
               Cancel
             </button>
             <button type="submit" className="btn btn-primary" disabled={loading}>
-              {loading ? 'Updating...' : 'Update Assignment'}
+              {loading ? (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center' }}>
+                  <LabSyncProLogo size="small" animated={true} showText={false} />
+                  Updating...
+                </div>
+              ) : (
+                'Update Assignment'
+              )}
             </button>
           </div>
         </form>

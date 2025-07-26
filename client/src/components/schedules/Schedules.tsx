@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { schedulesAPI } from '../../services/api';
 import { useAuth } from '../../contexts/AuthContext';
+import LoadingSpinner from '../common/LoadingSpinner';
 import './Schedules.css';
 
 interface Schedule {
@@ -111,10 +112,10 @@ const Schedules: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="schedules-loading">
-        <div className="loading-spinner"></div>
-        <p>Loading schedules...</p>
-      </div>
+      <LoadingSpinner
+        size="large"
+        message="Loading schedules..."
+      />
     );
   }
 
