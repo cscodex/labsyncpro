@@ -1,5 +1,5 @@
 // Fix database users script using Supabase
-require('dotenv').config({ path: './server/.env' });
+require('dotenv').config();
 const { createClient } = require('@supabase/supabase-js');
 const bcrypt = require('bcryptjs');
 
