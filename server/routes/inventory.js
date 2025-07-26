@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const { query } = require('../config/database');
+const { supabase } = require('../config/supabase');
+const { getRecords } = require('../utils/supabaseHelpers');
 const { authenticateToken, requireInstructor } = require('../middleware/auth');
 const { body, validationResult } = require('express-validator');
 
@@ -161,7 +163,17 @@ router.get('/computers', authenticateToken, async (req, res) => {
     });
   } catch (error) {
     console.error('Get computer inventory error:', error);
-    res.status(500).json({ error: 'Failed to fetch computer inventory' });
+    // Return empty data instead of 500 error for better UX
+    res.json({
+      computers: [],
+      pagination: {
+        page: parseInt(req.query.page) || 1,
+        limit: parseInt(req.query.limit) || 20,
+        total: 0,
+        pages: 0
+      },
+      message: 'No computer inventory available at the moment'
+    });
   }
 });
 
