@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { body, validationResult } = require('express-validator');
 const { query } = require('../config/database');
+const { supabase } = require('../config/supabase');
 const { authenticateToken, requireRole } = require('../middleware/auth');
 // Temporarily comment out new services to fix startup issues
 // const SessionService = require('../services/sessionService');
@@ -45,13 +46,19 @@ router.post('/register', [
 
     const { email, password, firstName, lastName, role, studentId } = req.body;
 
-    // Check if user already exists
-    const existingUser = await query(
-      'SELECT id FROM users WHERE email = $1 OR ($2::text IS NOT NULL AND student_id = $2)',
-      [email, studentId || null]
-    );
+    // Check if user already exists using Supabase client
+    const { data: existingUsers, error: checkError } = await supabase
+      .from('users')
+      .select('id')
+      .or(`email.eq.${email}${studentId ? `,student_id.eq.${studentId}` : ''}`)
+      .limit(1);
 
-    if (existingUser.rows.length > 0) {
+    if (checkError) {
+      console.error('❌ Supabase check error:', checkError);
+      return res.status(500).json({ error: 'Registration failed', details: checkError.message });
+    }
+
+    if (existingUsers && existingUsers.length > 0) {
       return res.status(409).json({ error: 'User already exists' });
     }
 
@@ -59,32 +66,39 @@ router.post('/register', [
     const saltRounds = 10;
     const passwordHash = await bcrypt.hash(password, saltRounds);
 
-    // Generate email address for mail server
-    const mailAddress = generateEmailAddress(firstName, lastName, studentId);
-    const tempMailPassword = `temp${Math.random().toString(36).slice(-8)}`;
+    // Generate email address for mail server (temporarily disabled)
+    // const mailAddress = generateEmailAddress(firstName, lastName, studentId);
+    // const tempMailPassword = `temp${Math.random().toString(36).slice(-8)}`;
 
-    // Insert new user
-    const result = await query(
-      `INSERT INTO users (email, password_hash, first_name, last_name, role, student_id, mail_address)
-       VALUES ($1, $2, $3, $4, $5, $6, $7)
-       RETURNING id, email, first_name, last_name, role, student_id, mail_address, created_at`,
-      [email, passwordHash, firstName, lastName, role, studentId || null, mailAddress]
-    );
+    // Insert new user using Supabase client
+    const { data: newUsers, error: insertError } = await supabase
+      .from('users')
+      .insert([{
+        email,
+        password_hash: passwordHash,
+        first_name: firstName,
+        last_name: lastName,
+        role,
+        student_id: studentId || null
+      }])
+      .select('id, email, first_name, last_name, role, student_id, created_at');
 
-    const user = result.rows[0];
+    if (insertError) {
+      console.error('❌ Supabase insert error:', insertError);
+      return res.status(500).json({ error: 'Registration failed', details: insertError.message });
+    }
+
+    const user = newUsers[0];
     const token = generateToken(user.id, user.email, user.role);
 
-    // Create email account on mail server
-    const emailResult = await createEmailAccount(mailAddress, tempMailPassword);
-
-    if (emailResult.success) {
-      console.log(`Email account created for ${user.first_name} ${user.last_name}: ${mailAddress}`);
-
-      // Send welcome email with mail credentials
-      await sendWelcomeEmail(email, firstName, tempMailPassword, mailAddress);
-    } else {
-      console.error(`Failed to create email account for ${mailAddress}:`, emailResult.error);
-    }
+    // Create email account on mail server (temporarily disabled)
+    // const emailResult = await createEmailAccount(mailAddress, tempMailPassword);
+    // if (emailResult.success) {
+    //   console.log(`Email account created for ${user.first_name} ${user.last_name}: ${mailAddress}`);
+    //   await sendWelcomeEmail(email, firstName, tempMailPassword, mailAddress);
+    // } else {
+    //   console.error(`Failed to create email account for ${mailAddress}:`, emailResult.error);
+    // }
 
     res.status(201).json({
       message: 'User registered successfully',
@@ -95,7 +109,7 @@ router.post('/register', [
         lastName: user.last_name,
         role: user.role,
         studentId: user.student_id,
-        mailAddress: user.mail_address,
+        // mailAddress: user.mail_address,
         createdAt: user.created_at
       },
       token
@@ -119,17 +133,23 @@ router.post('/login', [
 
     const { email, password } = req.body;
 
-    // Find user by email
-    const result = await query(
-      'SELECT id, email, password_hash, first_name, last_name, role, student_id, is_active FROM users WHERE email = $1',
-      [email]
-    );
+    // Find user by email using Supabase client
+    const { data: users, error: fetchError } = await supabase
+      .from('users')
+      .select('id, email, password_hash, first_name, last_name, role, student_id, is_active')
+      .eq('email', email)
+      .limit(1);
 
-    if (result.rows.length === 0) {
+    if (fetchError) {
+      console.error('❌ Supabase query error:', fetchError);
+      return res.status(500).json({ error: 'Login failed', details: fetchError.message });
+    }
+
+    if (!users || users.length === 0) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
-    const user = result.rows[0];
+    const user = users[0];
 
     if (!user.is_active) {
       return res.status(401).json({ error: 'Account is deactivated' });

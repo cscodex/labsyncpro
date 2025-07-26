@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const { query } = require('../config/database');
+const { supabase } = require('../config/supabase');
 
 // Simple JWT token verification
 const authenticateToken = async (req, res, next) => {
@@ -13,17 +14,23 @@ const authenticateToken = async (req, res, next) => {
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback-secret');
 
-    // Get user from database to ensure they still exist and are active
-    const userResult = await query(
-      'SELECT id, email, role, is_active, first_name, last_name, student_id FROM users WHERE id = $1',
-      [decoded.userId]
-    );
+    // Get user from database using Supabase client
+    const { data: users, error: fetchError } = await supabase
+      .from('users')
+      .select('id, email, role, is_active, first_name, last_name, student_id')
+      .eq('id', decoded.userId)
+      .limit(1);
 
-    if (userResult.rows.length === 0) {
+    if (fetchError) {
+      console.error('❌ Auth middleware error:', fetchError);
+      return res.status(500).json({ error: 'Authentication failed' });
+    }
+
+    if (!users || users.length === 0) {
       return res.status(401).json({ error: 'User not found' });
     }
 
-    const user = userResult.rows[0];
+    const user = users[0];
 
     if (!user.is_active) {
       return res.status(401).json({ error: 'Account is deactivated' });

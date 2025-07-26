@@ -74,7 +74,7 @@ app.use(cors({
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'Accept', 'X-Requested-With'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'Accept', 'X-Requested-With', 'Cache-Control'],
   preflightContinue: false,
   optionsSuccessStatus: 200
 }));
@@ -101,11 +101,22 @@ app.get('/health', async (req, res) => {
     // Test database connection (non-blocking)
     let dbStatus = 'unknown';
     try {
-      const dbTest = await Promise.race([
-        query('SELECT 1 as test'),
-        new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 2000))
-      ]);
-      dbStatus = dbTest.rows[0]?.test === 1 ? 'connected' : 'error';
+      // Try Supabase client first
+      const { supabase } = require('./config/supabase');
+      const { data, error } = await supabase
+        .from('users')
+        .select('count', { count: 'exact', head: true });
+
+      if (!error) {
+        dbStatus = 'connected (supabase)';
+      } else {
+        // Fallback to PostgreSQL pool
+        const dbTest = await Promise.race([
+          query('SELECT 1 as test'),
+          new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 2000))
+        ]);
+        dbStatus = dbTest.rows[0]?.test === 1 ? 'connected (pg)' : 'error';
+      }
     } catch (dbError) {
       dbStatus = 'disconnected';
     }
@@ -134,6 +145,46 @@ app.get('/health', async (req, res) => {
 // Simple ping endpoint for monitoring
 app.get('/ping', (req, res) => {
   res.status(200).send('pong');
+});
+
+// Test database with Supabase client
+app.get('/test-db', async (req, res) => {
+  try {
+    const { supabase } = require('./config/supabase');
+    const { data, error } = await supabase
+      .from('users')
+      .select('*')
+      .limit(5);
+
+    if (error) {
+      return res.status(500).json({ error: error.message });
+    }
+
+    res.json({
+      message: 'Database test successful',
+      userCount: data.length,
+      users: data.map(u => ({ id: u.id, email: u.email, role: u.role }))
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Temporary placeholder routes for student dashboard
+app.get('/api/assignments/student', (req, res) => {
+  res.json({ assignments: [], message: 'No assignments available' });
+});
+
+app.get('/api/grades', (req, res) => {
+  res.json({ grades: [], totalGrades: 0, message: 'No grades available' });
+});
+
+app.get('/api/submissions', (req, res) => {
+  res.json({ submissions: [], message: 'No submissions available' });
+});
+
+app.get('/api/groups/my-group', (req, res) => {
+  res.json({ group: null, message: 'No group assigned' });
 });
 
 // API routes
