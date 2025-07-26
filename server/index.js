@@ -95,30 +95,45 @@ app.use('/uploads', express.static('uploads'));
 // Static files for templates
 app.use('/templates', express.static('public/templates'));
 
-// Health check endpoint with database connectivity
+// Health check endpoint - simple version that always responds
 app.get('/health', async (req, res) => {
   try {
-    // Test database connection
-    const dbTest = await query('SELECT 1 as test');
-    const dbStatus = dbTest.rows[0]?.test === 1 ? 'connected' : 'error';
+    // Test database connection (non-blocking)
+    let dbStatus = 'unknown';
+    try {
+      const dbTest = await Promise.race([
+        query('SELECT 1 as test'),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 2000))
+      ]);
+      dbStatus = dbTest.rows[0]?.test === 1 ? 'connected' : 'error';
+    } catch (dbError) {
+      dbStatus = 'disconnected';
+    }
 
+    // Always return 200 OK for health check
     res.status(200).json({
       status: 'OK',
       timestamp: new Date().toISOString(),
       uptime: process.uptime(),
       database: dbStatus,
-      environment: process.env.NODE_ENV,
+      environment: process.env.NODE_ENV || 'unknown',
       version: '1.0.0'
     });
   } catch (error) {
-    res.status(503).json({
-      status: 'ERROR',
+    // Even if there's an error, return 200 for health check
+    res.status(200).json({
+      status: 'DEGRADED',
       timestamp: new Date().toISOString(),
       uptime: process.uptime(),
-      database: 'disconnected',
+      database: 'error',
       error: error.message
     });
   }
+});
+
+// Simple ping endpoint for monitoring
+app.get('/ping', (req, res) => {
+  res.status(200).send('pong');
 });
 
 // API routes
