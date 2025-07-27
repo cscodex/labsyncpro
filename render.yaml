@@ -11,32 +11,40 @@ services:
         value: production
       - key: PORT
         value: 10000
+      # Supabase Database Configuration
+      - key: DATABASE_URL
+        value: postgresql://postgres:Globaltracker123%23%24@db.awcgutnuuyemhmoykokk.supabase.co:5432/postgres
       - key: DB_HOST
-        fromDatabase:
-          name: labsyncpro-db
-          property: host
+        value: db.awcgutnuuyemhmoykokk.supabase.co
       - key: DB_PORT
-        fromDatabase:
-          name: labsyncpro-db
-          property: port
+        value: 5432
       - key: DB_NAME
-        fromDatabase:
-          name: labsyncpro-db
-          property: database
+        value: postgres
       - key: DB_USER
-        fromDatabase:
-          name: labsyncpro-db
-          property: user
+        value: postgres
       - key: DB_PASSWORD
-        fromDatabase:
-          name: labsyncpro-db
-          property: password
+        value: Globaltracker123%23%24
+      # Supabase Configuration
+      - key: SUPABASE_URL
+        value: https://awcgutnuuyemhmoykokk.supabase.co
+      - key: SUPABASE_ANON_KEY
+        value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF3Y2d1dG51dXllbWhtb3lrb2trIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI4MzIwODYsImV4cCI6MjA2ODQwODA4Nn0.AgjILFn4m4s8XuDbz4CvAUQZ9uEwkw3REmjOTzuZoVM
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF3Y2d1dG51dXllbWhtb3lrb2trIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MjgzMjA4NiwiZXhwIjoyMDY4NDA4MDg2fQ.v0w1EllcQZ4bRfzJcf1_ZU-8ivgBbAJ2fdDDeQXOQ5k
+      # JWT Configuration
       - key: JWT_SECRET
         generateValue: true
       - key: JWT_EXPIRE
         value: 7d
+      # CORS Configuration
       - key: CLIENT_URL
-        value: https://labsyncpro.onrender.com
+        value: https://labsyncpro-frontend.onrender.com
+      - key: FRONTEND_URL
+        value: https://labsyncpro-frontend.onrender.com
+      # Email Configuration
+      - key: FROM_EMAIL
+        value: noreply@labsync.local
+      # Text Submission Limits
       - key: MAX_TEXT_LENGTH
         value: 10000
       - key: MAX_OUTPUT_LENGTH
@@ -50,10 +58,9 @@ services:
     envVars:
       - key: VITE_API_URL
         value: https://labsyncpro-api.onrender.com/api
+      - key: VITE_SUPABASE_URL
+        value: https://awcgutnuuyemhmoykokk.supabase.co
+      - key: VITE_SUPABASE_ANON_KEY
+        value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF3Y2d1dG51dXllbWhtb3lrb2trIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI4MzIwODYsImV4cCI6MjA2ODQwODA4Nn0.AgjILFn4m4s8XuDbz4CvAUQZ9uEwkw3REmjOTzuZoVM
 
-databases:
-  # PostgreSQL Database (or use external Supabase)
-  - name: labsyncpro-db
-    databaseName: labsyncpro
-    user: labsyncpro_user
-    plan: free
+# Note: No databases section needed since we're using external Supabase
