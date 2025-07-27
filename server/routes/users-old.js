@@ -72,7 +72,7 @@ router.get('/', [authenticateToken, requireInstructor], async (req, res) => {
     // Filter students by class (students who belong to groups in the specified class)
     if (classId && role === 'student') {
       whereClause += ` AND EXISTS (
-        SELECT 1 FROM group_members gm
+// Removed SQL fragment: SELECT 1 FROM group_members gm
         JOIN groups g ON gm.group_id = g.id
         WHERE gm.user_id = u.id AND g.class_id = $${paramCount}
       )`;
@@ -94,7 +94,7 @@ router.get('/', [authenticateToken, requireInstructor], async (req, res) => {
 
     // Get all users with additional role-specific information
     const result = await query(`
-      SELECT
+// Removed SQL fragment: SELECT
         u.id, u.email, u.first_name, u.last_name, u.role, u.student_id,
         u.is_active, u.created_at,
         CASE 
@@ -198,7 +198,7 @@ router.get('/:id', authenticateToken, async (req, res) => {
     if (user.role === 'student') {
       // Get groups the student belongs to
       const groupsResult = await query(`
-        SELECT 
+// Removed SQL fragment: SELECT 
           g.id, g.group_name, g.max_members,
           c.class_code, c.grade, c.stream, c.section,
           gm.role as group_role, gm.joined_at
@@ -213,7 +213,7 @@ router.get('/:id', authenticateToken, async (req, res) => {
 
       // Get recent submissions
       const submissionsResult = await query(`
-        SELECT 
+// Removed SQL fragment: SELECT 
           s.id, s.submission_type, s.submitted_at, s.is_late, s.status,
           sch.title as schedule_title, sch.scheduled_date,
           g.score, g.max_score, g.graded_at
@@ -274,7 +274,7 @@ router.post('/', [
 
     // Insert new user
     const result = await query(`
-      INSERT INTO users (email, password_hash, first_name, last_name, role, student_id, mail_address)
+// Removed SQL fragment: INSERT INTO users (email, password_hash, first_name, last_name, role, student_id, mail_address)
       VALUES ($1, $2, $3, $4, $5, $6, $7)
       RETURNING id, email, first_name, last_name, role, student_id, mail_address, created_at
     `, [email, passwordHash, firstName, lastName, role, studentId || null, mailAddress]);
@@ -377,7 +377,7 @@ router.put('/:id', [
     values.push(id);
 
     const result = await query(`
-      UPDATE users 
+// Removed SQL fragment: UPDATE users 
       SET ${updateFields.join(', ')}, updated_at = CURRENT_TIMESTAMP
       WHERE id = $${paramCount}
       RETURNING id, email, first_name, last_name, role, student_id, is_active, updated_at
@@ -479,7 +479,7 @@ router.get('/students/available', authenticateToken, async (req, res) => {
     // Filter by class if provided
     if (classId) {
       whereClause += ` AND EXISTS (
-        SELECT 1 FROM group_members gm 
+// Removed SQL fragment: SELECT 1 FROM group_members gm 
         JOIN groups g ON gm.group_id = g.id 
         WHERE gm.user_id = u.id AND g.class_id = $${paramCount}
       )`;
@@ -490,7 +490,7 @@ router.get('/students/available', authenticateToken, async (req, res) => {
     // Exclude students already in a specific group
     if (excludeGroupId) {
       whereClause += ` AND NOT EXISTS (
-        SELECT 1 FROM group_members gm 
+// Removed SQL fragment: SELECT 1 FROM group_members gm 
         WHERE gm.user_id = u.id AND gm.group_id = $${paramCount}
       )`;
       queryParams.push(excludeGroupId);
@@ -498,7 +498,7 @@ router.get('/students/available', authenticateToken, async (req, res) => {
     }
 
     const result = await query(`
-      SELECT 
+// Removed SQL fragment: SELECT 
         u.id, u.first_name, u.last_name, u.student_id, u.email,
         COUNT(gm.id) as group_count
       FROM users u
@@ -564,7 +564,7 @@ router.post('/:id/assign-lab', [
 
     // Create a default schedule entry for the assignment
     await query(`
-      INSERT INTO schedules (title, description, lab_id, instructor_id, scheduled_date, start_time, end_time)
+// Removed SQL fragment: INSERT INTO schedules (title, description, lab_id, instructor_id, scheduled_date, start_time, end_time)
       VALUES ($1, $2, $3, $4, CURRENT_DATE, '09:00', '17:00')
     `, [
       'Default Lab Assignment',
@@ -590,7 +590,7 @@ router.delete('/:id/assign-lab/:labId', [
 
     // Remove the default schedule assignment
     const result = await query(`
-      DELETE FROM schedules 
+// Removed SQL fragment: DELETE FROM schedules 
       WHERE instructor_id = $1 AND lab_id = $2 AND title = 'Default Lab Assignment'
     `, [instructorId, labId]);
 
@@ -609,7 +609,7 @@ router.delete('/:id/assign-lab/:labId', [
 router.get('/labs/available', authenticateToken, async (req, res) => {
   try {
     const result = await query(`
-      SELECT id, lab_name, lab_code, total_computers, total_seats
+// Removed SQL fragment: SELECT id, lab_name, lab_code, total_computers, total_seats
       FROM labs 
       WHERE is_active = true
       ORDER BY lab_name

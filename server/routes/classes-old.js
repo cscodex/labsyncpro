@@ -56,7 +56,7 @@ router.get('/', authenticateToken, async (req, res) => {
     // Filter classes by lab - classes that have schedules in the specified lab
     if (labId) {
       const labCondition = `c.id IN (
-        SELECT DISTINCT s.class_id
+// Removed SQL fragment: SELECT DISTINCT s.class_id
         FROM schedules s
         WHERE s.lab_id = $${paramCount} AND s.class_id IS NOT NULL
       )`;
@@ -66,7 +66,7 @@ router.get('/', authenticateToken, async (req, res) => {
     }
 
     const result = await query(`
-      SELECT
+// Removed SQL fragment: SELECT
         c.*,
         COUNT(DISTINCT g.id) as group_count,
         COUNT(DISTINCT gm.user_id) as student_count,
@@ -108,7 +108,7 @@ router.post('/:id/assign-computer', authenticateToken, async (req, res) => {
 
     // Check if schedule exists and belongs to the class
     const scheduleCheck = await query(`
-      SELECT s.*, l.name as lab_name
+// Removed SQL fragment: SELECT s.*, l.name as lab_name
       FROM schedules s
       JOIN labs l ON s.lab_id = l.id
       WHERE s.id = $1 AND s.class_id = $2
@@ -122,7 +122,7 @@ router.post('/:id/assign-computer', authenticateToken, async (req, res) => {
 
     // Check if computer exists and is available
     const computerCheck = await query(`
-      SELECT * FROM computers
+// Removed SQL fragment: SELECT * FROM computers
       WHERE computer_number = $1 AND lab_id = $2 AND is_functional = true
     `, [computerNumber, labId || schedule.lab_id]);
 
@@ -132,7 +132,7 @@ router.post('/:id/assign-computer', authenticateToken, async (req, res) => {
 
     // Check if computer is already assigned for this schedule
     const existingAssignment = await query(`
-      SELECT * FROM schedule_assignments
+// Removed SQL fragment: SELECT * FROM schedule_assignments
       WHERE schedule_id = $1 AND assigned_computer = $2
     `, [scheduleId, computerNumber]);
 
@@ -142,14 +142,14 @@ router.post('/:id/assign-computer', authenticateToken, async (req, res) => {
 
     // Create the assignment
     const assignmentResult = await query(`
-      INSERT INTO schedule_assignments (schedule_id, group_id, user_id, assigned_computer, status)
+// Removed SQL fragment: INSERT INTO schedule_assignments (schedule_id, group_id, user_id, assigned_computer, status)
       VALUES ($1, $2, $3, $4, 'assigned')
       RETURNING *
     `, [scheduleId, groupId || null, userId || null, computerNumber]);
 
     // Get detailed assignment info for response
     const detailedAssignment = await query(`
-      SELECT
+// Removed SQL fragment: SELECT
         sa.*,
         s.title as schedule_title,
         s.scheduled_date,
@@ -196,7 +196,7 @@ router.get('/:id', authenticateToken, async (req, res) => {
 
     // Get groups in this class
     const groupsResult = await query(`
-      SELECT 
+// Removed SQL fragment: SELECT 
         g.*,
         COUNT(gm.user_id) as member_count,
         u.first_name as creator_first_name,
@@ -211,7 +211,7 @@ router.get('/:id', authenticateToken, async (req, res) => {
 
     // Get students in this class (through groups)
     const studentsResult = await query(`
-      SELECT DISTINCT
+// Removed SQL fragment: SELECT DISTINCT
         u.id, u.first_name, u.last_name, u.student_id, u.email,
         g.group_name, gm.role as group_role
       FROM users u
@@ -263,7 +263,7 @@ router.post('/', [
 
     // Create class
     const result = await query(`
-      INSERT INTO classes (class_code, grade, stream, section, description)
+// Removed SQL fragment: INSERT INTO classes (class_code, grade, stream, section, description)
       VALUES ($1, $2, $3, $4, $5)
       RETURNING *
     `, [classCode, grade, stream, section, description]);
@@ -337,7 +337,7 @@ router.put('/:id', [
     values.push(id);
 
     const result = await query(`
-      UPDATE classes 
+// Removed SQL fragment: UPDATE classes 
       SET ${updateFields.join(', ')}
       WHERE id = $${paramCount}
       RETURNING *
@@ -407,7 +407,7 @@ router.get('/:id/statistics', authenticateToken, async (req, res) => {
 
     // Get various statistics
     const statsResult = await query(`
-      SELECT 
+// Removed SQL fragment: SELECT 
         COUNT(DISTINCT g.id) as total_groups,
         COUNT(DISTINCT gm.user_id) as total_students,
         COUNT(DISTINCT s.id) as total_schedules,
@@ -425,7 +425,7 @@ router.get('/:id/statistics', authenticateToken, async (req, res) => {
 
     // Get recent activity
     const recentActivityResult = await query(`
-      SELECT 
+// Removed SQL fragment: SELECT 
         'schedule' as type,
         s.title as title,
         s.scheduled_date as date,
@@ -471,7 +471,7 @@ router.get('/:id/assignments', authenticateToken, async (req, res) => {
 
     // Get groups for this class
     const groupsResult = await query(`
-      SELECT
+// Removed SQL fragment: SELECT
         g.*,
         COUNT(gm.user_id) as member_count,
         u.first_name as leader_first_name,
@@ -488,7 +488,7 @@ router.get('/:id/assignments', authenticateToken, async (req, res) => {
     const groups = [];
     for (const group of groupsResult.rows) {
       const membersResult = await query(`
-        SELECT
+// Removed SQL fragment: SELECT
           u.id,
           u.first_name,
           u.last_name,
@@ -514,7 +514,7 @@ router.get('/:id/assignments', authenticateToken, async (req, res) => {
     let assignments = [];
     if (labId) {
       const assignmentsResult = await query(`
-        SELECT
+// Removed SQL fragment: SELECT
           sa.*,
           g.name as group_name,
           u.first_name,
@@ -570,7 +570,7 @@ router.post('/:id/assign-computer', authenticateToken, async (req, res) => {
 
     // Check if computer is available and functional
     const computerResult = await query(`
-      SELECT c.*, l.name as lab_name
+// Removed SQL fragment: SELECT c.*, l.name as lab_name
       FROM computers c
       JOIN labs l ON c.lab_id = l.id
       JOIN schedules s ON s.lab_id = l.id
@@ -583,7 +583,7 @@ router.post('/:id/assign-computer', authenticateToken, async (req, res) => {
 
     // Check if computer is already assigned for this schedule
     const existingAssignment = await query(`
-      SELECT id FROM schedule_assignments
+// Removed SQL fragment: SELECT id FROM schedule_assignments
       WHERE schedule_id = $1 AND assigned_computer = $2
     `, [scheduleId, computerNumber]);
 
@@ -593,7 +593,7 @@ router.post('/:id/assign-computer', authenticateToken, async (req, res) => {
 
     // Create the assignment
     const assignmentResult = await query(`
-      INSERT INTO schedule_assignments (schedule_id, group_id, user_id, assigned_computer, status)
+// Removed SQL fragment: INSERT INTO schedule_assignments (schedule_id, group_id, user_id, assigned_computer, status)
       VALUES ($1, $2, $3, $4, 'assigned')
       RETURNING *
     `, [scheduleId, groupId || null, userId || null, computerNumber]);

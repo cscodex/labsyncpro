@@ -60,7 +60,7 @@ router.get('/labs/:labId/computers', authenticateToken, async (req, res) => {
     const { scheduleId } = req.query;
 
     let computersQuery = `
-      SELECT 
+// Removed SQL fragment: SELECT 
         c.id,
         c.computer_name,
         c.computer_number,
@@ -105,7 +105,7 @@ router.get('/labs/:labId/seats', authenticateToken, async (req, res) => {
     const { scheduleId } = req.query;
 
     let seatsQuery = `
-      SELECT
+// Removed SQL fragment: SELECT
         s.id,
         s.seat_number,
         s.is_available,
@@ -218,7 +218,7 @@ router.post('/seat-assignments', [
 
     // Create the seat assignment
     const result = await query(`
-      INSERT INTO seat_assignments (schedule_id, user_id, seat_id)
+// Removed SQL fragment: INSERT INTO seat_assignments (schedule_id, user_id, seat_id)
       VALUES ($1, $2, $3)
       RETURNING *
     `, [schedule_id, user_id, seat_id]);
@@ -272,7 +272,7 @@ router.put('/seat-assignments/:id', [
     values.push(id);
 
     const result = await query(`
-      UPDATE seat_assignments 
+// Removed SQL fragment: UPDATE seat_assignments 
       SET ${updateFields.join(', ')}, assigned_at = CURRENT_TIMESTAMP
       WHERE id = $${paramCount}
       RETURNING *
@@ -349,7 +349,7 @@ router.post('/computer-assignments', [
 
     // Create the assignment
     const result = await query(`
-      INSERT INTO schedule_assignments (schedule_id, assigned_computer, group_id, user_id)
+// Removed SQL fragment: INSERT INTO schedule_assignments (schedule_id, assigned_computer, group_id, user_id)
       VALUES ($1, $2, $3, $4)
       RETURNING *
     `, [schedule_id, computer_number, group_id || null, user_id || null]);
@@ -417,7 +417,7 @@ router.put('/computer-assignments/:id', [
     values.push(id);
 
     const result = await query(`
-      UPDATE schedule_assignments
+// Removed SQL fragment: UPDATE schedule_assignments
       SET ${updateFields.join(', ')}, updated_at = CURRENT_TIMESTAMP
       WHERE id = $${paramCount}
       RETURNING *
@@ -525,7 +525,7 @@ router.get('/students-groups/:classId', authenticateToken, async (req, res) => {
 
     // Get all groups in the class with member details
     const groupsResult = await query(`
-      SELECT
+// Removed SQL fragment: SELECT
         g.id,
         g.name,
         g.description,
@@ -546,7 +546,7 @@ router.get('/students-groups/:classId', authenticateToken, async (req, res) => {
     const groups = [];
     for (const group of groupsResult.rows) {
       const membersResult = await query(`
-        SELECT
+// Removed SQL fragment: SELECT
           u.id,
           u.first_name,
           u.last_name,
@@ -609,7 +609,7 @@ router.get('/unassigned-students/:classId/:labId', authenticateToken, async (req
     // Query to get students who are in the class but not assigned to any seat
     // for the given lab and schedule (if provided)
     let unassignedQuery = `
-      SELECT DISTINCT
+// Removed SQL fragment: SELECT DISTINCT
         u.id,
         u.first_name,
         u.last_name,
@@ -640,7 +640,7 @@ router.get('/unassigned-students/:classId/:labId', authenticateToken, async (req
 
     unassignedQuery += `
         )
-      ORDER BY u.first_name, u.last_name
+// Removed SQL fragment: ORDER BY u.first_name, u.last_name
     `;
 
     const result = await query(unassignedQuery, queryParams);

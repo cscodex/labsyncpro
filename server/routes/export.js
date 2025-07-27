@@ -59,7 +59,7 @@ router.get('/assignments', authenticateToken, requireRole(['admin', 'instructor'
     }
 
     const assignmentsQuery = `
-      SELECT DISTINCT
+// Removed SQL fragment: SELECT DISTINCT
         ca.name as assignment_title,
         ca.description as assignment_description,
         ca.created_at as assignment_created,
@@ -147,7 +147,7 @@ router.get('/grades', authenticateToken, requireRole(['admin', 'instructor']), a
     }
 
     const gradesQuery = `
-      SELECT
+// Removed SQL fragment: SELECT
         sch.title as assignment_title,
         c.name as class_name,
         u.first_name || ' ' || u.last_name as student_name,
@@ -248,7 +248,7 @@ router.get('/submissions', authenticateToken, requireRole(['admin', 'instructor'
     }
 
     const submissionsQuery = `
-      SELECT
+// Removed SQL fragment: SELECT
         sch.title as assignment_title,
         c.name as class_name,
         u.first_name || ' ' || u.last_name as student_name,

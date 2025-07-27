@@ -38,7 +38,7 @@ router.get('/', authenticateToken, requireRole(['admin']), async (req, res) => {
 router.get('/stats', authenticateToken, requireRole(['admin']), async (req, res) => {
   try {
     const result = await query(`
-      SELECT 
+// Removed SQL fragment: SELECT 
         status,
         COUNT(*) as count
       FROM password_reset_requests
@@ -105,7 +105,7 @@ router.post('/:requestId/complete', [
     await query(
       `UPDATE password_reset_requests 
        SET status = 'completed', completed_by = $1, completed_at = CURRENT_TIMESTAMP
-       WHERE id = $2`,
+// Removed SQL fragment: WHERE id = $2`,
       [adminId, requestId]
     );
     
@@ -145,7 +145,7 @@ router.post('/:requestId/reject', authenticateToken, requireRole(['admin']), asy
     await query(
       `UPDATE password_reset_requests 
        SET status = 'rejected', completed_by = $1, completed_at = CURRENT_TIMESTAMP
-       WHERE id = $2`,
+// Removed SQL fragment: WHERE id = $2`,
       [adminId, requestId]
     );
     

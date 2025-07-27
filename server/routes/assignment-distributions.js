@@ -45,7 +45,7 @@ router.post('/', authenticateToken, async (req, res) => {
 
     // Check if assignment is published
     const assignmentCheck = await query(`
-      SELECT status FROM created_assignments WHERE id = $1
+// Removed SQL fragment: SELECT status FROM created_assignments WHERE id = $1
     `, [assignmentId]);
 
     if (assignmentCheck.rows.length === 0) {
@@ -67,7 +67,7 @@ router.post('/', authenticateToken, async (req, res) => {
     if (assignmentType === 'class') {
       // Assign to entire class
       const result = await query(`
-        INSERT INTO assignment_distributions (
+// Removed SQL fragment: INSERT INTO assignment_distributions (
           assignment_id, class_id, assignment_type, scheduled_date, deadline, status, assigned_at
         ) VALUES ($1, $2, $3, $4, $5, $6, NOW())
         RETURNING id
@@ -78,7 +78,7 @@ router.post('/', authenticateToken, async (req, res) => {
       // Assign to selected groups
       for (const groupId of groupIds) {
         const result = await query(`
-          INSERT INTO assignment_distributions (
+// Removed SQL fragment: INSERT INTO assignment_distributions (
             assignment_id, class_id, assignment_type, group_id, scheduled_date, deadline, status, assigned_at
           ) VALUES ($1, $2, $3, $4, $5, $6, $7, NOW())
           RETURNING id
@@ -90,7 +90,7 @@ router.post('/', authenticateToken, async (req, res) => {
       // Assign to selected students
       for (const userId of userIds) {
         const result = await query(`
-          INSERT INTO assignment_distributions (
+// Removed SQL fragment: INSERT INTO assignment_distributions (
             assignment_id, class_id, assignment_type, user_id, scheduled_date, deadline, status, assigned_at
           ) VALUES ($1, $2, $3, $4, $5, $6, $7, NOW())
           RETURNING id
@@ -126,7 +126,7 @@ router.put('/:id', authenticateToken, async (req, res) => {
     const { scheduledDate, deadline, status } = req.body;
 
     const result = await query(`
-      UPDATE assignment_distributions 
+// Removed SQL fragment: UPDATE assignment_distributions 
       SET scheduled_date = $1, deadline = $2, status = $3, updated_at = NOW()
       WHERE id = $4
       RETURNING id
@@ -158,7 +158,7 @@ router.delete('/:id', authenticateToken, async (req, res) => {
     const { id } = req.params;
 
     const result = await query(`
-      DELETE FROM assignment_distributions WHERE id = $1
+// Removed SQL fragment: DELETE FROM assignment_distributions WHERE id = $1
       RETURNING id
     `, [id]);
 

@@ -52,7 +52,7 @@ router.get('/consolidated', authenticateToken, async (req, res) => {
 
     // Base query to get consolidated assignments
     let baseQuery = `
-      SELECT
+// Removed SQL fragment: SELECT
         s.id as schedule_id,
         s.title as schedule_title,
         s.description,
@@ -95,7 +95,7 @@ router.get('/consolidated', authenticateToken, async (req, res) => {
     if (currentUser.role === 'student') {
       // Students see schedules they are assigned to
       whereClause += ` AND EXISTS (
-        SELECT 1 FROM schedule_assignments sa2
+// Removed SQL fragment: SELECT 1 FROM schedule_assignments sa2
         WHERE sa2.schedule_id = s.id AND (
           sa2.user_id = $${paramCount} OR
           EXISTS (
@@ -145,7 +145,7 @@ router.get('/consolidated', authenticateToken, async (req, res) => {
 
     // Group by schedule and add pagination
     const groupByClause = `
-      GROUP BY s.id, s.title, s.description, s.scheduled_date,
+// Removed SQL fragment: GROUP BY s.id, s.title, s.description, s.scheduled_date,
                s.deadline, s.duration_minutes, s.status, s.assignment_type, l.name,
                c.name, s.class_id, instructor.first_name, instructor.last_name,
                sf.id, sf.original_filename, sf.file_size
@@ -154,7 +154,7 @@ router.get('/consolidated', authenticateToken, async (req, res) => {
 
     // Get total count
     const countQuery = `
-      SELECT COUNT(DISTINCT s.id) as total
+// Removed SQL fragment: SELECT COUNT(DISTINCT s.id) as total
       FROM schedules s
       JOIN labs l ON s.lab_id = l.id
       LEFT JOIN classes c ON s.class_id = c.id
@@ -177,7 +177,7 @@ router.get('/consolidated', authenticateToken, async (req, res) => {
       ${baseQuery}
       ${whereClause}
       ${groupByClause}
-      LIMIT $${paramCount} OFFSET $${paramCount + 1}
+// Removed SQL fragment: LIMIT $${paramCount} OFFSET $${paramCount + 1}
     `;
 
     const result = await query(fullQuery, queryParams);
@@ -218,7 +218,7 @@ router.get('/', authenticateToken, async (req, res) => {
 
     // Get assignments with proper grouping for class assignments
     let baseQuery = `
-      SELECT DISTINCT
+// Removed SQL fragment: SELECT DISTINCT
         CASE
           WHEN s.assignment_type = 'class' THEN CONCAT('class_', s.id)
           ELSE sa.id::text
@@ -283,7 +283,7 @@ router.get('/', authenticateToken, async (req, res) => {
         sa.user_id = $${paramCount} OR
         -- Group assignments where student is a member
         EXISTS (
-          SELECT 1 FROM group_members gm
+// Removed SQL fragment: SELECT 1 FROM group_members gm
           WHERE gm.group_id = sa.group_id AND gm.user_id = $${paramCount}
         ) OR
         -- Class-wide assignments through group membership
@@ -341,7 +341,7 @@ router.get('/', authenticateToken, async (req, res) => {
         ${baseQuery}
         ${whereClause}
       )
-      SELECT DISTINCT ON (
+// Removed SQL fragment: SELECT DISTINCT ON (
         CASE
           WHEN assignment_type = 'class' THEN schedule_id::text
           ELSE id
@@ -361,7 +361,7 @@ router.get('/', authenticateToken, async (req, res) => {
 
     // Get total count for pagination
     const countQuery = `
-      SELECT COUNT(DISTINCT sa.id) as total
+// Removed SQL fragment: SELECT COUNT(DISTINCT sa.id) as total
       FROM schedule_assignments sa
       JOIN schedules s ON sa.schedule_id = s.id
       JOIN labs l ON s.lab_id = l.id
@@ -380,7 +380,7 @@ router.get('/', authenticateToken, async (req, res) => {
       console.log('No assignments found, falling back to schedules...');
 
       let scheduleQuery = `
-        SELECT DISTINCT
+// Removed SQL fragment: SELECT DISTINCT
           s.id,
           s.id as schedule_id,
           s.title as schedule_title,
@@ -416,7 +416,7 @@ router.get('/', authenticateToken, async (req, res) => {
         scheduleQuery += ` AND (
           -- Student can see schedules for classes they belong to through groups
           EXISTS (
-            SELECT 1 FROM group_members gm
+// Removed SQL fragment: SELECT 1 FROM group_members gm
             JOIN groups g ON gm.group_id = g.id
             WHERE gm.user_id = $${scheduleParamCount} AND g.class_id = s.class_id
           )
@@ -542,7 +542,7 @@ router.get('/:id', authenticateToken, async (req, res) => {
     const currentUser = req.user;
 
     const result = await query(`
-      SELECT
+// Removed SQL fragment: SELECT
         sa.id,
         sa.schedule_id,
         sa.group_id,
@@ -585,7 +585,7 @@ router.get('/:id', authenticateToken, async (req, res) => {
     if (currentUser.role === 'student') {
       const hasAccess = assignment.user_id === currentUser.id || 
         await query(`
-          SELECT 1 FROM group_members 
+// Removed SQL fragment: SELECT 1 FROM group_members 
           WHERE group_id = $1 AND user_id = $2
         `, [assignment.group_id, currentUser.id]);
       
@@ -624,7 +624,7 @@ router.put('/:id', authenticateToken, async (req, res) => {
 
     // Check if assignment exists and user has permission
     const assignmentCheck = await query(`
-      SELECT sa.*, s.instructor_id
+// Removed SQL fragment: SELECT sa.*, s.instructor_id
       FROM schedule_assignments sa
       JOIN schedules s ON sa.schedule_id = s.id
       WHERE sa.id = $1
@@ -664,7 +664,7 @@ router.put('/:id', authenticateToken, async (req, res) => {
     updateValues.push(id);
 
     const updateQuery = `
-      UPDATE schedule_assignments
+// Removed SQL fragment: UPDATE schedule_assignments
       SET ${updateFields.join(', ')}
       WHERE id = $${paramCount}
       RETURNING *
@@ -740,7 +740,7 @@ router.post('/', authenticateToken, async (req, res) => {
 
     // Check if schedule exists and user has permission
     const scheduleCheck = await query(`
-      SELECT s.*, c.name as class_name, l.name as lab_name
+// Removed SQL fragment: SELECT s.*, c.name as class_name, l.name as lab_name
       FROM schedules s
       LEFT JOIN classes c ON s.class_id = c.id
       LEFT JOIN labs l ON s.lab_id = l.id
@@ -769,7 +769,7 @@ router.post('/', authenticateToken, async (req, res) => {
       }
 
       const computerCheck = await query(`
-        SELECT c.*,
+// Removed SQL fragment: SELECT c.*,
                EXISTS(
                  SELECT 1 FROM schedule_assignments sa
                  WHERE sa.assigned_computer = c.computer_number
@@ -796,7 +796,7 @@ router.post('/', authenticateToken, async (req, res) => {
     let computerNumber = null;
     if (assigned_computer) {
       const computerInfo = await query(`
-        SELECT computer_number FROM computers WHERE id = $1
+// Removed SQL fragment: SELECT computer_number FROM computers WHERE id = $1
       `, [assigned_computer]);
 
       if (computerInfo.rows.length > 0) {
@@ -811,13 +811,13 @@ router.post('/', authenticateToken, async (req, res) => {
       // For class assignments, create a single assignment for the first group in the class
       // This represents that the entire class is assigned to this schedule
       const groupsResult = await query(`
-        SELECT id FROM groups WHERE class_id = $1 LIMIT 1
+// Removed SQL fragment: SELECT id FROM groups WHERE class_id = $1 LIMIT 1
       `, [class_id]);
 
       if (groupsResult.rows.length > 0) {
         // Use the first group to represent the class assignment
         const result = await query(`
-          INSERT INTO schedule_assignments (
+// Removed SQL fragment: INSERT INTO schedule_assignments (
             schedule_id, group_id, user_id, assigned_computer, assigned_seat, status
           )
           VALUES ($1, $2, $3, $4, $5, 'assigned')
@@ -833,14 +833,14 @@ router.post('/', authenticateToken, async (req, res) => {
       } else {
         // If no groups exist, create assignment for the first student in the class
         const studentsResult = await query(`
-          SELECT u.id FROM users u
+// Removed SQL fragment: SELECT u.id FROM users u
           WHERE u.role = 'student'
           LIMIT 1
         `, []);
 
         if (studentsResult.rows.length > 0) {
           const result = await query(`
-            INSERT INTO schedule_assignments (
+// Removed SQL fragment: INSERT INTO schedule_assignments (
               schedule_id, group_id, user_id, assigned_computer, assigned_seat, status
             )
             VALUES ($1, $2, $3, $4, $5, 'assigned')
@@ -863,7 +863,7 @@ router.post('/', authenticateToken, async (req, res) => {
     } else {
       // Single assignment (group or individual)
       const result = await query(`
-        INSERT INTO schedule_assignments (
+// Removed SQL fragment: INSERT INTO schedule_assignments (
           schedule_id, group_id, user_id, assigned_computer, assigned_seat, status
         )
         VALUES ($1, $2, $3, $4, $5, 'assigned')
@@ -904,7 +904,7 @@ router.post('/submit/:assignmentDistributionId', authenticateToken, upload.field
 
     // Check if assignment exists and user has access
     const assignmentCheck = await query(`
-      SELECT ad.*, ca.name as assignment_name
+// Removed SQL fragment: SELECT ad.*, ca.name as assignment_name
       FROM assignment_distributions ad
       JOIN created_assignments ca ON ad.assignment_id = ca.id
       WHERE ad.id = $1 AND (
@@ -934,7 +934,7 @@ router.post('/submit/:assignmentDistributionId', authenticateToken, upload.field
 
     // Check if already submitted and locked
     const existingSubmission = await query(`
-      SELECT * FROM assignment_submissions
+// Removed SQL fragment: SELECT * FROM assignment_submissions
       WHERE assignment_distribution_id = $1 AND user_id = $2
     `, [assignmentDistributionId, userId]);
 
@@ -954,7 +954,7 @@ router.post('/submit/:assignmentDistributionId', authenticateToken, upload.field
     if (existingSubmission.rows.length === 0) {
       // Create new submission
       await query(`
-        INSERT INTO assignment_submissions (
+// Removed SQL fragment: INSERT INTO assignment_submissions (
           assignment_distribution_id, user_id, assignment_response_filename,
           output_test_filename, is_locked, submitted_at
         ) VALUES ($1, $2, $3, $4, true, NOW())
@@ -962,7 +962,7 @@ router.post('/submit/:assignmentDistributionId', authenticateToken, upload.field
     } else {
       // Update existing submission
       await query(`
-        UPDATE assignment_submissions
+// Removed SQL fragment: UPDATE assignment_submissions
         SET assignment_response_filename = $3, output_test_filename = $4,
             is_locked = true, submitted_at = NOW(), updated_at = NOW()
         WHERE assignment_distribution_id = $1 AND user_id = $2
@@ -1004,7 +1004,7 @@ router.get('/download/:assignmentDistributionId/:fileType', authenticateToken, a
 
     // Check if assignment exists and user has access
     const assignmentCheck = await query(`
-      SELECT ad.*, ca.name as assignment_name
+// Removed SQL fragment: SELECT ad.*, ca.name as assignment_name
       FROM assignment_distributions ad
       JOIN created_assignments ca ON ad.assignment_id = ca.id
       WHERE ad.id = $1 AND (
@@ -1027,7 +1027,7 @@ router.get('/download/:assignmentDistributionId/:fileType', authenticateToken, a
 
     // Get submission
     const submission = await query(`
-      SELECT * FROM assignment_submissions
+// Removed SQL fragment: SELECT * FROM assignment_submissions
       WHERE assignment_distribution_id = $1 AND user_id = $2
     `, [assignmentDistributionId, userId]);
 

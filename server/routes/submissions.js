@@ -68,7 +68,7 @@ router.post('/upload', authenticateToken, assignmentUpload.single('file'), async
 
     // Check if this is actually an assignment distribution ID
     const assignmentCheck = await query(`
-      SELECT ad.id, ad.assignment_id, ca.name as assignment_name
+// Removed SQL fragment: SELECT ad.id, ad.assignment_id, ca.name as assignment_name
       FROM assignment_distributions ad
       JOIN created_assignments ca ON ad.assignment_id = ca.id
       WHERE ad.id = $1
@@ -82,7 +82,7 @@ router.post('/upload', authenticateToken, assignmentUpload.single('file'), async
 
     // Check if submission already exists for this user and assignment
     let submissionResult = await query(`
-      SELECT id FROM assignment_submissions
+// Removed SQL fragment: SELECT id FROM assignment_submissions
       WHERE assignment_distribution_id = $1 AND user_id = $2
     `, [scheduleId, currentUser.id]);
 
@@ -90,7 +90,7 @@ router.post('/upload', authenticateToken, assignmentUpload.single('file'), async
     if (submissionResult.rows.length === 0) {
       // Create new submission record
       const newSubmission = await query(`
-        INSERT INTO assignment_submissions (assignment_distribution_id, user_id, submitted_at)
+// Removed SQL fragment: INSERT INTO assignment_submissions (assignment_distribution_id, user_id, submitted_at)
         VALUES ($1, $2, NOW())
         RETURNING id
       `, [scheduleId, currentUser.id]);
@@ -102,7 +102,7 @@ router.post('/upload', authenticateToken, assignmentUpload.single('file'), async
     // Update the submission with the file information
     const columnName = fileType === 'assignment_response' ? 'assignment_response_filename' : 'output_test_filename';
     await query(`
-      UPDATE assignment_submissions
+// Removed SQL fragment: UPDATE assignment_submissions
       SET ${columnName} = $1, updated_at = NOW()
       WHERE id = $2
     `, [req.file.filename, submissionId]);
@@ -230,7 +230,7 @@ router.get('/', authenticateToken, async (req, res) => {
     queryParams.push(limit, offset);
 
     const result = await query(`
-      SELECT
+// Removed SQL fragment: SELECT
         s.*,
         sch.title as schedule_title,
         sch.scheduled_date,
@@ -255,7 +255,7 @@ router.get('/', authenticateToken, async (req, res) => {
 
     // Get total count
     const countResult = await query(`
-      SELECT COUNT(*) as total 
+// Removed SQL fragment: SELECT COUNT(*) as total 
       FROM submissions s
       JOIN schedules sch ON s.schedule_id = sch.id
       ${whereClause}
@@ -293,7 +293,7 @@ router.get('/:id', authenticateToken, async (req, res) => {
     const currentUser = req.user;
 
     const result = await query(`
-      SELECT
+// Removed SQL fragment: SELECT
         s.*,
         sch.title as schedule_title,
         sch.scheduled_date,
@@ -366,7 +366,7 @@ router.post('/', [
 
     // Check if schedule exists and is accessible
     const scheduleResult = await query(`
-      SELECT s.*,
+// Removed SQL fragment: SELECT s.*,
         CASE WHEN s.scheduled_date < CURRENT_DATE
         THEN true ELSE false END as is_late
       FROM schedules s
@@ -381,7 +381,7 @@ router.post('/', [
 
     // Check if user is assigned to this schedule
     const assignmentResult = await query(`
-      SELECT 1 FROM schedule_assignments sa
+// Removed SQL fragment: SELECT 1 FROM schedule_assignments sa
       LEFT JOIN group_members gm ON sa.group_id = gm.group_id
       WHERE sa.schedule_id = $1 AND (sa.user_id = $2 OR gm.user_id = $2)
     `, [scheduleId, currentUser.id]);
@@ -414,7 +414,7 @@ router.post('/', [
 
     // Create submission
     const result = await query(`
-      INSERT INTO submissions (
+// Removed SQL fragment: INSERT INTO submissions (
         schedule_id, user_id, group_id, submission_type, 
         content, file_paths, is_late
       )
@@ -470,7 +470,7 @@ router.put('/:id', [
 
     // Get existing submission
     const submissionResult = await query(`
-      SELECT s.*, sch.status as schedule_status
+// Removed SQL fragment: SELECT s.*, sch.status as schedule_status
       FROM submissions s
       JOIN schedules sch ON s.schedule_id = sch.id
       WHERE s.id = $1
@@ -531,7 +531,7 @@ router.put('/:id', [
     values.push(id);
 
     const result = await query(`
-      UPDATE submissions
+// Removed SQL fragment: UPDATE submissions
       SET ${updateFields.join(', ')}, updated_at = CURRENT_TIMESTAMP
       WHERE id = $${paramCount}
       RETURNING *
@@ -565,7 +565,7 @@ router.delete('/:id', authenticateToken, async (req, res) => {
 
     // Get submission details
     const submissionResult = await query(`
-      SELECT s.*, sch.status as schedule_status
+// Removed SQL fragment: SELECT s.*, sch.status as schedule_status
       FROM submissions s
       JOIN schedules sch ON s.schedule_id = sch.id
       WHERE s.id = $1
@@ -615,7 +615,7 @@ router.get('/:id/files/:filename', authenticateToken, async (req, res) => {
 
     // Get submission details
     const submissionResult = await query(`
-      SELECT s.*, sch.instructor_id
+// Removed SQL fragment: SELECT s.*, sch.instructor_id
       FROM submissions s
       JOIN schedules sch ON s.schedule_id = sch.id
       WHERE s.id = $1

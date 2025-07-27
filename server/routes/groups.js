@@ -186,7 +186,7 @@ router.get('/my-group', authenticateToken, async (req, res) => {
 
     // Find the student's group
     const groupResult = await query(`
-      SELECT
+// Removed SQL fragment: SELECT
         g.id,
         g.name,
         g.max_members,
@@ -213,7 +213,7 @@ router.get('/my-group', authenticateToken, async (req, res) => {
 
     // Get group members
     const membersResult = await query(`
-      SELECT
+// Removed SQL fragment: SELECT
         u.id, u.first_name, u.last_name, u.student_id,
         CASE WHEN g.leader_id = u.id THEN 'leader' ELSE 'member' END as role
       FROM group_members gm
@@ -271,7 +271,7 @@ router.get('/my-seat-info', authenticateToken, async (req, res) => {
 
     // Get student's seat assignments with computer assignments
     const result = await query(`
-      SELECT
+// Removed SQL fragment: SELECT
         sa.id,
         sa.schedule_id,
         s.seat_number,
@@ -355,7 +355,7 @@ router.get('/:id', authenticateToken, async (req, res) => {
 
     // Get group details
     const groupResult = await query(`
-      SELECT
+// Removed SQL fragment: SELECT
         g.*,
         c.name as class_name,
         u.first_name as leader_first_name,
@@ -386,7 +386,7 @@ router.get('/:id', authenticateToken, async (req, res) => {
 
     // Get group members
     const membersResult = await query(`
-      SELECT 
+// Removed SQL fragment: SELECT 
         u.id, u.first_name, u.last_name, u.student_id, u.email,
         gm.role, gm.joined_at
       FROM group_members gm
@@ -397,7 +397,7 @@ router.get('/:id', authenticateToken, async (req, res) => {
 
     // Get recent schedules for this group
     const schedulesResult = await query(`
-      SELECT 
+// Removed SQL fragment: SELECT 
         s.id, s.title, s.scheduled_date, s.start_time, s.end_time, s.status,
         l.lab_name
       FROM schedules s
@@ -487,7 +487,7 @@ router.post('/', [
       console.log('Validating students:', { classId, studentIds });
 
       const studentCheck = await query(`
-        SELECT DISTINCT
+// Removed SQL fragment: SELECT DISTINCT
           u.id, u.first_name, u.last_name,
           CASE WHEN EXISTS (
             SELECT 1 FROM group_members gm2
@@ -524,7 +524,7 @@ router.post('/', [
 
     // Create group
     const result = await query(`
-      INSERT INTO groups (name, class_id, max_members, description)
+// Removed SQL fragment: INSERT INTO groups (name, class_id, max_members, description)
       VALUES ($1, $2, $3, $4)
       RETURNING *
     `, [groupName, classId, maxMembers, description]);
@@ -534,7 +534,7 @@ router.post('/', [
     // Set the leader in the groups table
     if (leaderId) {
       await query(`
-        UPDATE groups SET leader_id = $1 WHERE id = $2
+// Removed SQL fragment: UPDATE groups SET leader_id = $1 WHERE id = $2
       `, [leaderId, group.id]);
     }
 
@@ -559,20 +559,20 @@ router.post('/', [
       // Add students to the new group
       for (const studentId of studentIds) {
         await query(`
-          INSERT INTO group_members (group_id, user_id)
+// Removed SQL fragment: INSERT INTO group_members (group_id, user_id)
           VALUES ($1, $2)
         `, [group.id, studentId]);
       }
     } else {
       // If no students specified, add creator as member (backward compatibility)
       await query(`
-        INSERT INTO group_members (group_id, user_id)
+// Removed SQL fragment: INSERT INTO group_members (group_id, user_id)
         VALUES ($1, $2)
       `, [group.id, currentUser.id]);
 
       // Set creator as leader
       await query(`
-        UPDATE groups SET leader_id = $1 WHERE id = $2
+// Removed SQL fragment: UPDATE groups SET leader_id = $1 WHERE id = $2
       `, [currentUser.id, group.id]);
     }
 
@@ -679,7 +679,7 @@ router.post('/:id/members', [
 
     // Add member to the target group
     await query(`
-      INSERT INTO group_members (group_id, user_id)
+// Removed SQL fragment: INSERT INTO group_members (group_id, user_id)
       VALUES ($1, $2)
     `, [id, userId]);
 
@@ -862,7 +862,7 @@ router.put('/:id', [
     values.push(id);
 
     const result = await query(`
-      UPDATE groups 
+// Removed SQL fragment: UPDATE groups 
       SET ${updateFields.join(', ')}
       WHERE id = $${paramCount}
       RETURNING *
@@ -941,7 +941,7 @@ router.get('/available-students/:classId', authenticateToken, async (req, res) =
 
     // Get students from the default group of this class
     const result = await query(`
-      SELECT DISTINCT
+// Removed SQL fragment: SELECT DISTINCT
         u.id,
         u.first_name,
         u.last_name,

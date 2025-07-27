@@ -108,7 +108,7 @@ router.get('/', [authenticateToken, requireInstructor], async (req, res) => {
       // Continue with original PostgreSQL logic below
     }
     const result = await query(`
-      SELECT
+// Removed SQL fragment: SELECT
         l.*,
         COALESCE(comp_stats.computer_count, 0) as computer_count,
         COALESCE(seat_stats.seat_count, 0) as seat_count,
@@ -311,7 +311,7 @@ router.get('/:id/availability', authenticateToken, async (req, res) => {
 
     // Get conflicting schedules
     const conflictingSchedules = await query(`
-      SELECT
+// Removed SQL fragment: SELECT
         s.id, s.title, s.scheduled_date, s.duration_minutes,
         COUNT(sa.id) as assigned_computers,
         COUNT(seat_a.id) as assigned_seats
@@ -326,7 +326,7 @@ router.get('/:id/availability', authenticateToken, async (req, res) => {
 
     // Get total resources
     const resourcesResult = await query(`
-      SELECT 
+// Removed SQL fragment: SELECT 
         COUNT(CASE WHEN c.is_functional = true THEN 1 END) as available_computers,
         COUNT(s.id) as available_seats
       FROM labs l
@@ -382,7 +382,7 @@ router.post('/', [authenticateToken, requireInstructor], async (req, res) => {
 
     // Create lab
     const result = await query(`
-      INSERT INTO labs (name, total_computers, total_seats, location)
+// Removed SQL fragment: INSERT INTO labs (name, total_computers, total_seats, location)
       VALUES ($1, $2, $3, $4)
       RETURNING *
     `, [labName, totalComputers, totalSeats, description]);
@@ -393,7 +393,7 @@ router.post('/', [authenticateToken, requireInstructor], async (req, res) => {
     for (let i = 1; i <= totalComputers; i++) {
       const computerName = `${labCode}-PC-${i.toString().padStart(3, '0')}`;
       await query(`
-        INSERT INTO computers (lab_id, computer_name, computer_number, specifications)
+// Removed SQL fragment: INSERT INTO computers (lab_id, computer_name, computer_number, specifications)
         VALUES ($1, $2, $3, $4)
       `, [lab.id, computerName, i, JSON.stringify({
         cpu: 'Intel i5',
@@ -406,7 +406,7 @@ router.post('/', [authenticateToken, requireInstructor], async (req, res) => {
     // Create seats
     for (let i = 1; i <= totalSeats; i++) {
       await query(`
-        INSERT INTO seats (lab_id, seat_number)
+// Removed SQL fragment: INSERT INTO seats (lab_id, seat_number)
         VALUES ($1, $2)
       `, [lab.id, i]);
     }
@@ -450,7 +450,7 @@ router.put('/:labId/computers/:computerId', [authenticateToken, requireInstructo
     values.push(computerId, labId);
 
     const result = await query(`
-      UPDATE computers 
+// Removed SQL fragment: UPDATE computers 
       SET ${updateFields.join(', ')}, updated_at = CURRENT_TIMESTAMP
       WHERE id = $${paramCount} AND lab_id = $${paramCount + 1}
       RETURNING *

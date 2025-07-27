@@ -8,7 +8,7 @@ const { authenticateToken, requireRole } = require('../middleware/auth');
 async function calculateGradeLetter(percentage) {
   try {
     const result = await query(`
-      SELECT grade_letter
+// Removed SQL fragment: SELECT grade_letter
       FROM grade_scales
       WHERE is_active = true
         AND $1 >= min_percentage
@@ -64,7 +64,7 @@ router.get('/', authenticateToken, async (req, res) => {
     queryParams.push(limit, offset);
 
     const result = await query(`
-      SELECT 
+// Removed SQL fragment: SELECT 
         ag.*,
         asub.assignment_distribution_id,
         asub.assignment_response_filename,
@@ -95,7 +95,7 @@ router.get('/', authenticateToken, async (req, res) => {
 
     // Get total count
     const countResult = await query(`
-      SELECT COUNT(*) as total 
+// Removed SQL fragment: SELECT COUNT(*) as total 
       FROM assignment_grades ag
       JOIN assignment_submissions asub ON ag.assignment_submission_id = asub.id
       JOIN assignment_distributions ad ON asub.assignment_distribution_id = ad.id
@@ -135,7 +135,7 @@ router.get('/submission/:submissionId', authenticateToken, async (req, res) => {
     }
 
     const result = await query(`
-      SELECT 
+// Removed SQL fragment: SELECT 
         ag.*,
         asub.assignment_distribution_id,
         asub.assignment_response_filename,
@@ -194,7 +194,7 @@ router.post('/', [
 
     // Check if submission exists
     const submissionResult = await query(`
-      SELECT asub.*, ad.assignment_id, ca.created_by
+// Removed SQL fragment: SELECT asub.*, ad.assignment_id, ca.created_by
       FROM assignment_submissions asub
       JOIN assignment_distributions ad ON asub.assignment_distribution_id = ad.id
       JOIN created_assignments ca ON ad.assignment_id = ca.id
@@ -218,14 +218,14 @@ router.post('/', [
 
     // Check if grade already exists
     const existingGradeResult = await query(`
-      SELECT id FROM assignment_grades WHERE assignment_submission_id = $1
+// Removed SQL fragment: SELECT id FROM assignment_grades WHERE assignment_submission_id = $1
     `, [submissionId]);
 
     let gradeResult;
     if (existingGradeResult.rows.length > 0) {
       // Update existing grade
       gradeResult = await query(`
-        UPDATE assignment_grades 
+// Removed SQL fragment: UPDATE assignment_grades 
         SET score = $1, max_score = $2, grade_letter = $3, feedback = $4, 
             instructor_id = $5, updated_at = CURRENT_TIMESTAMP
         WHERE assignment_submission_id = $6
@@ -234,7 +234,7 @@ router.post('/', [
     } else {
       // Create new grade
       gradeResult = await query(`
-        INSERT INTO assignment_grades (assignment_submission_id, instructor_id, score, max_score, grade_letter, feedback)
+// Removed SQL fragment: INSERT INTO assignment_grades (assignment_submission_id, instructor_id, score, max_score, grade_letter, feedback)
         VALUES ($1, $2, $3, $4, $5, $6)
         RETURNING *
       `, [submissionId, currentUser.id, score, maxScore, gradeLetter, feedback]);
@@ -242,7 +242,7 @@ router.post('/', [
 
     // Update submission status to graded
     await query(`
-      UPDATE assignment_submissions 
+// Removed SQL fragment: UPDATE assignment_submissions 
       SET status = 'graded', updated_at = CURRENT_TIMESTAMP
       WHERE id = $1
     `, [submissionId]);
@@ -278,7 +278,7 @@ router.put('/:id', [
 
     // Check if grade exists
     const gradeResult = await query(`
-      SELECT ag.*, asub.assignment_distribution_id
+// Removed SQL fragment: SELECT ag.*, asub.assignment_distribution_id
       FROM assignment_grades ag
       JOIN assignment_submissions asub ON ag.assignment_submission_id = asub.id
       WHERE ag.id = $1
@@ -328,7 +328,7 @@ router.put('/:id', [
     values.push(id);
 
     const updateResult = await query(`
-      UPDATE assignment_grades 
+// Removed SQL fragment: UPDATE assignment_grades 
       SET ${updates.join(', ')}
       WHERE id = $${paramCount}
       RETURNING *
@@ -354,7 +354,7 @@ router.delete('/:id', [
 
     // Check if grade exists
     const gradeResult = await query(`
-      SELECT ag.*, asub.id as submission_id
+// Removed SQL fragment: SELECT ag.*, asub.id as submission_id
       FROM assignment_grades ag
       JOIN assignment_submissions asub ON ag.assignment_submission_id = asub.id
       WHERE ag.id = $1
@@ -371,7 +371,7 @@ router.delete('/:id', [
 
     // Update submission status back to submitted
     await query(`
-      UPDATE assignment_submissions 
+// Removed SQL fragment: UPDATE assignment_submissions 
       SET status = 'submitted', updated_at = CURRENT_TIMESTAMP
       WHERE id = $1
     `, [grade.submission_id]);
@@ -422,7 +422,7 @@ router.get('/analytics', [
 
     // Get overall statistics
     const statsResult = await query(`
-      SELECT
+// Removed SQL fragment: SELECT
         COUNT(*) as total_grades,
         AVG(ag.percentage) as average_percentage,
         MIN(ag.percentage) as min_percentage,
@@ -443,7 +443,7 @@ router.get('/analytics', [
 
     // Get grade distribution by letter
     const gradeDistributionResult = await query(`
-      SELECT
+// Removed SQL fragment: SELECT
         ag.grade_letter,
         COUNT(*) as count,
         ROUND(COUNT(*) * 100.0 / SUM(COUNT(*)) OVER (), 2) as percentage
@@ -462,7 +462,7 @@ router.get('/analytics', [
 
     // Get top performing students
     const topStudentsResult = await query(`
-      SELECT
+// Removed SQL fragment: SELECT
         u.first_name || ' ' || u.last_name as student_name,
         u.student_id,
         c.name as class_name,
@@ -487,7 +487,7 @@ router.get('/analytics', [
 
     // Get assignment performance
     const assignmentPerformanceResult = await query(`
-      SELECT
+// Removed SQL fragment: SELECT
         ca.name as assignment_title,
         ca.id as assignment_id,
         COUNT(ag.id) as total_submissions,
@@ -513,7 +513,7 @@ router.get('/analytics', [
 
     // Get class performance comparison
     const classPerformanceResult = await query(`
-      SELECT
+// Removed SQL fragment: SELECT
         c.name as class_name,
         c.id as class_id,
         COUNT(ag.id) as total_grades,

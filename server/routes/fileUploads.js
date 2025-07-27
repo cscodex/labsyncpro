@@ -61,7 +61,7 @@ router.post('/upload', authenticateToken, upload.single('file'), async (req, res
 
     // Verify submission exists and user has permission
     const submissionCheck = await query(`
-      SELECT s.*, sch.title as schedule_title
+// Removed SQL fragment: SELECT s.*, sch.title as schedule_title
       FROM submissions s
       JOIN schedules sch ON s.schedule_id = sch.id
       WHERE s.id = $1 AND (
@@ -81,7 +81,7 @@ router.post('/upload', authenticateToken, upload.single('file'), async (req, res
 
     // Check if file of this type already exists for this submission
     const existingFile = await query(`
-      SELECT id, file_path FROM file_uploads 
+// Removed SQL fragment: SELECT id, file_path FROM file_uploads 
       WHERE submission_id = $1 AND file_type = $2
     `, [submissionId, fileType]);
 
@@ -98,7 +98,7 @@ router.post('/upload', authenticateToken, upload.single('file'), async (req, res
 
     // Save file information to database
     const result = await query(`
-      INSERT INTO file_uploads (
+// Removed SQL fragment: INSERT INTO file_uploads (
         submission_id, original_filename, stored_filename, file_path,
         file_size, mime_type, file_type, uploaded_by
       )
@@ -150,7 +150,7 @@ router.get('/submission/:submissionId', authenticateToken, async (req, res) => {
 
     // Verify access to submission
     const accessCheck = await query(`
-      SELECT s.id FROM submissions s
+// Removed SQL fragment: SELECT s.id FROM submissions s
       WHERE s.id = $1 AND (
         s.user_id = $2 OR 
         EXISTS (
@@ -170,7 +170,7 @@ router.get('/submission/:submissionId', authenticateToken, async (req, res) => {
     }
 
     const files = await query(`
-      SELECT 
+// Removed SQL fragment: SELECT 
         id, original_filename, file_type, file_size, 
         uploaded_by, created_at
       FROM file_uploads 
@@ -194,7 +194,7 @@ router.get('/download/:fileId', authenticateToken, async (req, res) => {
 
     // Get file info and verify access
     const fileInfo = await query(`
-      SELECT 
+// Removed SQL fragment: SELECT 
         fu.*, s.user_id as submission_user_id, s.group_id as submission_group_id,
         sch.instructor_id
       FROM file_uploads fu
@@ -219,7 +219,7 @@ router.get('/download/:fileId', authenticateToken, async (req, res) => {
     // Check group access
     if (!hasAccess && file.submission_group_id) {
       const groupAccess = await query(`
-        SELECT 1 FROM group_members 
+// Removed SQL fragment: SELECT 1 FROM group_members 
         WHERE group_id = $1 AND user_id = $2
       `, [file.submission_group_id, currentUser.id]);
       
@@ -256,7 +256,7 @@ router.delete('/:fileId', authenticateToken, async (req, res) => {
 
     // Get file info and verify ownership
     const fileInfo = await query(`
-      SELECT fu.*, s.user_id as submission_user_id, s.group_id as submission_group_id
+// Removed SQL fragment: SELECT fu.*, s.user_id as submission_user_id, s.group_id as submission_group_id
       FROM file_uploads fu
       JOIN submissions s ON fu.submission_id = s.id
       WHERE fu.id = $1 AND (

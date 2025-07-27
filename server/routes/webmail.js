@@ -207,7 +207,7 @@ router.get('/email-accounts', [
 ], async (req, res) => {
   try {
     const result = await query(`
-      SELECT
+// Removed SQL fragment: SELECT
         ea.id,
         ea.email,
         ea.first_name,
@@ -238,7 +238,7 @@ router.get('/email-templates', [
 ], async (req, res) => {
   try {
     const result = await query(`
-      SELECT
+// Removed SQL fragment: SELECT
         id, template_key, subject, html_content,
         text_content, variables, is_active, created_at
       FROM email_templates
@@ -271,7 +271,7 @@ router.put('/email-templates/:id', [
     const { subject, html_content, text_content, variables } = req.body;
 
     const result = await query(`
-      UPDATE email_templates
+// Removed SQL fragment: UPDATE email_templates
       SET subject = $1, html_content = $2, text_content = $3,
           variables = $4, updated_at = CURRENT_TIMESTAMP
       WHERE id = $5
@@ -319,12 +319,12 @@ router.get('/email-logs', [
 
     // Get total count
     const countResult = await query(`
-      SELECT COUNT(*) as total FROM email_logs WHERE ${whereClause}
+// Removed SQL fragment: SELECT COUNT(*) as total FROM email_logs WHERE ${whereClause}
     `, queryParams);
 
     // Get logs
     const logsResult = await query(`
-      SELECT
+// Removed SQL fragment: SELECT
         id, from_email, to_email, subject, template_key,
         status, error_message, sent_at, delivered_at
       FROM email_logs
@@ -362,7 +362,7 @@ router.get('/email-stats', [
     const accountStats = await query('SELECT * FROM email_account_stats');
 
     const logStats = await query(`
-      SELECT
+// Removed SQL fragment: SELECT
         COUNT(*) as total_emails,
         COUNT(*) FILTER (WHERE status = 'sent') as sent_emails,
         COUNT(*) FILTER (WHERE status = 'failed') as failed_emails,
