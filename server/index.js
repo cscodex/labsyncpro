@@ -12,10 +12,10 @@ const classRoutes = require('./routes/classes');
 const capacityRoutes = require('./routes/capacity');
 const groupRoutes = require('./routes/groups');
 const scheduleRoutes = require('./routes/schedules');
-// const assignmentRoutes = require('./routes/assignments');
+const assignmentRoutes = require('./routes/assignments');
 // const createdAssignmentRoutes = require('./routes/created-assignments');
 // const assignmentDistributionRoutes = require('./routes/assignment-distributions');
-// const submissionRoutes = require('./routes/submissions');
+const submissionRoutes = require('./routes/submissions');
 // const gradeRoutes = require('./routes/grades');
 // const assignmentGradeRoutes = require('./routes/assignment-grades');
 // const gradeScalesRoutes = require('./routes/grade-scales');
@@ -197,6 +197,8 @@ app.get('/api', (req, res) => {
       '/api/labs',
       '/api/users',
       '/api/assignments',
+      '/api/submissions',
+      '/api/groups',
       '/api/capacity'
     ]
   });
@@ -212,8 +214,8 @@ app.use('/api/groups', groupRoutes);
 app.use('/api/schedules', scheduleRoutes);
 // app.use('/api/assignments/created', createdAssignmentRoutes);
 // app.use('/api/assignment-distributions', assignmentDistributionRoutes);
-// app.use('/api/assignments', assignmentRoutes);
-// app.use('/api/submissions', submissionRoutes);
+app.use('/api/assignments', assignmentRoutes);
+app.use('/api/submissions', submissionRoutes);
 // app.use('/api/grades', gradeRoutes);
 // app.use('/api/assignment-grades', assignmentGradeRoutes);
 // app.use('/api/grade-scales', gradeScalesRoutes);
