@@ -283,4 +283,53 @@ router.get('/:id/stats', authenticateToken, async (req, res) => {
   }
 });
 
+// Get assignments for a specific class
+router.get('/:id/assignments', authenticateToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { labId } = req.query;
+
+    console.log('Fetching assignments for classId:', id, 'labId:', labId);
+
+    // For now, return sample data since the full schema isn't in Supabase yet
+    // In a full implementation, this would query the assignments table
+    const sampleAssignments = [
+      {
+        id: '1',
+        title: 'Introduction to Programming',
+        description: 'Basic programming concepts and syntax',
+        lab_id: labId || '1',
+        instructor_id: 'instructor1',
+        class_id: id,
+        scheduled_date: new Date().toISOString(),
+        duration_minutes: 120,
+        deadline: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+        status: 'scheduled',
+        max_participants: 25
+      },
+      {
+        id: '2',
+        title: 'Data Structures',
+        description: 'Arrays, linked lists, and basic data structures',
+        lab_id: labId || '1',
+        instructor_id: 'instructor1',
+        class_id: id,
+        scheduled_date: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+        duration_minutes: 120,
+        deadline: new Date(Date.now() + 8 * 24 * 60 * 60 * 1000).toISOString(),
+        status: 'scheduled',
+        max_participants: 25
+      }
+    ];
+
+    res.json({
+      assignments: sampleAssignments,
+      total: sampleAssignments.length
+    });
+  } catch (error) {
+    console.error('Get class assignments error:', error);
+    res.status(500).json({ error: 'Failed to fetch class assignments' });
+  }
+});
+
 module.exports = router;

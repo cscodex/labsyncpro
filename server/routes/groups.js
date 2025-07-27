@@ -119,7 +119,21 @@ router.get('/dashboard-stats', authenticateToken, async (req, res) => {
 
       if (groupsError) throw groupsError;
 
-      // Get total labs (computers data might not exist yet)
+      // For now, provide sample class data since the full schema isn't in Supabase yet
+      // In a full implementation, this would query the classes table and group membership
+      const totalClasses = 2;
+      const classesList = [
+        {
+          name: "Computer Science A",
+          studentCount: 2
+        },
+        {
+          name: "Computer Science B",
+          studentCount: 1
+        }
+      ];
+
+      // Get total labs and computers data
       const { data: labs, error: labsError } = await supabase
         .from('labs')
         .select('*');
@@ -132,7 +146,9 @@ router.get('/dashboard-stats', authenticateToken, async (req, res) => {
       const stats = {
         totalStudents: studentsCount || 0,
         totalGroups: groupsCount || 0,
-        totalComputers: totalComputers
+        totalComputers: totalComputers,
+        totalClasses: totalClasses,
+        classes: classesList
       };
 
       return res.json(stats);
@@ -144,7 +160,9 @@ router.get('/dashboard-stats', authenticateToken, async (req, res) => {
       const stats = {
         totalStudents: 0,
         totalGroups: 0,
-        totalComputers: 0
+        totalComputers: 0,
+        totalClasses: 0,
+        classes: []
       };
 
       return res.json(stats);
