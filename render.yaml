@@ -57,7 +57,7 @@ services:
     staticPublishPath: client/dist
     envVars:
       - key: VITE_API_URL
-        value: https://labsyncpro-api.onrender.com/api
+        value: https://labsyncpro.onrender.com/api
       - key: VITE_SUPABASE_URL
         value: https://awcgutnuuyemhmoykokk.supabase.co
       - key: VITE_SUPABASE_ANON_KEY

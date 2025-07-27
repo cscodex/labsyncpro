@@ -12,10 +12,10 @@ const getApiBaseUrl = () => {
     // Try to determine the backend URL based on current domain
     const currentDomain = window.location.hostname;
     if (currentDomain.includes('labsyncpro-frontend')) {
-      return 'https://labsyncpro-api.onrender.com/api';
+      return 'https://labsyncpro.onrender.com/api';
     }
     if (currentDomain.includes('onrender.com')) {
-      return 'https://labsyncpro-api.onrender.com/api';
+      return 'https://labsyncpro.onrender.com/api';
     }
   }
 
