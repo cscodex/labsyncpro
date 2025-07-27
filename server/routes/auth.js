@@ -184,6 +184,54 @@ router.get('/me', authenticateToken, async (req, res) => {
   }
 });
 
+// Get user profile (alias for /me)
+router.get('/profile', authenticateToken, async (req, res) => {
+  try {
+    // Try to get user from Supabase
+    try {
+      const { data: users, error } = await supabase
+        .from('users')
+        .select('id, email, first_name, last_name, role, student_id')
+        .eq('id', req.user.userId)
+        .limit(1);
+
+      if (error || !users || users.length === 0) {
+        throw new Error('User not found in Supabase');
+      }
+
+      const user = users[0];
+      res.json({
+        user: {
+          id: user.id,
+          email: user.email,
+          firstName: user.first_name,
+          lastName: user.last_name,
+          role: user.role,
+          studentId: user.student_id
+        }
+      });
+
+    } catch (supabaseError) {
+      console.log('Supabase profile fetch failed, using token data:', supabaseError.message);
+
+      // Fallback to token data
+      res.json({
+        user: {
+          id: req.user.userId,
+          email: req.user.email,
+          firstName: 'Demo',
+          lastName: 'User',
+          role: req.user.role
+        }
+      });
+    }
+
+  } catch (error) {
+    console.error('Get profile error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 // Password reset request
 router.post('/password-reset-request', [
   body('email').isEmail().normalizeEmail()

@@ -14,7 +14,7 @@
  * 3. Required npm packages: pg, @supabase/supabase-js, dotenv
  */
 
-require('dotenv').config({ path: './server/.env' });
+require('dote₹nv').config({ path: './server/.env' });
 const { Pool } = require('pg');
 const { createClient } = require('@supabase/supabase-js');
 

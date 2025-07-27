@@ -10,9 +10,8 @@ const userRoutes = require('./routes/users');
 const labRoutes = require('./routes/labs');
 const classRoutes = require('./routes/classes');
 const capacityRoutes = require('./routes/capacity');
-// Temporarily comment out broken routes
-// const groupRoutes = require('./routes/groups');
-// const scheduleRoutes = require('./routes/schedules');
+const groupRoutes = require('./routes/groups');
+const scheduleRoutes = require('./routes/schedules');
 // const assignmentRoutes = require('./routes/assignments');
 // const createdAssignmentRoutes = require('./routes/created-assignments');
 // const assignmentDistributionRoutes = require('./routes/assignment-distributions');
@@ -209,9 +208,8 @@ app.use('/api/users', userRoutes);
 app.use('/api/labs', labRoutes);
 app.use('/api/classes', classRoutes);
 app.use('/api/capacity', capacityRoutes);
-// Temporarily comment out broken routes
-// app.use('/api/groups', groupRoutes);
-// app.use('/api/schedules', scheduleRoutes);
+app.use('/api/groups', groupRoutes);
+app.use('/api/schedules', scheduleRoutes);
 // app.use('/api/assignments/created', createdAssignmentRoutes);
 // app.use('/api/assignment-distributions', assignmentDistributionRoutes);
 // app.use('/api/assignments', assignmentRoutes);
