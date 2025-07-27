@@ -516,7 +516,7 @@ router.get('/student', authenticateToken, async (req, res) => {
     // Ensure only students can access this endpoint
     if (req.user.role !== 'student') {
       return res.status(403).json({ error: 'Access denied. Students only.' });
-// Removed orphaned closing brace
+    }
     // TODO: Implement proper assignment distribution system with Supabase
     // For now, return empty assignments list for students
     console.log(`📚 Student ${userId} requested assignments - returning empty list (Supabase migration pending)`);
