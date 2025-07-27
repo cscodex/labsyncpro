@@ -110,7 +110,7 @@ const Groups: React.FC = () => {
       setTotalPages(Math.ceil((data.groups || []).length / itemsPerPage));
     } catch (err) {
       console.error('Error fetching groups:', err);
-      showNotification('Failed to fetch groups', 'error');
+      showError('Error', 'Failed to fetch groups');
     } finally {
       setLoading(false);
     }
@@ -239,7 +239,7 @@ const Groups: React.FC = () => {
       fetchGroups();
       
       // Show success notification
-      showNotification('Group created successfully!', 'success');
+      showSuccess('Success', 'Group created successfully!');
     } catch (error) {
       console.error('Error creating group:', error);
       setGroupNameError(error instanceof Error ? error.message : 'Failed to create group');
@@ -411,10 +411,10 @@ const Groups: React.FC = () => {
       setShowDeleteModal(false);
       setDeletingGroup(null);
       fetchGroups();
-      showNotification('Group deleted successfully!', 'success');
+      showSuccess('Success', 'Group deleted successfully!');
     } catch (error) {
       console.error('Error deleting group:', error);
-      showNotification('Failed to delete group', 'error');
+      showError('Error', 'Failed to delete group');
     }
   };
 

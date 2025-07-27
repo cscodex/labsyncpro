@@ -7,16 +7,16 @@ import './Labs.css';
 interface Lab {
   id: string;
   name: string;
-  totalComputers: number;
-  totalSeats: number;
+  total_computers: number;
+  total_seats: number;
   location: string;
-  equipment: string[];
-  isActive: boolean;
-  availableComputers: number;
-  availableSeats: number;
-  functionalComputers?: number;
-  maintenanceComputers?: number;
-  assignedComputers?: number;
+  equipment?: string[];
+  is_active: boolean;
+  computer_count: number;
+  functional_computers: number;
+  maintenance_computers: number;
+  assigned_computers: number;
+  available_computers: number;
 }
 
 interface Computer {
@@ -205,42 +205,50 @@ const Labs: React.FC = () => {
             <div key={lab.id} className="lab-card">
               <div className="lab-card-header">
                 <h3>{lab.name}</h3>
-                <div className={`lab-status ${lab.isActive ? 'active' : 'inactive'}`}>
-                  {lab.isActive ? 'Active' : 'Inactive'}
+                <div className={`lab-status ${lab.is_active ? 'active' : 'inactive'}`}>
+                  {lab.is_active ? 'Active' : 'Inactive'}
+                </div>
+              </div>
+
+              <div className="lab-capacity">
+                <div className="capacity-info">
+                  <strong>Capacity:</strong> {lab.total_computers} computers, {lab.total_seats} seats
                 </div>
               </div>
 
               <div className="lab-stats">
                 <div className="stat">
-                  <div className="stat-value">{lab.functionalComputers || lab.availableComputers}/{lab.totalComputers}</div>
+                  <div className="stat-value">{lab.functional_computers}/{lab.computer_count}</div>
                   <div className="stat-label">Functional Computers</div>
                 </div>
                 <div className="stat">
-                  <div className="stat-value">{lab.assignedComputers || 0}</div>
+                  <div className="stat-value">{lab.assigned_computers}</div>
                   <div className="stat-label">Currently Assigned</div>
                 </div>
                 <div className="stat">
-                  <div className="stat-value">{lab.maintenanceComputers || 0}</div>
+                  <div className="stat-value">{lab.maintenance_computers}</div>
                   <div className="stat-label">Under Maintenance</div>
                 </div>
                 <div className="stat">
-                  <div className="stat-value">{lab.availableSeats}/{lab.totalSeats}</div>
-                  <div className="stat-label">Seats Available</div>
+                  <div className="stat-value">{lab.available_computers}</div>
+                  <div className="stat-label">Available</div>
                 </div>
               </div>
 
               <div className="lab-location">
-                <strong>Location:</strong> {lab.location}
+                <strong>Location:</strong> {lab.location || 'Not specified'}
               </div>
 
-              <div className="lab-equipment">
-                <strong>Equipment:</strong>
-                <div className="equipment-tags">
-                  {lab.equipment.map((item, index) => (
-                    <span key={index} className="equipment-tag">{item}</span>
-                  ))}
+              {lab.equipment && lab.equipment.length > 0 && (
+                <div className="lab-equipment">
+                  <strong>Equipment:</strong>
+                  <div className="equipment-tags">
+                    {lab.equipment.map((item, index) => (
+                      <span key={index} className="equipment-tag">{item}</span>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
               <div className="lab-actions">
                 <button

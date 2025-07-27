@@ -13,6 +13,11 @@ interface DashboardStats {
   totalStudents: number;
   totalGroups: number;
   totalComputers: number;
+  totalClasses: number;
+  classes: Array<{
+    name: string;
+    studentCount: number;
+  }>;
 }
 
 interface RecentActivity {
@@ -87,6 +92,8 @@ const Dashboard: React.FC = () => {
         totalStudents: systemStatsResponse.data.totalStudents || 0,
         totalGroups: systemStatsResponse.data.totalGroups || 0,
         totalComputers: systemStatsResponse.data.totalComputers || 0,
+        totalClasses: systemStatsResponse.data.totalClasses || 0,
+        classes: systemStatsResponse.data.classes || [],
       });
 
       // Prepare recent activity
@@ -132,6 +139,8 @@ const Dashboard: React.FC = () => {
           totalStudents: systemStatsResponse.data.totalStudents || 0,
           totalGroups: systemStatsResponse.data.totalGroups || 0,
           totalComputers: systemStatsResponse.data.totalComputers || 0,
+          totalClasses: systemStatsResponse.data.totalClasses || 0,
+          classes: systemStatsResponse.data.classes || [],
         });
       } catch (statsError) {
         console.error('Error fetching system stats:', statsError);
@@ -144,6 +153,8 @@ const Dashboard: React.FC = () => {
           totalStudents: 3, // We have 3 users in database
           totalGroups: 0,
           totalComputers: 200, // Fallback value
+          totalClasses: 0,
+          classes: [],
         });
       }
 
@@ -214,6 +225,14 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
 
+        <div className="stat-card system-stat">
+          <div className="stat-icon">🎓</div>
+          <div className="stat-content">
+            <h3>{stats.totalClasses}</h3>
+            <p>Total Classes</p>
+          </div>
+        </div>
+
         {/* Activity Statistics */}
         <div className="stat-card">
           <div className="stat-icon">📅</div>
@@ -277,6 +296,24 @@ const Dashboard: React.FC = () => {
           )}
         </div>
       </div>
+
+      {/* Classes Overview */}
+      {stats.classes && stats.classes.length > 0 && (
+        <div className="dashboard-section">
+          <h2>Classes Overview</h2>
+          <div className="classes-grid">
+            {stats.classes.map((classItem, index) => (
+              <div key={index} className="class-card">
+                <div className="class-icon">🎓</div>
+                <div className="class-content">
+                  <h4>{classItem.name}</h4>
+                  <p>{classItem.studentCount} students</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Quick Actions */}
       <div className="dashboard-section">

@@ -595,7 +595,6 @@ const EditAssignmentModal: React.FC<EditAssignmentModalProps> = ({
 }) => {
   const { showError } = useNotification();
   const [loading, setLoading] = useState(false);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const [formData, setFormData] = useState({
     name: assignment.name || '',
@@ -610,25 +609,7 @@ const EditAssignmentModal: React.FC<EditAssignmentModalProps> = ({
     }));
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      // Check file type
-      if (file.type !== 'application/pdf') {
-        showError('Invalid File Type', 'Please select a PDF file.');
-        return;
-      }
 
-      // Check file size (10MB = 10 * 1024 * 1024 bytes)
-      const maxSize = 10 * 1024 * 1024;
-      if (file.size > maxSize) {
-        showError('File Too Large', 'File size must be less than 10MB.');
-        return;
-      }
-
-      setSelectedFile(file);
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -637,22 +618,18 @@ const EditAssignmentModal: React.FC<EditAssignmentModalProps> = ({
     try {
       const token = localStorage.getItem('token');
 
-      // Create FormData for file upload
-      const formDataToSend = new FormData();
-      formDataToSend.append('name', formData.name);
-      formDataToSend.append('description', formData.description);
-      formDataToSend.append('status', formData.status);
-
-      if (selectedFile) {
-        formDataToSend.append('pdf_file', selectedFile);
-      }
-
+      // For updates, we only send JSON data (no file upload support in PUT route)
       const response = await fetch(`/api/assignments/created/${assignment.id}`, {
         method: 'PUT',
         headers: {
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
         },
-        body: formDataToSend
+        body: JSON.stringify({
+          name: formData.name,
+          description: formData.description,
+          status: formData.status
+        })
       });
 
       if (!response.ok) {
@@ -710,45 +687,38 @@ const EditAssignmentModal: React.FC<EditAssignmentModalProps> = ({
           </div>
 
           <div className="form-section">
-            <h3>PDF File Upload</h3>
+            <h3>Current PDF File</h3>
             <div className="form-grid">
               <div className="form-group full-width">
-                <label htmlFor="edit-pdfFile">PDF File (Max 10MB)</label>
-                {assignment.pdfFileName && (
+                {assignment.pdfFileName ? (
                   <div className="current-file">
                     <p><strong>Current file:</strong> {assignment.pdfFileName}</p>
                     {assignment.pdfFileSize && (
                       <small>Size: {(assignment.pdfFileSize / (1024 * 1024)).toFixed(2)} MB</small>
                     )}
-                  </div>
-                )}
-                <input
-                  type="file"
-                  id="edit-pdfFile"
-                  accept=".pdf"
-                  onChange={handleFileChange}
-                  className="file-input"
-                />
-                {selectedFile && (
-                  <div className="file-preview">
-                    <div className="file-info">
-                      <span className="file-name">📄 {selectedFile.name}</span>
-                      <span className="file-size">({(selectedFile.size / (1024 * 1024)).toFixed(2)} MB)</span>
+                    <div className="file-actions" style={{ marginTop: '8px' }}>
+                      <a
+                        href={`/api/assignments/created/${assignment.id}/download`}
+                        className="btn btn-sm btn-primary"
+                        style={{ marginRight: '8px' }}
+                      >
+                        📥 Download
+                      </a>
+                      <a
+                        href={`/api/assignments/created/${assignment.id}/view`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn btn-sm btn-secondary"
+                      >
+                        👁️ View
+                      </a>
                     </div>
-                    <button
-                      type="button"
-                      className="btn btn-sm btn-danger"
-                      onClick={() => setSelectedFile(null)}
-                    >
-                      Remove
-                    </button>
                   </div>
+                ) : (
+                  <p className="no-file">No PDF file attached to this assignment.</p>
                 )}
                 <small className="form-help">
-                  {assignment.pdfFileName
-                    ? 'Upload a new PDF file to replace the current one (maximum 10MB)'
-                    : 'Upload a PDF file containing the assignment instructions (maximum 10MB)'
-                  }
+                  Note: PDF file updates are not supported in edit mode. Create a new assignment to upload a different PDF.
                 </small>
               </div>
             </div>
