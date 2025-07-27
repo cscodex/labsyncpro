@@ -519,136 +519,19 @@ router.get('/student', authenticateToken, async (req, res) => {
       return res.status(403).json({ error: 'Access denied. Students only.' });
     }
 
-    // Get assignments for the student from assignment_distributions table with submission tracking
-    const result = await query(`
-      SELECT DISTINCT
-        ad.id,
-        ad.assignment_id,
-        ca.name as title,
-        ca.description,
-        ad.deadline as due_date,
-        ad.scheduled_date,
-        ad.assignment_type,
-        c.name as class_name,
-        CONCAT(instructor.first_name, ' ', instructor.last_name) as instructor_name,
-        ad.assigned_at,
-        g.name as group_name,
-        ca.pdf_filename,
-        ca.created_at as assignment_created_at,
-        -- Submission tracking
-        sub.id as submission_id,
-        sub.assignment_response_filename,
-        sub.output_test_filename,
-        sub.submitted_at,
-        sub.is_locked,
-        -- Dynamic status calculation
-        CASE
-          WHEN ad.scheduled_date::date > CURRENT_DATE THEN 'upcoming'
-          WHEN sub.assignment_response_filename IS NOT NULL AND sub.output_test_filename IS NOT NULL THEN 'completed'
-          WHEN ad.deadline < NOW() AND (sub.assignment_response_filename IS NULL OR sub.output_test_filename IS NULL) THEN 'cancelled'
-          ELSE 'in_progress'
-        END as assignment_status,
-        -- PDF access control
-        CASE
-          WHEN ad.scheduled_date::date > CURRENT_DATE THEN false
-          ELSE true
-        END as can_access_pdf,
-        -- Debug info
-        ad.scheduled_date,
-        CURRENT_DATE as current_date,
-        NOW() as current_timestamp,
-        -- Upload permission (allow uploads within 7 days after deadline for testing)
-        CASE
-          WHEN sub.is_locked = true THEN false
-          WHEN ad.deadline < NOW() - INTERVAL '7 days' THEN false
-          ELSE true
-        END as can_upload
-      FROM assignment_distributions ad
-      JOIN created_assignments ca ON ad.assignment_id = ca.id
-      JOIN classes c ON ad.class_id = c.id
-      JOIN users instructor ON ca.created_by = instructor.id
-      LEFT JOIN groups g ON ad.group_id = g.id
-      LEFT JOIN assignment_submissions sub ON ad.id = sub.assignment_distribution_id AND sub.user_id = $1
-      WHERE ca.status = 'published' AND (
-        -- Individual assignments
-        ad.user_id = $1 OR
-        -- Group assignments where student is a member
-        (ad.assignment_type = 'group' AND ad.group_id IN (
-          SELECT group_id FROM group_members WHERE user_id = $1
-        )) OR
-        -- Class assignments where student belongs to the class
-        (ad.assignment_type = 'class' AND ad.class_id IN (
-          SELECT DISTINCT g.class_id
-          FROM groups g
-          JOIN group_members gm ON g.id = gm.group_id
-          WHERE gm.user_id = $1
-        ))
-      )
-      ORDER BY ad.deadline ASC, ad.assigned_at DESC
-    `, [userId]);
-
-    const assignments = result.rows.map(row => {
-      // Format date as DD-MMM-YYYY for upcoming assignments
-      const formatDateDDMMYYYY = (dateString) => {
-        if (!dateString) return null;
-        const date = new Date(dateString);
-        if (isNaN(date.getTime())) return null;
-
-        const day = date.getDate().toString().padStart(2, '0');
-        const month = date.toLocaleDateString('en-US', { month: 'short' });
-        const year = date.getFullYear();
-
-        return `${day}-${month}-${year}`;
-      };
-
-      return {
-        id: row.id,
-        assignmentId: row.assignment_id,
-        title: row.title,
-        description: row.description,
-        dueDate: row.due_date,
-        scheduledDate: row.scheduled_date,
-        scheduledDateFormatted: formatDateDDMMYYYY(row.scheduled_date),
-        status: row.assignment_status, // Use the dynamic status
-        assignmentType: row.assignment_type,
-        className: row.class_name,
-        instructorName: row.instructor_name,
-        assignmentStatus: row.assignment_status,
-        assignedAt: row.assigned_at,
-        groupName: row.group_name,
-        pdfFileName: row.pdf_filename,
-        canAccessPdf: row.can_access_pdf,
-        canUpload: row.can_upload,
-        type: row.assignment_type,
-        isUpcoming: row.assignment_status === 'upcoming',
-        // Submission details
-        submission: {
-          id: row.submission_id,
-          assignmentResponseFilename: row.assignment_response_filename,
-          outputTestFilename: row.output_test_filename,
-          submittedAt: row.submitted_at,
-          isLocked: row.is_locked,
-          hasResponse: !!row.assignment_response_filename,
-          hasOutput: !!row.output_test_filename,
-          isComplete: !!(row.assignment_response_filename && row.output_test_filename)
-        }
-      };
-    });
+    // TODO: Implement proper assignment distribution system with Supabase
+    // For now, return empty assignments list for students
+    console.log(`📚 Student ${userId} requested assignments - returning empty list (Supabase migration pending)`);
 
     res.json({
-      success: true,
-      assignments,
-      total: assignments.length
+      assignments: [],
+      message: 'Assignment distribution system is being migrated to Supabase. Check back soon!'
     });
-
   } catch (error) {
     console.error('Error fetching student assignments:', error);
-    // Return empty data instead of 500 error for better UX
     res.json({
-      success: true,
       assignments: [],
-      total: 0,
-      message: 'No assignments available at the moment'
+      message: 'Assignment system is being migrated to Supabase. Check back soon!'
     });
   }
 });

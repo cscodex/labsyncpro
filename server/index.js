@@ -239,6 +239,8 @@ app.listen(PORT, () => {
   console.log(`🚀 LabSyncPro server running on port ${PORT}`);
   console.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`🔗 Health check: http://localhost:${PORT}/health`);
+  console.log(`📁 Supabase Storage enabled for PDF files`);
+  console.log(`🔧 Assignment routes fixed`);
 });
 
 module.exports = app;

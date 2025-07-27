@@ -3,6 +3,7 @@ const { body, validationResult } = require('express-validator');
 const { authenticateToken, requireAdmin } = require('../middleware/auth');
 // const { applyRateLimit } = require('../middleware/rateLimiter');
 const { query } = require('../config/database');
+const { supabase } = require('../config/supabase');
 const {
   getEmails,
   getEmail,
@@ -141,18 +142,25 @@ router.delete('/email/:emailId', authenticateToken, async (req, res) => {
 // Get all users for email composition
 router.get('/users', authenticateToken, async (req, res) => {
   try {
-    const result = await query(
-      'SELECT email, first_name, last_name, role FROM users WHERE is_active = true ORDER BY first_name, last_name',
-      []
-    );
+    const { data: users, error } = await supabase
+      .from('users')
+      .select('email, first_name, last_name, role')
+      .eq('is_active', true)
+      .order('first_name', { ascending: true })
+      .order('last_name', { ascending: true });
 
-    const users = result.rows.map(user => ({
+    if (error) {
+      console.error('Supabase error:', error);
+      return res.status(500).json({ error: 'Failed to fetch users' });
+    }
+
+    const formattedUsers = users.map(user => ({
       email: user.email,
       name: `${user.first_name} ${user.last_name}`,
       role: user.role
     }));
 
-    res.json({ users });
+    res.json({ users: formattedUsers });
   } catch (error) {
     console.error('Users fetch error:', error);
     res.status(500).json({ error: 'Failed to fetch users' });

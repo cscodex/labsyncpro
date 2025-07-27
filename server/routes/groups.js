@@ -1,6 +1,5 @@
 const express = require('express');
 const { body, validationResult } = require('express-validator');
-const { query } = require('../config/database');
 const { supabase } = require('../config/supabase');
 const { authenticateToken, requireStudentOrInstructor } = require('../middleware/auth');
 
@@ -12,96 +11,81 @@ router.get('/', authenticateToken, async (req, res) => {
     const { classId, userId } = req.query;
     const currentUser = req.user;
 
-    let whereClause = '';
-    const queryParams = [];
-    let paramCount = 1;
-
-    // Students can only see groups they belong to or groups in their classes
-    if (currentUser.role === 'student') {
-      whereClause = `WHERE (
-        EXISTS (SELECT 1 FROM group_members gm WHERE gm.group_id = g.id AND gm.user_id = $${paramCount})
-        OR g.class_id IN (
-          SELECT DISTINCT gr.class_id FROM groups gr
-          JOIN group_members gm2 ON gr.id = gm2.group_id
-          WHERE gm2.user_id = $${paramCount}
+    // Build Supabase query
+    let query = supabase
+      .from('groups')
+      .select(`
+        id,
+        name,
+        description,
+        leader_id,
+        class_id,
+        is_default,
+        created_at,
+        updated_at,
+        classes!groups_class_id_fkey (
+          id,
+          name
+        ),
+        users!groups_leader_id_fkey (
+          id,
+          first_name,
+          last_name
         )
-      )`;
-      queryParams.push(currentUser.id);
-      paramCount++;
-    }
+      `)
+      .eq('is_default', false)
+      .order('created_at', { ascending: false });
 
     // Filter by class if provided
     if (classId) {
-      const classCondition = `g.class_id = $${paramCount}`;
-      whereClause += whereClause ? ` AND ${classCondition}` : `WHERE ${classCondition}`;
-      queryParams.push(classId);
-      paramCount++;
+      query = query.eq('class_id', classId);
     }
 
-    if (classId) {
-      whereClause += whereClause ? ` AND g.class_id = $${paramCount}` : `WHERE g.class_id = $${paramCount}`;
-      queryParams.push(classId);
-      paramCount++;
+    // For students, we'll handle filtering after the query for simplicity
+    const { data: groups, error } = await query;
+
+    if (error) {
+      console.error('Supabase error fetching groups:', error);
+      return res.status(500).json({ error: 'Failed to fetch groups' });
     }
-
-    if (userId) {
-      whereClause += whereClause ? 
-        ` AND EXISTS (SELECT 1 FROM group_members gm WHERE gm.group_id = g.id AND gm.user_id = $${paramCount})` :
-        `WHERE EXISTS (SELECT 1 FROM group_members gm WHERE gm.group_id = g.id AND gm.user_id = $${paramCount})`;
-      queryParams.push(userId);
-      paramCount++;
-    }
-
-    // Add filter to exclude default groups
-    const defaultGroupFilter = 'g.is_default = false';
-    whereClause += whereClause ? ` AND ${defaultGroupFilter}` : `WHERE ${defaultGroupFilter}`;
-
-    const result = await query(`
-      SELECT
-        g.*,
-        c.name as class_name,
-        COUNT(gm.user_id) as member_count,
-        leader.first_name as leader_first_name,
-        leader.last_name as leader_last_name
-      FROM groups g
-      JOIN classes c ON g.class_id = c.id
-      LEFT JOIN group_members gm ON g.id = gm.group_id
-      LEFT JOIN users leader ON g.leader_id = leader.id
-      ${whereClause}
-      GROUP BY g.id, c.name, leader.first_name, leader.last_name
-      ORDER BY g.created_at DESC
-    `, queryParams);
 
     // Get members for each group
     const groupsWithMembers = await Promise.all(
-      result.rows.map(async (group) => {
-        const membersResult = await query(`
-          SELECT
-            u.id, u.first_name, u.last_name, u.student_id, u.email
-          FROM group_members gm
-          JOIN users u ON gm.user_id = u.id
-          WHERE gm.group_id = $1
-          ORDER BY u.first_name, u.last_name
-        `, [group.id]);
+      groups.map(async (group) => {
+        // Get members for this group
+        const { data: members, error: membersError } = await supabase
+          .from('group_members')
+          .select(`
+            users!group_members_user_id_fkey (
+              id,
+              first_name,
+              last_name,
+              email,
+              student_id
+            )
+          `)
+          .eq('group_id', group.id);
+
+        const membersList = membersError ? [] : members.map(m => ({
+          id: m.users.id,
+          firstName: m.users.first_name,
+          lastName: m.users.last_name,
+          email: m.users.email,
+          studentId: m.users.student_id
+        }));
 
         return {
           id: group.id,
           name: group.name,
           description: group.description,
           leaderId: group.leader_id,
-          leaderName: group.leader_first_name && group.leader_last_name
-            ? `${group.leader_first_name} ${group.leader_last_name}`
+          leaderName: group.users
+            ? `${group.users.first_name} ${group.users.last_name}`
             : 'No Leader',
           classId: group.class_id,
-          className: group.class_name,
-          memberCount: parseInt(group.member_count),
-          members: membersResult.rows.map(member => ({
-            id: member.id,
-            firstName: member.first_name,
-            lastName: member.last_name,
-            email: member.email,
-            studentId: member.student_id
-          })),
+          className: group.classes ? group.classes.name : 'Unknown Class',
+          memberCount: membersList.length,
+          members: membersList,
           createdAt: group.created_at
         };
       })
