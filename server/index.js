@@ -181,9 +181,10 @@ app.get('/health', (req, res) => {
   res.json({
     status: 'OK',
     timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    database: 'connected (supabase)',
     version: '1.0.0',
-    environment: process.env.NODE_ENV || 'development',
-    supabase_configured: !!(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY)
+    environment: process.env.NODE_ENV || 'development'
   });
 });
 

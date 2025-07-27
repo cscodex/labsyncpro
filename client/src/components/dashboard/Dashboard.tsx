@@ -62,15 +62,27 @@ const Dashboard: React.FC = () => {
       });
       
       // Fetch submissions (for students) or all submissions (for instructors)
-      const submissionsResponse = await submissionsAPI.getSubmissions({
-        limit: 10,
-        ...(user?.role === 'student' && { status: 'submitted' })
-      });
+      let submissionsResponse;
+      try {
+        submissionsResponse = await submissionsAPI.getSubmissions({
+          limit: 10,
+          ...(user?.role === 'student' && { status: 'submitted' })
+        });
+      } catch (error) {
+        console.warn('Submissions API not available yet:', error);
+        submissionsResponse = { data: { submissions: [] } };
+      }
       
       // Fetch recent grades
-      const gradesResponse = await gradesAPI.getGrades({
-        limit: 5
-      });
+      let gradesResponse;
+      try {
+        gradesResponse = await gradesAPI.getGrades({
+          limit: 5
+        });
+      } catch (error) {
+        console.warn('Grades API not available yet:', error);
+        gradesResponse = { data: { grades: [] } };
+      }
 
       // Fetch system statistics
       const systemStatsResponse = await dashboardAPI.getSystemStats();
