@@ -1,6 +1,31 @@
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
+// API Base URL configuration with better fallback handling
+const getApiBaseUrl = () => {
+  // Check if we have a specific API URL set
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL;
+  }
+
+  // If we're in production and no API URL is set, try to construct it
+  if (import.meta.env.PROD) {
+    // Try to determine the backend URL based on current domain
+    const currentDomain = window.location.hostname;
+    if (currentDomain.includes('labsyncpro-frontend')) {
+      return 'https://labsyncpro-api.onrender.com/api';
+    }
+    if (currentDomain.includes('onrender.com')) {
+      return 'https://labsyncpro-api.onrender.com/api';
+    }
+  }
+
+  // Default fallback for development
+  return '/api';
+};
+
+const API_BASE_URL = getApiBaseUrl();
+
+console.log('🔗 API Base URL:', API_BASE_URL);
 
 // Create axios instance
 const api = axios.create({
