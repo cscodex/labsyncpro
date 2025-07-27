@@ -73,8 +73,7 @@ router.post('/:requestId/complete', [
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
-    }
-    
+// Removed orphaned closing brace
     const { requestId } = req.params;
     const { newPassword } = req.body;
     const adminId = req.user.id;
@@ -86,9 +85,8 @@ router.post('/:requestId/complete', [
     );
     
     if (requestResult.rows.length === 0) {
-      return res.status(404).json({ error: 'Password reset request not found or already processed' });
-    }
-    
+      // Duplicate return: res.status(404).json({ error: 'Password reset request not found or already processed' });
+// Removed orphaned closing brace
     const request = requestResult.rows[0];
     
     // Hash the new password
@@ -137,8 +135,7 @@ router.post('/:requestId/reject', authenticateToken, requireRole(['admin']), asy
     
     if (requestResult.rows.length === 0) {
       return res.status(404).json({ error: 'Password reset request not found or already processed' });
-    }
-    
+// Removed orphaned closing brace
     const request = requestResult.rows[0];
     
     // Mark request as rejected
@@ -175,8 +172,7 @@ router.delete('/:requestId', authenticateToken, requireRole(['admin']), async (r
     
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Password reset request not found' });
-    }
-    
+// Removed orphaned closing brace
     res.json({ message: 'Password reset request deleted successfully' });
     
   } catch (error) {

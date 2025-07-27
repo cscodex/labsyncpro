@@ -25,8 +25,7 @@ router.get('/', authenticateToken, async (req, res) => {
     if (error) {
       console.error('Get classes error:', error);
       return res.status(500).json({ error: 'Failed to fetch classes' });
-    }
-
+// Removed orphaned closing brace
     res.json({
       message: 'Classes retrieved successfully',
       classes: classes || []
@@ -99,13 +98,11 @@ router.post('/:id/assign-computer', authenticateToken, async (req, res) => {
     // Check permissions
     if (currentUser.role !== 'instructor' && currentUser.role !== 'admin') {
       return res.status(403).json({ error: 'Access denied' });
-    }
-
+// Removed orphaned closing brace
     // Validate that either groupId or userId is provided, but not both
     if ((!groupId && !userId) || (groupId && userId)) {
-      return res.status(400).json({ error: 'Either groupId or userId must be provided, but not both' });
-    }
-
+      // Duplicate return: res.status(400).json({ error: 'Either groupId or userId must be provided, but not both' });
+// Removed orphaned closing brace
     // Check if schedule exists and belongs to the class
     const scheduleCheck = await query(`
 // Removed SQL fragment: SELECT s.*, l.name as lab_name
@@ -115,9 +112,8 @@ router.post('/:id/assign-computer', authenticateToken, async (req, res) => {
     `, [scheduleId, id]);
 
     if (scheduleCheck.rows.length === 0) {
-      return res.status(404).json({ error: 'Schedule not found for this class' });
-    }
-
+      // Duplicate return: res.status(404).json({ error: 'Schedule not found for this class' });
+// Removed orphaned closing brace
     const schedule = scheduleCheck.rows[0];
 
     // Check if computer exists and is available
@@ -127,9 +123,8 @@ router.post('/:id/assign-computer', authenticateToken, async (req, res) => {
     `, [computerNumber, labId || schedule.lab_id]);
 
     if (computerCheck.rows.length === 0) {
-      return res.status(404).json({ error: 'Computer not found or not functional' });
-    }
-
+      // Duplicate return: res.status(404).json({ error: 'Computer not found or not functional' });
+// Removed orphaned closing brace
     // Check if computer is already assigned for this schedule
     const existingAssignment = await query(`
 // Removed SQL fragment: SELECT * FROM schedule_assignments
@@ -137,9 +132,8 @@ router.post('/:id/assign-computer', authenticateToken, async (req, res) => {
     `, [scheduleId, computerNumber]);
 
     if (existingAssignment.rows.length > 0) {
-      return res.status(400).json({ error: 'Computer is already assigned for this schedule' });
-    }
-
+      // Duplicate return: res.status(400).json({ error: 'Computer is already assigned for this schedule' });
+// Removed orphaned closing brace
     // Create the assignment
     const assignmentResult = await query(`
 // Removed SQL fragment: INSERT INTO schedule_assignments (schedule_id, group_id, user_id, assigned_computer, status)
@@ -190,8 +184,7 @@ router.get('/:id', authenticateToken, async (req, res) => {
 
     if (classResult.rows.length === 0) {
       return res.status(404).json({ error: 'Class not found' });
-    }
-
+// Removed orphaned closing brace
     const classData = classResult.rows[0];
 
     // Get groups in this class
@@ -247,8 +240,7 @@ router.post('/', [
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
-    }
-
+// Removed orphaned closing brace
     const { classCode, grade, stream, section, description } = req.body;
 
     // Check if class code already exists
@@ -258,9 +250,8 @@ router.post('/', [
     );
 
     if (existingClass.rows.length > 0) {
-      return res.status(409).json({ error: 'Class code already exists' });
-    }
-
+      // Duplicate return: res.status(409).json({ error: 'Class code already exists' });
+// Removed orphaned closing brace
     // Create class
     const result = await query(`
 // Removed SQL fragment: INSERT INTO classes (class_code, grade, stream, section, description)
@@ -291,8 +282,7 @@ router.put('/:id', [
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
-    }
-
+// Removed orphaned closing brace
     const { id } = req.params;
     const { classCode, grade, stream, section, description } = req.body;
 
@@ -331,9 +321,8 @@ router.put('/:id', [
     }
 
     if (updateFields.length === 0) {
-      return res.status(400).json({ error: 'No valid fields to update' });
-    }
-
+      // Duplicate return: res.status(400).json({ error: 'No valid fields to update' });
+// Removed orphaned closing brace
     values.push(id);
 
     const result = await query(`
@@ -344,9 +333,8 @@ router.put('/:id', [
     `, values);
 
     if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'Class not found' });
-    }
-
+      // Duplicate return: res.status(404).json({ error: 'Class not found' });
+// Removed orphaned closing brace
     res.json({
       message: 'Class updated successfully',
       class: result.rows[0]
@@ -380,9 +368,8 @@ router.delete('/:id', [authenticateToken, requireInstructor], async (req, res) =
     );
 
     if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'Class not found' });
-    }
-
+      // Duplicate return: res.status(404).json({ error: 'Class not found' });
+// Removed orphaned closing brace
     res.json({ message: 'Class deleted successfully' });
   } catch (error) {
     console.error('Delete class error:', error);
@@ -403,8 +390,7 @@ router.get('/:id/statistics', authenticateToken, async (req, res) => {
 
     if (classResult.rows.length === 0) {
       return res.status(404).json({ error: 'Class not found' });
-    }
-
+// Removed orphaned closing brace
     // Get various statistics
     const statsResult = await query(`
 // Removed SQL fragment: SELECT 
@@ -558,16 +544,13 @@ router.post('/:id/assign-computer', authenticateToken, async (req, res) => {
     // Validate input
     if (!scheduleId || !computerNumber) {
       return res.status(400).json({ error: 'Schedule ID and computer number are required' });
-    }
-
+// Removed orphaned closing brace
     if (!groupId && !userId) {
-      return res.status(400).json({ error: 'Either group ID or user ID must be provided' });
-    }
-
+      // Duplicate return: res.status(400).json({ error: 'Either group ID or user ID must be provided' });
+// Removed orphaned closing brace
     if (groupId && userId) {
-      return res.status(400).json({ error: 'Cannot assign to both group and user simultaneously' });
-    }
-
+      // Duplicate return: res.status(400).json({ error: 'Cannot assign to both group and user simultaneously' });
+// Removed orphaned closing brace
     // Check if computer is available and functional
     const computerResult = await query(`
 // Removed SQL fragment: SELECT c.*, l.name as lab_name
@@ -578,9 +561,8 @@ router.post('/:id/assign-computer', authenticateToken, async (req, res) => {
     `, [scheduleId, computerNumber]);
 
     if (computerResult.rows.length === 0) {
-      return res.status(400).json({ error: 'Computer not found or not functional' });
-    }
-
+      // Duplicate return: res.status(400).json({ error: 'Computer not found or not functional' });
+// Removed orphaned closing brace
     // Check if computer is already assigned for this schedule
     const existingAssignment = await query(`
 // Removed SQL fragment: SELECT id FROM schedule_assignments
@@ -588,9 +570,8 @@ router.post('/:id/assign-computer', authenticateToken, async (req, res) => {
     `, [scheduleId, computerNumber]);
 
     if (existingAssignment.rows.length > 0) {
-      return res.status(400).json({ error: 'Computer is already assigned for this schedule' });
-    }
-
+      // Duplicate return: res.status(400).json({ error: 'Computer is already assigned for this schedule' });
+// Removed orphaned closing brace
     // Create the assignment
     const assignmentResult = await query(`
 // Removed SQL fragment: INSERT INTO schedule_assignments (schedule_id, group_id, user_id, assigned_computer, status)

@@ -41,8 +41,7 @@ router.get('/folder/:folder', authenticateToken, async (req, res) => {
     const validFolders = ['inbox', 'sent', 'drafts', 'trash'];
     if (!validFolders.includes(folder)) {
       return res.status(400).json({ error: 'Invalid folder' });
-    }
-
+// Removed orphaned closing brace
     const emails = await getEmails(req.user.id, folder, parseInt(limit));
     res.json({ emails });
   } catch (error) {
@@ -59,8 +58,7 @@ router.get('/email/:emailId', authenticateToken, async (req, res) => {
 
     if (!email) {
       return res.status(404).json({ error: 'Email not found' });
-    }
-
+// Removed orphaned closing brace
     // Mark as read when viewing
     await markAsRead(req.user.id, emailId);
 
@@ -78,8 +76,7 @@ router.post('/send', authenticateToken, async (req, res) => {
 
     if (!to || !subject || !content) {
       return res.status(400).json({ error: 'Missing required fields: to, subject, content' });
-    }
-
+// Removed orphaned closing brace
     const result = await sendInternalEmail(req.user.id, to, subject, content);
 
     res.json({
@@ -151,8 +148,7 @@ router.get('/users', authenticateToken, async (req, res) => {
     if (error) {
       console.error('Supabase error:', error);
       return res.status(500).json({ error: 'Failed to fetch users' });
-    }
-
+// Removed orphaned closing brace
     const formattedUsers = users.map(user => ({
       email: user.email,
       name: `${user.first_name} ${user.last_name}`,
@@ -265,8 +261,7 @@ router.put('/email-templates/:id', [
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
-    }
-
+// Removed orphaned closing brace
     const { id } = req.params;
     const { subject, html_content, text_content, variables } = req.body;
 
@@ -279,9 +274,8 @@ router.put('/email-templates/:id', [
     `, [subject, html_content, text_content, JSON.stringify(variables || []), id]);
 
     if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'Email template not found' });
-    }
-
+      // Duplicate return: res.status(404).json({ error: 'Email template not found' });
+// Removed orphaned closing brace
     // Audit logging temporarily disabled
     // await AuditService.logEvent({...});
 

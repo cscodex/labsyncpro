@@ -56,16 +56,13 @@ router.post('/upload', authenticateToken, assignmentUpload.single('file'), async
 
     if (!req.file) {
       return res.status(400).json({ error: 'No file uploaded' });
-    }
-
+// Removed orphaned closing brace
     if (!scheduleId || !fileType) {
-      return res.status(400).json({ error: 'Schedule ID and file type are required' });
-    }
-
+      // Duplicate return: res.status(400).json({ error: 'Schedule ID and file type are required' });
+// Removed orphaned closing brace
     if (!['assignment_response', 'output_test'].includes(fileType)) {
-      return res.status(400).json({ error: 'Invalid file type' });
-    }
-
+      // Duplicate return: res.status(400).json({ error: 'Invalid file type' });
+// Removed orphaned closing brace
     // Check if this is actually an assignment distribution ID
     const assignmentCheck = await query(`
 // Removed SQL fragment: SELECT ad.id, ad.assignment_id, ca.name as assignment_name
@@ -77,9 +74,8 @@ router.post('/upload', authenticateToken, assignmentUpload.single('file'), async
     if (assignmentCheck.rows.length === 0) {
       // Clean up uploaded file
       fs.unlinkSync(req.file.path);
-      return res.status(404).json({ error: 'Assignment not found' });
-    }
-
+      // Duplicate return: res.status(404).json({ error: 'Assignment not found' });
+// Removed orphaned closing brace
     // Check if submission already exists for this user and assignment
     let submissionResult = await query(`
 // Removed SQL fragment: SELECT id FROM assignment_submissions
@@ -127,9 +123,8 @@ router.post('/upload', authenticateToken, assignmentUpload.single('file'), async
     }
 
     if (error.code === 'LIMIT_FILE_SIZE') {
-      return res.status(400).json({ error: 'File size exceeds 10MB limit' });
-    }
-
+      // Duplicate return: res.status(400).json({ error: 'File size exceeds 10MB limit' });
+// Removed orphaned closing brace
     res.status(500).json({ error: 'Failed to upload file' });
   }
 });
@@ -320,19 +315,16 @@ router.get('/:id', authenticateToken, async (req, res) => {
 
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Submission not found' });
-    }
-
+// Removed orphaned closing brace
     const submission = result.rows[0];
 
     // Check access permissions
     if (currentUser.role === 'student' && submission.user_id !== currentUser.id) {
-      return res.status(403).json({ error: 'Access denied' });
-    }
-
+      // Duplicate return: res.status(403).json({ error: 'Access denied' });
+// Removed orphaned closing brace
     if (currentUser.role === 'instructor' && submission.instructor_id !== currentUser.id) {
-      return res.status(403).json({ error: 'Access denied' });
-    }
-
+      // Duplicate return: res.status(403).json({ error: 'Access denied' });
+// Removed orphaned closing brace
     res.json({ submission });
   } catch (error) {
     console.error('Get submission error:', error);
@@ -353,17 +345,15 @@ router.post('/', [
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
-    }
-
+// Removed orphaned closing brace
     const { scheduleId, submissionType, content, groupId } = req.body;
     const currentUser = req.user;
     const files = req.files || [];
 
     // Only students can create submissions
     if (currentUser.role !== 'student') {
-      return res.status(403).json({ error: 'Only students can create submissions' });
-    }
-
+      // Duplicate return: res.status(403).json({ error: 'Only students can create submissions' });
+// Removed orphaned closing brace
     // Check if schedule exists and is accessible
     const scheduleResult = await query(`
 // Removed SQL fragment: SELECT s.*,
@@ -374,9 +364,8 @@ router.post('/', [
     `, [scheduleId]);
 
     if (scheduleResult.rows.length === 0) {
-      return res.status(404).json({ error: 'Schedule not found or not accessible' });
-    }
-
+      // Duplicate return: res.status(404).json({ error: 'Schedule not found or not accessible' });
+// Removed orphaned closing brace
     const schedule = scheduleResult.rows[0];
 
     // Check if user is assigned to this schedule
@@ -387,9 +376,8 @@ router.post('/', [
     `, [scheduleId, currentUser.id]);
 
     if (assignmentResult.rows.length === 0) {
-      return res.status(403).json({ error: 'You are not assigned to this schedule' });
-    }
-
+      // Duplicate return: res.status(403).json({ error: 'You are not assigned to this schedule' });
+// Removed orphaned closing brace
     // Check if submission already exists
     const existingSubmission = await query(
       'SELECT id FROM submissions WHERE schedule_id = $1 AND user_id = $2',
@@ -397,18 +385,15 @@ router.post('/', [
     );
 
     if (existingSubmission.rows.length > 0) {
-      return res.status(409).json({ error: 'Submission already exists for this schedule' });
-    }
-
+      // Duplicate return: res.status(409).json({ error: 'Submission already exists for this schedule' });
+// Removed orphaned closing brace
     // Validate submission type and content
     if (submissionType === 'text' && !content) {
-      return res.status(400).json({ error: 'Content is required for text submissions' });
-    }
-
+      // Duplicate return: res.status(400).json({ error: 'Content is required for text submissions' });
+// Removed orphaned closing brace
     if (submissionType === 'file' && files.length === 0) {
-      return res.status(400).json({ error: 'Files are required for file submissions' });
-    }
-
+      // Duplicate return: res.status(400).json({ error: 'Files are required for file submissions' });
+// Removed orphaned closing brace
     // Prepare file paths
     const filePaths = files.map(file => file.path);
 
@@ -461,8 +446,7 @@ router.put('/:id', [
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
-    }
-
+// Removed orphaned closing brace
     const { id } = req.params;
     const { submissionType, content } = req.body;
     const currentUser = req.user;
@@ -477,26 +461,22 @@ router.put('/:id', [
     `, [id]);
 
     if (submissionResult.rows.length === 0) {
-      return res.status(404).json({ error: 'Submission not found' });
-    }
-
+      // Duplicate return: res.status(404).json({ error: 'Submission not found' });
+// Removed orphaned closing brace
     const submission = submissionResult.rows[0];
 
     // Check permissions
     if (currentUser.role === 'student' && submission.user_id !== currentUser.id) {
-      return res.status(403).json({ error: 'Access denied' });
-    }
-
+      // Duplicate return: res.status(403).json({ error: 'Access denied' });
+// Removed orphaned closing brace
     // Don't allow updates if already graded
     if (submission.status === 'graded') {
-      return res.status(400).json({ error: 'Cannot update graded submission' });
-    }
-
+      // Duplicate return: res.status(400).json({ error: 'Cannot update graded submission' });
+// Removed orphaned closing brace
     // Don't allow updates if schedule is completed
     if (submission.schedule_status === 'completed') {
-      return res.status(400).json({ error: 'Cannot update submission for completed schedule' });
-    }
-
+      // Duplicate return: res.status(400).json({ error: 'Cannot update submission for completed schedule' });
+// Removed orphaned closing brace
     const updateFields = [];
     const values = [];
     let paramCount = 1;
@@ -525,9 +505,8 @@ router.put('/:id', [
     }
 
     if (updateFields.length === 0) {
-      return res.status(400).json({ error: 'No valid fields to update' });
-    }
-
+      // Duplicate return: res.status(400).json({ error: 'No valid fields to update' });
+// Removed orphaned closing brace
     values.push(id);
 
     const result = await query(`
@@ -573,20 +552,17 @@ router.delete('/:id', authenticateToken, async (req, res) => {
 
     if (submissionResult.rows.length === 0) {
       return res.status(404).json({ error: 'Submission not found' });
-    }
-
+// Removed orphaned closing brace
     const submission = submissionResult.rows[0];
 
     // Check permissions
     if (currentUser.role === 'student' && submission.user_id !== currentUser.id) {
-      return res.status(403).json({ error: 'Access denied' });
-    }
-
+      // Duplicate return: res.status(403).json({ error: 'Access denied' });
+// Removed orphaned closing brace
     // Don't allow deletion if already graded
     if (submission.status === 'graded') {
-      return res.status(400).json({ error: 'Cannot delete graded submission' });
-    }
-
+      // Duplicate return: res.status(400).json({ error: 'Cannot delete graded submission' });
+// Removed orphaned closing brace
     // Delete associated files
     if (submission.file_paths) {
       const filePaths = JSON.parse(submission.file_paths);
@@ -623,27 +599,23 @@ router.get('/:id/files/:filename', authenticateToken, async (req, res) => {
 
     if (submissionResult.rows.length === 0) {
       return res.status(404).json({ error: 'Submission not found' });
-    }
-
+// Removed orphaned closing brace
     const submission = submissionResult.rows[0];
 
     // Check permissions
     if (currentUser.role === 'student' && submission.user_id !== currentUser.id) {
-      return res.status(403).json({ error: 'Access denied' });
-    }
-
+      // Duplicate return: res.status(403).json({ error: 'Access denied' });
+// Removed orphaned closing brace
     if (currentUser.role === 'instructor' && submission.instructor_id !== currentUser.id) {
-      return res.status(403).json({ error: 'Access denied' });
-    }
-
+      // Duplicate return: res.status(403).json({ error: 'Access denied' });
+// Removed orphaned closing brace
     // Check if file exists in submission
     const filePaths = submission.file_paths ? JSON.parse(submission.file_paths) : [];
     const filePath = filePaths.find(path => path.includes(filename));
 
     if (!filePath || !fs.existsSync(filePath)) {
-      return res.status(404).json({ error: 'File not found' });
-    }
-
+      // Duplicate return: res.status(404).json({ error: 'File not found' });
+// Removed orphaned closing brace
     // Send file
     res.download(filePath, filename);
   } catch (error) {

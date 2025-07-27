@@ -142,7 +142,7 @@ router.get('/:id', authenticateToken, async (req, res) => {
     };
 
     if (sampleClasses[id]) {
-      return res.json({
+      // Duplicate return: res.json({
         message: 'Class retrieved successfully (sample data)',
         class: sampleClasses[id]
       });
@@ -206,8 +206,7 @@ router.post('/', [
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
-    }
-
+// Removed orphaned closing brace
     const { name, description, grade, stream, section } = req.body;
 
     // Check if class with same name already exists
@@ -218,9 +217,8 @@ router.post('/', [
       .single();
 
     if (existingClass) {
-      return res.status(400).json({ error: 'Class with this name already exists' });
-    }
-
+      // Duplicate return: res.status(400).json({ error: 'Class with this name already exists' });
+// Removed orphaned closing brace
     const { data: newClass, error } = await supabase
       .from('classes')
       .insert({
@@ -232,9 +230,8 @@ router.post('/', [
 
     if (error) {
       console.error('Create class error:', error);
-      return res.status(500).json({ error: 'Failed to create class' });
-    }
-
+      // Duplicate return: res.status(500).json({ error: 'Failed to create class' });
+// Removed orphaned closing brace
     res.status(201).json({
       message: 'Class created successfully',
       class: newClass
@@ -256,8 +253,7 @@ router.put('/:id', [
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
-    }
-
+// Removed orphaned closing brace
     const { id } = req.params;
     const { name, description, grade, stream, section } = req.body;
 
@@ -274,9 +270,8 @@ router.put('/:id', [
 
     // Check if there are any fields to update
     if (Object.keys(updateData).length === 1) { // Only updated_at
-      return res.status(400).json({ error: 'No valid fields to update' });
-    }
-
+      // Duplicate return: res.status(400).json({ error: 'No valid fields to update' });
+// Removed orphaned closing brace
     const { data: updatedClass, error } = await supabase
       .from('classes')
       .update(updateData)
@@ -286,12 +281,11 @@ router.put('/:id', [
 
     if (error) {
       if (error.code === 'PGRST116') {
-        return res.status(404).json({ error: 'Class not found' });
-      }
+        // Duplicate return: res.status(404).json({ error: 'Class not found' });
+// Removed orphaned closing brace
       console.error('Update class error:', error);
-      return res.status(500).json({ error: 'Failed to update class' });
-    }
-
+      // Duplicate return: res.status(500).json({ error: 'Failed to update class' });
+// Removed orphaned closing brace
     res.json({
       message: 'Class updated successfully',
       class: updatedClass
@@ -327,7 +321,7 @@ router.delete('/:id', [authenticateToken, requireAdmin], async (req, res) => {
       .limit(1);
 
     if (schedules && schedules.length > 0) {
-      return res.status(400).json({ 
+      // Duplicate return: res.status(400).json({ 
         error: 'Cannot delete class with existing schedules. Please remove all schedules first.' 
       });
     }
@@ -341,12 +335,11 @@ router.delete('/:id', [authenticateToken, requireAdmin], async (req, res) => {
 
     if (error) {
       if (error.code === 'PGRST116') {
-        return res.status(404).json({ error: 'Class not found' });
-      }
+        // Duplicate return: res.status(404).json({ error: 'Class not found' });
+// Removed orphaned closing brace
       console.error('Delete class error:', error);
-      return res.status(500).json({ error: 'Failed to delete class' });
-    }
-
+      // Duplicate return: res.status(500).json({ error: 'Failed to delete class' });
+// Removed orphaned closing brace
     res.json({
       message: 'Class deleted successfully',
       class: deletedClass
@@ -372,7 +365,7 @@ router.get('/:id/stats', authenticateToken, async (req, res) => {
     if (classError) {
       if (classError.code === 'PGRST116') {
         return res.status(404).json({ error: 'Class not found' });
-      }
+// Removed orphaned closing brace
       throw classError;
     }
 

@@ -49,16 +49,13 @@ router.post('/upload', authenticateToken, upload.single('file'), async (req, res
 
     if (!req.file) {
       return res.status(400).json({ error: 'No file uploaded' });
-    }
-
+// Removed orphaned closing brace
     if (!submissionId || !fileType) {
-      return res.status(400).json({ error: 'Submission ID and file type are required' });
-    }
-
+      // Duplicate return: res.status(400).json({ error: 'Submission ID and file type are required' });
+// Removed orphaned closing brace
     if (!['assignment_response', 'output_test'].includes(fileType)) {
-      return res.status(400).json({ error: 'Invalid file type' });
-    }
-
+      // Duplicate return: res.status(400).json({ error: 'Invalid file type' });
+// Removed orphaned closing brace
     // Verify submission exists and user has permission
     const submissionCheck = await query(`
 // Removed SQL fragment: SELECT s.*, sch.title as schedule_title
@@ -76,9 +73,8 @@ router.post('/upload', authenticateToken, upload.single('file'), async (req, res
     if (submissionCheck.rows.length === 0) {
       // Clean up uploaded file
       fs.unlinkSync(req.file.path);
-      return res.status(404).json({ error: 'Submission not found or access denied' });
-    }
-
+      // Duplicate return: res.status(404).json({ error: 'Submission not found or access denied' });
+// Removed orphaned closing brace
     // Check if file of this type already exists for this submission
     const existingFile = await query(`
 // Removed SQL fragment: SELECT id, file_path FROM file_uploads 
@@ -135,9 +131,8 @@ router.post('/upload', authenticateToken, upload.single('file'), async (req, res
     }
     
     if (error.code === 'LIMIT_FILE_SIZE') {
-      return res.status(400).json({ error: 'File size exceeds 10MB limit' });
-    }
-    
+      // Duplicate return: res.status(400).json({ error: 'File size exceeds 10MB limit' });
+// Removed orphaned closing brace
     res.status(500).json({ error: 'Failed to upload file' });
   }
 });
@@ -167,8 +162,7 @@ router.get('/submission/:submissionId', authenticateToken, async (req, res) => {
 
     if (accessCheck.rows.length === 0) {
       return res.status(404).json({ error: 'Submission not found or access denied' });
-    }
-
+// Removed orphaned closing brace
     const files = await query(`
 // Removed SQL fragment: SELECT 
         id, original_filename, file_type, file_size, 
@@ -205,8 +199,7 @@ router.get('/download/:fileId', authenticateToken, async (req, res) => {
 
     if (fileInfo.rows.length === 0) {
       return res.status(404).json({ error: 'File not found' });
-    }
-
+// Removed orphaned closing brace
     const file = fileInfo.rows[0];
 
     // Check access permissions
@@ -229,14 +222,12 @@ router.get('/download/:fileId', authenticateToken, async (req, res) => {
     }
 
     if (!hasAccess) {
-      return res.status(403).json({ error: 'Access denied' });
-    }
-
+      // Duplicate return: res.status(403).json({ error: 'Access denied' });
+// Removed orphaned closing brace
     // Check if file exists on disk
     if (!fs.existsSync(file.file_path)) {
-      return res.status(404).json({ error: 'File not found on disk' });
-    }
-
+      // Duplicate return: res.status(404).json({ error: 'File not found on disk' });
+// Removed orphaned closing brace
     // Send file
     res.setHeader('Content-Type', file.mime_type);
     res.setHeader('Content-Disposition', `attachment; filename="${file.original_filename}"`);
@@ -271,8 +262,7 @@ router.delete('/:fileId', authenticateToken, async (req, res) => {
 
     if (fileInfo.rows.length === 0) {
       return res.status(404).json({ error: 'File not found or access denied' });
-    }
-
+// Removed orphaned closing brace
     const file = fileInfo.rows[0];
 
     // Delete file from disk

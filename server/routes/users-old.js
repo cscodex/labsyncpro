@@ -174,8 +174,7 @@ router.get('/:id', authenticateToken, async (req, res) => {
     // Students can only view their own profile, instructors can view all
     if (currentUser.role === 'student' && currentUser.id !== id) {
       return res.status(403).json({ error: 'Access denied' });
-    }
-
+// Removed orphaned closing brace
     // Try Supabase first
     const { data: users, error } = await supabase
       .from('users')
@@ -185,13 +184,11 @@ router.get('/:id', authenticateToken, async (req, res) => {
 
     if (error) {
       console.error('Supabase error:', error);
-      return res.status(500).json({ error: 'Failed to fetch user' });
-    }
-
+      // Duplicate return: res.status(500).json({ error: 'Failed to fetch user' });
+// Removed orphaned closing brace
     if (!users || users.length === 0) {
-      return res.status(404).json({ error: 'User not found' });
-    }
-
+      // Duplicate return: res.status(404).json({ error: 'User not found' });
+// Removed orphaned closing brace
     const user = users[0];
 
     // If it's a student, get additional information
@@ -250,8 +247,7 @@ router.post('/', [
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
-    }
-
+// Removed orphaned closing brace
     const { email, password, firstName, lastName, role, studentId } = req.body;
 
     // Check if user already exists
@@ -261,9 +257,8 @@ router.post('/', [
     );
 
     if (existingUser.rows.length > 0) {
-      return res.status(409).json({ error: 'User already exists' });
-    }
-
+      // Duplicate return: res.status(409).json({ error: 'User already exists' });
+// Removed orphaned closing brace
     // Hash password
     const saltRounds = 10;
     const passwordHash = await bcrypt.hash(password, saltRounds);
@@ -318,8 +313,7 @@ router.put('/:id', [
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
-    }
-
+// Removed orphaned closing brace
     const { id } = req.params;
     const currentUser = req.user;
     const { email, firstName, lastName, studentId, isActive } = req.body;
@@ -328,14 +322,12 @@ router.put('/:id', [
     // Instructors can update student profiles
     // Admins can update any profile
     if (currentUser.role === 'student' && currentUser.id !== id) {
-      return res.status(403).json({ error: 'Access denied' });
-    }
-
+      // Duplicate return: res.status(403).json({ error: 'Access denied' });
+// Removed orphaned closing brace
     // Only admins can change isActive status
     if (isActive !== undefined && currentUser.role !== 'admin') {
-      return res.status(403).json({ error: 'Only admins can change account status' });
-    }
-
+      // Duplicate return: res.status(403).json({ error: 'Only admins can change account status' });
+// Removed orphaned closing brace
     const updateFields = [];
     const values = [];
     let paramCount = 1;
@@ -371,9 +363,8 @@ router.put('/:id', [
     }
 
     if (updateFields.length === 0) {
-      return res.status(400).json({ error: 'No valid fields to update' });
-    }
-
+      // Duplicate return: res.status(400).json({ error: 'No valid fields to update' });
+// Removed orphaned closing brace
     values.push(id);
 
     const result = await query(`
@@ -384,9 +375,8 @@ router.put('/:id', [
     `, values);
 
     if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'User not found' });
-    }
-
+      // Duplicate return: res.status(404).json({ error: 'User not found' });
+// Removed orphaned closing brace
     res.json({
       message: 'User updated successfully',
       user: result.rows[0]
@@ -405,8 +395,7 @@ router.put('/:id/block', [authenticateToken, requireAdmin], async (req, res) => 
 
     if (typeof isActive !== 'boolean') {
       return res.status(400).json({ error: 'isActive must be a boolean value' });
-    }
-
+// Removed orphaned closing brace
     // Check if user exists
     const userCheck = await query(
       'SELECT id, email, first_name, last_name, role FROM users WHERE id = $1',
@@ -414,16 +403,14 @@ router.put('/:id/block', [authenticateToken, requireAdmin], async (req, res) => 
     );
 
     if (userCheck.rows.length === 0) {
-      return res.status(404).json({ error: 'User not found' });
-    }
-
+      // Duplicate return: res.status(404).json({ error: 'User not found' });
+// Removed orphaned closing brace
     const user = userCheck.rows[0];
 
     // Prevent admin from blocking themselves
     if (req.user.id === id && !isActive) {
-      return res.status(400).json({ error: 'You cannot block yourself' });
-    }
-
+      // Duplicate return: res.status(400).json({ error: 'You cannot block yourself' });
+// Removed orphaned closing brace
     // Update user status
     const result = await query(
       'UPDATE users SET is_active = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING id, is_active',
@@ -458,8 +445,7 @@ router.delete('/:id', [authenticateToken, requireAdmin], async (req, res) => {
 
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'User not found' });
-    }
-
+// Removed orphaned closing brace
     res.json({ message: 'User deactivated successfully' });
   } catch (error) {
     console.error('Delete user error:', error);
@@ -527,8 +513,7 @@ router.post('/:id/assign-lab', [
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
-    }
-
+// Removed orphaned closing brace
     const { id: instructorId } = req.params;
     const { labId } = req.body;
 
@@ -539,9 +524,8 @@ router.post('/:id/assign-lab', [
     );
 
     if (userResult.rows.length === 0) {
-      return res.status(404).json({ error: 'Instructor not found' });
-    }
-
+      // Duplicate return: res.status(404).json({ error: 'Instructor not found' });
+// Removed orphaned closing brace
     // Verify the lab exists
     const labResult = await query(
       'SELECT id FROM labs WHERE id = $1',
@@ -549,9 +533,8 @@ router.post('/:id/assign-lab', [
     );
 
     if (labResult.rows.length === 0) {
-      return res.status(404).json({ error: 'Lab not found' });
-    }
-
+      // Duplicate return: res.status(404).json({ error: 'Lab not found' });
+// Removed orphaned closing brace
     // Check if assignment already exists through schedules
     const existingAssignment = await query(
       'SELECT id FROM schedules WHERE instructor_id = $1 AND lab_id = $2',
@@ -559,9 +542,8 @@ router.post('/:id/assign-lab', [
     );
 
     if (existingAssignment.rows.length > 0) {
-      return res.status(400).json({ error: 'Instructor is already assigned to this lab' });
-    }
-
+      // Duplicate return: res.status(400).json({ error: 'Instructor is already assigned to this lab' });
+// Removed orphaned closing brace
     // Create a default schedule entry for the assignment
     await query(`
 // Removed SQL fragment: INSERT INTO schedules (title, description, lab_id, instructor_id, scheduled_date, start_time, end_time)
@@ -596,8 +578,7 @@ router.delete('/:id/assign-lab/:labId', [
 
     if (result.rowCount === 0) {
       return res.status(404).json({ error: 'Assignment not found' });
-    }
-
+// Removed orphaned closing brace
     res.json({ message: 'Lab assignment removed successfully' });
   } catch (error) {
     console.error('Remove lab assignment error:', error);

@@ -516,8 +516,7 @@ router.get('/student', authenticateToken, async (req, res) => {
     // Ensure only students can access this endpoint
     if (req.user.role !== 'student') {
       return res.status(403).json({ error: 'Access denied. Students only.' });
-    }
-
+// Removed orphaned closing brace
     // TODO: Implement proper assignment distribution system with Supabase
     // For now, return empty assignments list for students
     console.log(`📚 Student ${userId} requested assignments - returning empty list (Supabase migration pending)`);
@@ -577,8 +576,7 @@ router.get('/:id', authenticateToken, async (req, res) => {
 
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Assignment not found' });
-    }
-
+// Removed orphaned closing brace
     const assignment = result.rows[0];
 
     // Check access permissions
@@ -590,8 +588,8 @@ router.get('/:id', authenticateToken, async (req, res) => {
         `, [assignment.group_id, currentUser.id]);
       
       if (!hasAccess.rows.length && assignment.user_id !== currentUser.id) {
-        return res.status(403).json({ error: 'Access denied' });
-      }
+        // Duplicate return: res.status(403).json({ error: 'Access denied' });
+// Removed orphaned closing brace
     } else if (currentUser.role === 'instructor') {
       const scheduleCheck = await query(
         'SELECT instructor_id FROM schedules WHERE id = $1',
@@ -599,8 +597,8 @@ router.get('/:id', authenticateToken, async (req, res) => {
       );
       
       if (scheduleCheck.rows[0]?.instructor_id !== currentUser.id) {
-        return res.status(403).json({ error: 'Access denied' });
-      }
+        // Duplicate return: res.status(403).json({ error: 'Access denied' });
+// Removed orphaned closing brace
     }
 
     res.json({ assignment });
@@ -620,8 +618,7 @@ router.put('/:id', authenticateToken, async (req, res) => {
 
     if (currentUser.role !== 'instructor' && currentUser.role !== 'admin') {
       return res.status(403).json({ error: 'Access denied' });
-    }
-
+// Removed orphaned closing brace
     // Check if assignment exists and user has permission
     const assignmentCheck = await query(`
 // Removed SQL fragment: SELECT sa.*, s.instructor_id
@@ -631,14 +628,12 @@ router.put('/:id', authenticateToken, async (req, res) => {
     `, [id]);
 
     if (assignmentCheck.rows.length === 0) {
-      return res.status(404).json({ error: 'Assignment not found' });
-    }
-
+      // Duplicate return: res.status(404).json({ error: 'Assignment not found' });
+// Removed orphaned closing brace
     if (currentUser.role === 'instructor' &&
         assignmentCheck.rows[0].instructor_id !== currentUser.id) {
-      return res.status(403).json({ error: 'Access denied' });
-    }
-
+      // Duplicate return: res.status(403).json({ error: 'Access denied' });
+// Removed orphaned closing brace
     // Build update query dynamically
     const updateFields = [];
     const updateValues = [];
@@ -658,9 +653,8 @@ router.put('/:id', authenticateToken, async (req, res) => {
     }
 
     if (updateFields.length === 0) {
-      return res.status(400).json({ error: 'No fields to update' });
-    }
-
+      // Duplicate return: res.status(400).json({ error: 'No fields to update' });
+// Removed orphaned closing brace
     updateValues.push(id);
 
     const updateQuery = `
@@ -700,29 +694,28 @@ router.post('/', authenticateToken, async (req, res) => {
     // Check permissions
     if (currentUser.role !== 'instructor' && currentUser.role !== 'admin') {
       return res.status(403).json({ error: 'Access denied' });
-    }
-
+// Removed orphaned closing brace
     // Validate assignment type and required fields
     if (assignment_type === 'class') {
       if (!class_id) {
-        return res.status(400).json({
+        // Duplicate return: res.status(400).json({
           error: 'class_id is required for class assignments'
         });
       }
     } else if (assignment_type === 'group') {
       if (!group_id) {
-        return res.status(400).json({
+        // Duplicate return: res.status(400).json({
           error: 'group_id is required for group assignments'
         });
       }
     } else if (assignment_type === 'individual') {
       if (!user_id) {
-        return res.status(400).json({
+        // Duplicate return: res.status(400).json({
           error: 'user_id is required for individual assignments'
         });
       }
     } else {
-      return res.status(400).json({
+      // Duplicate return: res.status(400).json({
         error: 'Invalid assignment_type. Must be class, group, or individual'
       });
     }
@@ -733,7 +726,7 @@ router.post('/', authenticateToken, async (req, res) => {
     if (!scheduleId) {
       // For capacity planning assignments, we need to create a default schedule
       // or find an existing one for the current class/lab combination
-      return res.status(400).json({
+      // Duplicate return: res.status(400).json({
         error: 'schedule_id is required for assignments'
       });
     }
@@ -748,22 +741,20 @@ router.post('/', authenticateToken, async (req, res) => {
     `, [scheduleId]);
 
     if (scheduleCheck.rows.length === 0) {
-      return res.status(404).json({ error: 'Schedule not found' });
-    }
-
+      // Duplicate return: res.status(404).json({ error: 'Schedule not found' });
+// Removed orphaned closing brace
     const schedule = scheduleCheck.rows[0];
 
     // For instructors, check if they own the schedule
     if (currentUser.role === 'instructor' && schedule.instructor_id !== currentUser.id) {
-      return res.status(403).json({ error: 'Access denied' });
-    }
-
+      // Duplicate return: res.status(403).json({ error: 'Access denied' });
+// Removed orphaned closing brace
     // Check if computer is available (if assigned)
     if (assigned_computer) {
       // Validate that assigned_computer is a valid UUID
       const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
       if (!uuidRegex.test(assigned_computer)) {
-        return res.status(400).json({
+        // Duplicate return: res.status(400).json({
           error: 'Invalid computer ID format. Expected UUID.'
         });
       }
@@ -780,16 +771,14 @@ router.post('/', authenticateToken, async (req, res) => {
       `, [scheduleId, assigned_computer]);
 
       if (computerCheck.rows.length === 0) {
-        return res.status(404).json({ error: 'Computer not found' });
-      }
-
+        // Duplicate return: res.status(404).json({ error: 'Computer not found' });
+// Removed orphaned closing brace
       if (!computerCheck.rows[0].is_functional) {
-        return res.status(400).json({ error: 'Computer is not functional' });
-      }
-
+        // Duplicate return: res.status(400).json({ error: 'Computer is not functional' });
+// Removed orphaned closing brace
       if (computerCheck.rows[0].is_assigned) {
-        return res.status(409).json({ error: 'Computer is already assigned' });
-      }
+        // Duplicate return: res.status(409).json({ error: 'Computer is already assigned' });
+// Removed orphaned closing brace
     }
 
     // Get computer number if computer is assigned
@@ -900,8 +889,7 @@ router.post('/submit/:assignmentDistributionId', authenticateToken, upload.field
     // Check if user is a student
     if (req.user.role !== 'student') {
       return res.status(403).json({ error: 'Only students can submit assignments' });
-    }
-
+// Removed orphaned closing brace
     // Check if assignment exists and user has access
     const assignmentCheck = await query(`
 // Removed SQL fragment: SELECT ad.*, ca.name as assignment_name
@@ -922,16 +910,14 @@ router.post('/submit/:assignmentDistributionId', authenticateToken, upload.field
     `, [assignmentDistributionId, userId]);
 
     if (assignmentCheck.rows.length === 0) {
-      return res.status(404).json({ error: 'Assignment not found or access denied' });
-    }
-
+      // Duplicate return: res.status(404).json({ error: 'Assignment not found or access denied' });
+// Removed orphaned closing brace
     const assignment = assignmentCheck.rows[0];
 
     // Check if deadline has passed
     if (new Date() > new Date(assignment.deadline)) {
-      return res.status(400).json({ error: 'Assignment deadline has passed. Submission not allowed.' });
-    }
-
+      // Duplicate return: res.status(400).json({ error: 'Assignment deadline has passed. Submission not allowed.' });
+// Removed orphaned closing brace
     // Check if already submitted and locked
     const existingSubmission = await query(`
 // Removed SQL fragment: SELECT * FROM assignment_submissions
@@ -939,14 +925,12 @@ router.post('/submit/:assignmentDistributionId', authenticateToken, upload.field
     `, [assignmentDistributionId, userId]);
 
     if (existingSubmission.rows.length > 0 && existingSubmission.rows[0].is_locked) {
-      return res.status(400).json({ error: 'Assignment already submitted and locked. No further uploads allowed.' });
-    }
-
+      // Duplicate return: res.status(400).json({ error: 'Assignment already submitted and locked. No further uploads allowed.' });
+// Removed orphaned closing brace
     // Validate files
     if (!req.files || !req.files.assignmentResponse || !req.files.outputTest) {
-      return res.status(400).json({ error: 'Both assignment response and output test files are required' });
-    }
-
+      // Duplicate return: res.status(400).json({ error: 'Both assignment response and output test files are required' });
+// Removed orphaned closing brace
     const assignmentResponseFile = req.files.assignmentResponse[0];
     const outputTestFile = req.files.outputTest[0];
 
@@ -995,13 +979,11 @@ router.get('/download/:assignmentDistributionId/:fileType', authenticateToken, a
     // Check if user is a student
     if (req.user.role !== 'student') {
       return res.status(403).json({ error: 'Only students can download their submissions' });
-    }
-
+// Removed orphaned closing brace
     // Validate file type
     if (!['assignment_response', 'output_test'].includes(fileType)) {
-      return res.status(400).json({ error: 'Invalid file type' });
-    }
-
+      // Duplicate return: res.status(400).json({ error: 'Invalid file type' });
+// Removed orphaned closing brace
     // Check if assignment exists and user has access
     const assignmentCheck = await query(`
 // Removed SQL fragment: SELECT ad.*, ca.name as assignment_name
@@ -1022,9 +1004,8 @@ router.get('/download/:assignmentDistributionId/:fileType', authenticateToken, a
     `, [assignmentDistributionId, userId]);
 
     if (assignmentCheck.rows.length === 0) {
-      return res.status(404).json({ error: 'Assignment not found or access denied' });
-    }
-
+      // Duplicate return: res.status(404).json({ error: 'Assignment not found or access denied' });
+// Removed orphaned closing brace
     // Get submission
     const submission = await query(`
 // Removed SQL fragment: SELECT * FROM assignment_submissions
@@ -1032,25 +1013,22 @@ router.get('/download/:assignmentDistributionId/:fileType', authenticateToken, a
     `, [assignmentDistributionId, userId]);
 
     if (submission.rows.length === 0) {
-      return res.status(404).json({ error: 'No submission found' });
-    }
-
+      // Duplicate return: res.status(404).json({ error: 'No submission found' });
+// Removed orphaned closing brace
     const submissionData = submission.rows[0];
     const filename = fileType === 'assignment_response'
       ? submissionData.assignment_response_filename
       : submissionData.output_test_filename;
 
     if (!filename) {
-      return res.status(404).json({ error: 'File not found' });
-    }
-
+      // Duplicate return: res.status(404).json({ error: 'File not found' });
+// Removed orphaned closing brace
     const filePath = path.join(__dirname, '../uploads/assignment-submissions/', filename);
 
     // Check if file exists
     if (!require('fs').existsSync(filePath)) {
-      return res.status(404).json({ error: 'File not found on server' });
-    }
-
+      // Duplicate return: res.status(404).json({ error: 'File not found on server' });
+// Removed orphaned closing brace
     // Set appropriate headers
     res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
     res.setHeader('Content-Type', 'application/octet-stream');

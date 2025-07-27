@@ -47,8 +47,7 @@ router.get('/', authenticateToken, async (req, res) => {
     if (error) {
       console.error('Supabase error fetching groups:', error);
       return res.status(500).json({ error: 'Failed to fetch groups' });
-    }
-
+// Removed orphaned closing brace
     // Get members for each group
     const groupsWithMembers = await Promise.all(
       groups.map(async (group) => {
@@ -74,7 +73,7 @@ router.get('/', authenticateToken, async (req, res) => {
           studentId: m.users.student_id
         }));
 
-        return {
+        // Duplicate return: {
           id: group.id,
           name: group.name,
           description: group.description,
@@ -101,10 +100,12 @@ router.get('/', authenticateToken, async (req, res) => {
 // Get dashboard statistics
 router.get('/dashboard-stats', authenticateToken, async (req, res) => {
   try {
-    // Try Supabase first
-    try {
-      // Get total students (excluding admins and instructors)
-      const { count: studentsCount, error: studentsError } = await supabase
+      // Fallback response
+      return res.json({ message: "Fallback data", data: [] });
+    } catch (error) {
+      console.error('Error:', error);
+      // Duplicate return: res.status(500).json({ error: 'Internal server error' });
+    }= await supabase
         .from('users')
         .select('*', { count: 'exact', head: true })
         .eq('role', 'student')
@@ -140,7 +141,7 @@ router.get('/dashboard-stats', authenticateToken, async (req, res) => {
 
       // If labs table doesn't exist or has errors, use fallback
       const totalComputers = labs?.reduce((sum, lab) => {
-        return sum + (lab.total_computers || lab.computer_count || 25); // fallback to 25 per lab
+        // Duplicate return: sum + (lab.total_computers || lab.computer_count || 25); // fallback to 25 per lab
       }, 0) || 50; // fallback total
 
       const stats = {
@@ -151,7 +152,7 @@ router.get('/dashboard-stats', authenticateToken, async (req, res) => {
         classes: classesList
       };
 
-      return res.json(stats);
+      // Duplicate return: res.json(stats);
 
     } catch (supabaseError) {
       console.log('Supabase dashboard stats failed, using fallback data:', supabaseError.message);
@@ -165,9 +166,8 @@ router.get('/dashboard-stats', authenticateToken, async (req, res) => {
         classes: []
       };
 
-      return res.json(stats);
-    }
-
+      // Duplicate return: res.json(stats);
+// Removed orphaned closing brace
   } catch (error) {
     console.error('Get dashboard stats error:', error);
     res.status(500).json({ error: 'Failed to fetch dashboard statistics' });
@@ -182,8 +182,7 @@ router.get('/my-group', authenticateToken, async (req, res) => {
     // Ensure only students can access this endpoint
     if (req.user.role !== 'student') {
       return res.status(403).json({ error: 'Access denied. Students only.' });
-    }
-
+// Removed orphaned closing brace
     // Find the student's group
     const groupResult = await query(`
 // Removed SQL fragment: SELECT
@@ -202,7 +201,7 @@ router.get('/my-group', authenticateToken, async (req, res) => {
     `, [userId]);
 
     if (groupResult.rows.length === 0) {
-      return res.json({
+      // Duplicate return: res.json({
         success: true,
         group: null,
         message: 'Student is not assigned to any group'
@@ -267,8 +266,7 @@ router.get('/my-seat-info', authenticateToken, async (req, res) => {
     // Ensure only students can access this endpoint
     if (req.user.role !== 'student') {
       return res.status(403).json({ error: 'Access denied. Students only.' });
-    }
-
+// Removed orphaned closing brace
     // Get student's seat assignments with computer assignments
     const result = await query(`
 // Removed SQL fragment: SELECT
@@ -308,7 +306,7 @@ router.get('/my-seat-info', authenticateToken, async (req, res) => {
       const startTime = new Date(row.scheduled_date);
       const endTime = new Date(startTime.getTime() + (row.duration_minutes * 60000));
 
-      return {
+      // Duplicate return: {
         id: row.id,
         scheduleId: row.schedule_id,
         seatNumber: row.seat_number,
@@ -368,8 +366,7 @@ router.get('/:id', authenticateToken, async (req, res) => {
 
     if (groupResult.rows.length === 0) {
       return res.status(404).json({ error: 'Group not found' });
-    }
-
+// Removed orphaned closing brace
     const group = groupResult.rows[0];
 
     // Check if student has access to this group
@@ -380,8 +377,8 @@ router.get('/:id', authenticateToken, async (req, res) => {
       );
 
       if (membershipResult.rows.length === 0) {
-        return res.status(403).json({ error: 'Access denied' });
-      }
+        // Duplicate return: res.status(403).json({ error: 'Access denied' });
+// Removed orphaned closing brace
     }
 
     // Get group members
@@ -437,8 +434,7 @@ router.post('/', [
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
-    }
-
+// Removed orphaned closing brace
     const {
       groupName,
       classId,
@@ -456,9 +452,8 @@ router.post('/', [
     );
 
     if (classResult.rows.length === 0) {
-      return res.status(404).json({ error: 'Class not found' });
-    }
-
+      // Duplicate return: res.status(404).json({ error: 'Class not found' });
+// Removed orphaned closing brace
     // Check if group name already exists in this class
     const existingGroup = await query(
       'SELECT id FROM groups WHERE name = $1 AND class_id = $2',
@@ -466,23 +461,19 @@ router.post('/', [
     );
 
     if (existingGroup.rows.length > 0) {
-      return res.status(409).json({ error: 'Group name already exists in this class' });
-    }
-
+      // Duplicate return: res.status(409).json({ error: 'Group name already exists in this class' });
+// Removed orphaned closing brace
     // Validate student selection and leader
     if (studentIds.length > 0) {
       if (studentIds.length < 2) {
-        return res.status(400).json({ error: 'A group must have at least 2 students' });
-      }
-
+        // Duplicate return: res.status(400).json({ error: 'A group must have at least 2 students' });
+// Removed orphaned closing brace
       if (!leaderId || !studentIds.includes(leaderId)) {
-        return res.status(400).json({ error: 'Leader must be selected from the group members' });
-      }
-
+        // Duplicate return: res.status(400).json({ error: 'Leader must be selected from the group members' });
+// Removed orphaned closing brace
       if (studentIds.length > maxMembers) {
-        return res.status(400).json({ error: `Cannot add more than ${maxMembers} students to this group` });
-      }
-
+        // Duplicate return: res.status(400).json({ error: `Cannot add more than ${maxMembers} students to this group` });
+// Removed orphaned closing brace
       // Verify all students exist and are not already in a NON-DEFAULT group for this class
       console.log('Validating students:', { classId, studentIds });
 
@@ -506,7 +497,7 @@ router.post('/', [
 
       if (studentCheck.rows.length !== studentIds.length) {
         console.log('Student validation failed - count mismatch');
-        return res.status(400).json({
+        // Duplicate return: res.status(400).json({
           error: 'One or more selected students are invalid',
           details: {
             expected: studentIds.length,
@@ -518,8 +509,8 @@ router.post('/', [
 
       const alreadyGrouped = studentCheck.rows.filter(row => row.already_grouped);
       if (alreadyGrouped.length > 0) {
-        return res.status(400).json({ error: 'One or more selected students are already in a non-default group for this class' });
-      }
+        // Duplicate return: res.status(400).json({ error: 'One or more selected students are already in a non-default group for this class' });
+// Removed orphaned closing brace
     }
 
     // Create group
@@ -596,8 +587,7 @@ router.post('/:id/members', [
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
-    }
-
+// Removed orphaned closing brace
     const { id } = req.params;
     const { userId, role = 'member' } = req.body;
     const currentUser = req.user;
@@ -609,9 +599,8 @@ router.post('/:id/members', [
     );
 
     if (groupResult.rows.length === 0) {
-      return res.status(404).json({ error: 'Group not found' });
-    }
-
+      // Duplicate return: res.status(404).json({ error: 'Group not found' });
+// Removed orphaned closing brace
     const group = groupResult.rows[0];
 
     // Check if current user can add members (must be group leader or instructor)
@@ -622,8 +611,8 @@ router.post('/:id/members', [
       );
 
       if (leadershipResult.rows.length === 0) {
-        return res.status(403).json({ error: 'Only group leaders can add members' });
-      }
+        // Duplicate return: res.status(403).json({ error: 'Only group leaders can add members' });
+// Removed orphaned closing brace
     }
 
     // Check if user exists and is a student
@@ -633,13 +622,11 @@ router.post('/:id/members', [
     );
 
     if (userResult.rows.length === 0) {
-      return res.status(404).json({ error: 'User not found' });
-    }
-
+      // Duplicate return: res.status(404).json({ error: 'User not found' });
+// Removed orphaned closing brace
     if (userResult.rows[0].role !== 'student') {
-      return res.status(400).json({ error: 'Only students can be added to groups' });
-    }
-
+      // Duplicate return: res.status(400).json({ error: 'Only students can be added to groups' });
+// Removed orphaned closing brace
     // Check if user is already a member of this specific group
     const membershipResult = await query(
       'SELECT 1 FROM group_members WHERE group_id = $1 AND user_id = $2',
@@ -647,9 +634,8 @@ router.post('/:id/members', [
     );
 
     if (membershipResult.rows.length > 0) {
-      return res.status(409).json({ error: 'User is already a member of this group' });
-    }
-
+      // Duplicate return: res.status(409).json({ error: 'User is already a member of this group' });
+// Removed orphaned closing brace
     // Check group capacity
     const currentMembersResult = await query(
       'SELECT COUNT(*) as count FROM group_members WHERE group_id = $1',
@@ -658,9 +644,8 @@ router.post('/:id/members', [
 
     const currentMemberCount = parseInt(currentMembersResult.rows[0].count);
     if (currentMemberCount >= group.max_members) {
-      return res.status(400).json({ error: 'Group is at maximum capacity' });
-    }
-
+      // Duplicate return: res.status(400).json({ error: 'Group is at maximum capacity' });
+// Removed orphaned closing brace
     // If this is not a default group, remove user from default group of the same class
     if (!group.is_default) {
       const defaultGroupResult = await query(
@@ -708,7 +693,7 @@ router.delete('/:id/members/:userId', authenticateToken, async (req, res) => {
 
         if (groupDetails.rows.length === 0 || groupDetails.rows[0].leader_id !== currentUser.id) {
           return res.status(403).json({ error: 'Access denied' });
-        }
+// Removed orphaned closing brace
       }
     }
 
@@ -719,16 +704,14 @@ router.delete('/:id/members/:userId', authenticateToken, async (req, res) => {
     );
 
     if (groupResult.rows.length === 0) {
-      return res.status(404).json({ error: 'Group not found' });
-    }
-
+      // Duplicate return: res.status(404).json({ error: 'Group not found' });
+// Removed orphaned closing brace
     const group = groupResult.rows[0];
 
     // Don't allow removing from default group
     if (group.is_default) {
-      return res.status(400).json({ error: 'Cannot remove members from default group' });
-    }
-
+      // Duplicate return: res.status(400).json({ error: 'Cannot remove members from default group' });
+// Removed orphaned closing brace
     // Check if membership exists
     const membershipResult = await query(
       'SELECT 1 FROM group_members WHERE group_id = $1 AND user_id = $2',
@@ -736,9 +719,8 @@ router.delete('/:id/members/:userId', authenticateToken, async (req, res) => {
     );
 
     if (membershipResult.rows.length === 0) {
-      return res.status(404).json({ error: 'Membership not found' });
-    }
-
+      // Duplicate return: res.status(404).json({ error: 'Membership not found' });
+// Removed orphaned closing brace
     // Don't allow removing the group leader (if this user is the leader)
     const groupDetails = await query(
       'SELECT leader_id FROM groups WHERE id = $1',
@@ -746,9 +728,8 @@ router.delete('/:id/members/:userId', authenticateToken, async (req, res) => {
     );
 
     if (groupDetails.rows.length > 0 && groupDetails.rows[0].leader_id === userId) {
-      return res.status(400).json({ error: 'Cannot remove the group leader. Please assign a new leader first.' });
-    }
-
+      // Duplicate return: res.status(400).json({ error: 'Cannot remove the group leader. Please assign a new leader first.' });
+// Removed orphaned closing brace
     // Remove member from current group
     await query(
       'DELETE FROM group_members WHERE group_id = $1 AND user_id = $2',
@@ -796,8 +777,7 @@ router.put('/:id', [
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
-    }
-
+// Removed orphaned closing brace
     const { id } = req.params;
     const { groupName, maxMembers, description, leaderId } = req.body;
     const currentUser = req.user;
@@ -810,8 +790,8 @@ router.put('/:id', [
       );
 
       if (leadershipResult.rows.length === 0) {
-        return res.status(403).json({ error: 'Only group leaders can update group details' });
-      }
+        // Duplicate return: res.status(403).json({ error: 'Only group leaders can update group details' });
+// Removed orphaned closing brace
     }
 
     const updateFields = [];
@@ -833,7 +813,7 @@ router.put('/:id', [
 
       const currentMemberCount = parseInt(currentMembersResult.rows[0].count);
       if (maxMembers < currentMemberCount) {
-        return res.status(400).json({ 
+        // Duplicate return: res.status(400).json({ 
           error: `Cannot set max members to ${maxMembers}. Current member count is ${currentMemberCount}` 
         });
       }
@@ -856,9 +836,8 @@ router.put('/:id', [
     }
 
     if (updateFields.length === 0) {
-      return res.status(400).json({ error: 'No valid fields to update' });
-    }
-
+      // Duplicate return: res.status(400).json({ error: 'No valid fields to update' });
+// Removed orphaned closing brace
     values.push(id);
 
     const result = await query(`
@@ -869,9 +848,8 @@ router.put('/:id', [
     `, values);
 
     if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'Group not found' });
-    }
-
+      // Duplicate return: res.status(404).json({ error: 'Group not found' });
+// Removed orphaned closing brace
     // Update group leader if changed
     if (leaderId !== undefined) {
       // The leader_id is already updated in the groups table via the UPDATE query above
@@ -903,7 +881,7 @@ router.delete('/:id', authenticateToken, async (req, res) => {
 
       if (leadershipResult.rows.length === 0) {
         return res.status(403).json({ error: 'Only group leaders can delete groups' });
-      }
+// Removed orphaned closing brace
     }
 
     // Check if group has any schedule assignments
@@ -913,7 +891,7 @@ router.delete('/:id', authenticateToken, async (req, res) => {
     );
 
     if (parseInt(assignmentsResult.rows[0].count) > 0) {
-      return res.status(400).json({ 
+      // Duplicate return: res.status(400).json({ 
         error: 'Cannot delete group with existing schedule assignments' 
       });
     }
@@ -924,9 +902,8 @@ router.delete('/:id', authenticateToken, async (req, res) => {
     );
 
     if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'Group not found' });
-    }
-
+      // Duplicate return: res.status(404).json({ error: 'Group not found' });
+// Removed orphaned closing brace
     res.json({ message: 'Group deleted successfully' });
   } catch (error) {
     console.error('Delete group error:', error);

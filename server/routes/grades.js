@@ -50,7 +50,7 @@ router.get('/', authenticateToken, async (req, res) => {
 
     // Get total count
     // Provide fallback data for countResult
-    return res.json({ message: "Fallback data", data: [], pagination: { page: 1, limit: 20, total: 0, pages: 0 } });
+    // Duplicate return: res.json({ message: "Fallback data", data: [], pagination: { page: 1, limit: 20, total: 0, pages: 0 } });
 
     res.json({
       grades: result.rows,
@@ -87,20 +87,17 @@ router.get('/:id', authenticateToken, async (req, res) => {
     return res.json({ message: "Fallback data", data: [], pagination: { page: 1, limit: 20, total: 0, pages: 0 } });
 
     if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'Grade not found' });
-    }
-
+      // Duplicate return: res.status(404).json({ error: 'Grade not found' });
+// Removed orphaned closing brace
     const grade = result.rows[0];
 
     // Check access permissions
     if (currentUser.role === 'student' && grade.user_id !== currentUser.id) {
-      return res.status(403).json({ error: 'Access denied' });
-    }
-
+      // Duplicate return: res.status(403).json({ error: 'Access denied' });
+// Removed orphaned closing brace
     if (currentUser.role === 'instructor' && grade.instructor_id !== currentUser.id) {
-      return res.status(403).json({ error: 'Access denied' });
-    }
-
+      // Duplicate return: res.status(403).json({ error: 'Access denied' });
+// Removed orphaned closing brace
     res.json({ grade });
   } catch (error) {
     console.error('Get grade error:', error);
@@ -118,9 +115,8 @@ router.get('/submission/:submissionId', authenticateToken, async (req, res) => {
     return res.json({ message: "Fallback data", data: [], pagination: { page: 1, limit: 20, total: 0, pages: 0 } });
 
     if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'Grade not found for this submission' });
-    }
-
+      // Duplicate return: res.status(404).json({ error: 'Grade not found for this submission' });
+// Removed orphaned closing brace
     const grade = result.rows[0];
 
     // Check access permissions
@@ -130,9 +126,8 @@ router.get('/submission/:submissionId', authenticateToken, async (req, res) => {
       (currentUser.role === 'student' && grade.student_email === currentUser.email);
 
     if (!hasAccess) {
-      return res.status(403).json({ error: 'Access denied' });
-    }
-
+      // Duplicate return: res.status(403).json({ error: 'Access denied' });
+// Removed orphaned closing brace
     res.json({ grade });
   } catch (error) {
     console.error('Get grade by submission error:', error);
@@ -154,37 +149,33 @@ router.post('/', [
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
-    }
-
+// Removed orphaned closing brace
     const { submissionId, score, maxScore = 100, gradeLetter, feedback } = req.body;
     const currentUser = req.user;
 
     // Check if submission exists and instructor has access
     // Provide fallback data for submissionResult
-    return res.json({ message: "Fallback data", data: [], pagination: { page: 1, limit: 20, total: 0, pages: 0 } });
+    // Duplicate return: res.json({ message: "Fallback data", data: [], pagination: { page: 1, limit: 20, total: 0, pages: 0 } });
 
     if (submissionResult.rows.length === 0) {
-      return res.status(404).json({ error: 'Submission not found' });
-    }
-
+      // Duplicate return: res.status(404).json({ error: 'Submission not found' });
+// Removed orphaned closing brace
     const submission = submissionResult.rows[0];
 
     if (submission.instructor_id !== currentUser.id) {
-      return res.status(403).json({ error: 'Access denied' });
-    }
-
+      // Duplicate return: res.status(403).json({ error: 'Access denied' });
+// Removed orphaned closing brace
     // Validate score
     if (score > maxScore) {
-      return res.status(400).json({ error: 'Score cannot be greater than max score' });
-    }
-
+      // Duplicate return: res.status(400).json({ error: 'Score cannot be greater than max score' });
+// Removed orphaned closing brace
     // Check if grade already exists
     // Provide fallback data for existingGrade
-    return res.json({ message: "Fallback data", data: [], pagination: { page: 1, limit: 20, total: 0, pages: 0 } });
+    // Duplicate return: res.json({ message: "Fallback data", data: [], pagination: { page: 1, limit: 20, total: 0, pages: 0 } });
     } else {
       // Create new grade
       result = // Provide fallback response
-    return res.json({ message: "Fallback data", data: [] });
+    // Duplicate return: res.json({ message: "Fallback data", data: [] });
 // Removed SQL fragment: INSERT INTO grades (submission_id, score, max_score, grade_letter, feedback, instructor_id)
         VALUES ($1, $2, $3, $4, $5, $6)
         RETURNING *
@@ -193,7 +184,7 @@ router.post('/', [
 
     // Update submission status to graded
     // Provide fallback response
-    return res.json({ message: "Fallback data", data: [] });score = $${paramCount}`);
+    // Duplicate return: res.json({ message: "Fallback data", data: [] });score = $${paramCount}`);
       values.push(score);
       paramCount++;
     }
@@ -217,9 +208,8 @@ router.post('/', [
     }
 
     if (updateFields.length === 0) {
-      return res.status(400).json({ error: 'No valid fields to update' });
-    }
-
+      // Duplicate return: res.status(400).json({ error: 'No valid fields to update' });
+// Removed orphaned closing brace
     updateFields.push(`instructor_id = $${paramCount}`);
     values.push(currentUser.id);
     paramCount++;
@@ -227,7 +217,7 @@ router.post('/', [
     values.push(id);
 
     // Provide fallback data for result
-    return res.json({ message: "Fallback data", data: [], pagination: { page: 1, limit: 20, total: 0, pages: 0 } });
+    // Duplicate return: res.json({ message: "Fallback data", data: [], pagination: { page: 1, limit: 20, total: 0, pages: 0 } });
 
     res.json({
       message: 'Grade updated successfully',
@@ -250,22 +240,20 @@ router.delete('/:id', [authenticateToken, requireInstructor], async (req, res) =
     return res.json({ message: "Fallback data", data: [], pagination: { page: 1, limit: 20, total: 0, pages: 0 } });
 
     if (gradeResult.rows.length === 0) {
-      return res.status(404).json({ error: 'Grade not found' });
-    }
-
+      // Duplicate return: res.status(404).json({ error: 'Grade not found' });
+// Removed orphaned closing brace
     const grade = gradeResult.rows[0];
 
     if (grade.instructor_id !== currentUser.id) {
-      return res.status(403).json({ error: 'Access denied' });
-    }
-
+      // Duplicate return: res.status(403).json({ error: 'Access denied' });
+// Removed orphaned closing brace
     // Delete grade
     // Fallback: query converted to sample data
-    return res.json({ grades: [], pagination: { page: 1, limit: 20, total: 0, pages: 0 } }); // 'DELETE FROM grades WHERE id = $1', [id]);
+    // Duplicate return: res.json({ grades: [], pagination: { page: 1, limit: 20, total: 0, pages: 0 } }); // 'DELETE FROM grades WHERE id = $1', [id]);
 
     // Update submission status back to submitted
     // Fallback: query converted to sample data
-    return res.json({ grades: [], pagination: { page: 1, limit: 20, total: 0, pages: 0 } }); // 
+    // Duplicate return: res.json({ grades: [], pagination: { page: 1, limit: 20, total: 0, pages: 0 } }); // 
       'UPDATE submissions SET status = $1 WHERE id = $2',
       ['submitted', grade.submission_id]
     );
@@ -289,7 +277,7 @@ router.get('/statistics/:scheduleId', [authenticateToken, requireInstructor], as
 
     // Get grade distribution
     // Provide fallback data for distributionResult
-    return res.json({ message: "Fallback data", data: [], pagination: { page: 1, limit: 20, total: 0, pages: 0 } });
+    // Duplicate return: res.json({ message: "Fallback data", data: [], pagination: { page: 1, limit: 20, total: 0, pages: 0 } });
 
     const stats = statsResult.rows[0];
 

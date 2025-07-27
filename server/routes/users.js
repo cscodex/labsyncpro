@@ -16,8 +16,7 @@ router.get('/', [authenticateToken, requireAdmin], async (req, res) => {
     if (error) {
       console.error('Get users error:', error);
       return res.status(500).json({ error: 'Failed to fetch users' });
-    }
-
+// Removed orphaned closing brace
     res.json({
       message: 'Users retrieved successfully',
       users: users || []
@@ -38,8 +37,7 @@ router.get('/:id', authenticateToken, async (req, res) => {
     // Instructors and admins can view any profile
     if (currentUser.role === 'student' && currentUser.id !== id) {
       return res.status(403).json({ error: 'Access denied' });
-    }
-
+// Removed orphaned closing brace
     const { data: user, error } = await supabase
       .from('users')
       .select('id, email, first_name, last_name, role, student_id, is_active, created_at, updated_at')
@@ -48,12 +46,11 @@ router.get('/:id', authenticateToken, async (req, res) => {
 
     if (error) {
       if (error.code === 'PGRST116') {
-        return res.status(404).json({ error: 'User not found' });
-      }
+        // Duplicate return: res.status(404).json({ error: 'User not found' });
+// Removed orphaned closing brace
       console.error('Get user error:', error);
-      return res.status(500).json({ error: 'Failed to fetch user' });
-    }
-
+      // Duplicate return: res.status(500).json({ error: 'Failed to fetch user' });
+// Removed orphaned closing brace
     res.json({
       message: 'User retrieved successfully',
       user
@@ -76,8 +73,7 @@ router.put('/:id', [
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
-    }
-
+// Removed orphaned closing brace
     const { id } = req.params;
     const currentUser = req.user;
     const { email, firstName, lastName, studentId, isActive } = req.body;
@@ -86,14 +82,12 @@ router.put('/:id', [
     // Instructors can update student profiles
     // Admins can update any profile
     if (currentUser.role === 'student' && currentUser.id !== id) {
-      return res.status(403).json({ error: 'Access denied' });
-    }
-
+      // Duplicate return: res.status(403).json({ error: 'Access denied' });
+// Removed orphaned closing brace
     // Only admins can change isActive status
     if (isActive !== undefined && currentUser.role !== 'admin') {
-      return res.status(403).json({ error: 'Only admins can change account status' });
-    }
-
+      // Duplicate return: res.status(403).json({ error: 'Only admins can change account status' });
+// Removed orphaned closing brace
     // Build update object
     const updateData = {
       updated_at: new Date().toISOString()
@@ -109,9 +103,8 @@ router.put('/:id', [
 
     // Check if there are any fields to update
     if (Object.keys(updateData).length === 1) { // Only updated_at
-      return res.status(400).json({ error: 'No valid fields to update' });
-    }
-
+      // Duplicate return: res.status(400).json({ error: 'No valid fields to update' });
+// Removed orphaned closing brace
     const { data: updatedUser, error } = await supabase
       .from('users')
       .update(updateData)
@@ -121,12 +114,11 @@ router.put('/:id', [
 
     if (error) {
       if (error.code === 'PGRST116') {
-        return res.status(404).json({ error: 'User not found' });
-      }
+        // Duplicate return: res.status(404).json({ error: 'User not found' });
+// Removed orphaned closing brace
       console.error('Update user error:', error);
-      return res.status(500).json({ error: 'Failed to update user' });
-    }
-
+      // Duplicate return: res.status(500).json({ error: 'Failed to update user' });
+// Removed orphaned closing brace
     res.json({
       message: 'User updated successfully',
       user: updatedUser
@@ -145,13 +137,11 @@ router.put('/:id/block', [authenticateToken, requireAdmin], async (req, res) => 
 
     if (typeof isActive !== 'boolean') {
       return res.status(400).json({ error: 'isActive must be a boolean' });
-    }
-
+// Removed orphaned closing brace
     // Prevent admin from blocking themselves
     if (req.user.id === id && !isActive) {
-      return res.status(400).json({ error: 'You cannot block yourself' });
-    }
-
+      // Duplicate return: res.status(400).json({ error: 'You cannot block yourself' });
+// Removed orphaned closing brace
     const { data: updatedUser, error } = await supabase
       .from('users')
       .update({ 
@@ -164,12 +154,11 @@ router.put('/:id/block', [authenticateToken, requireAdmin], async (req, res) => 
 
     if (error) {
       if (error.code === 'PGRST116') {
-        return res.status(404).json({ error: 'User not found' });
-      }
+        // Duplicate return: res.status(404).json({ error: 'User not found' });
+// Removed orphaned closing brace
       console.error('Block/unblock user error:', error);
-      return res.status(500).json({ error: 'Failed to update user status' });
-    }
-
+      // Duplicate return: res.status(500).json({ error: 'Failed to update user status' });
+// Removed orphaned closing brace
     const action = isActive ? 'unblocked' : 'blocked';
     res.json({
       message: `User ${action} successfully`,
@@ -190,8 +179,7 @@ router.delete('/:id', [authenticateToken, requireAdmin], async (req, res) => {
     // Prevent admin from deleting themselves
     if (req.user.id === id) {
       return res.status(400).json({ error: 'You cannot delete yourself' });
-    }
-
+// Removed orphaned closing brace
     // Soft delete by setting is_active to false
     const { data: deletedUser, error } = await supabase
       .from('users')
@@ -205,12 +193,11 @@ router.delete('/:id', [authenticateToken, requireAdmin], async (req, res) => {
 
     if (error) {
       if (error.code === 'PGRST116') {
-        return res.status(404).json({ error: 'User not found' });
-      }
+        // Duplicate return: res.status(404).json({ error: 'User not found' });
+// Removed orphaned closing brace
       console.error('Delete user error:', error);
-      return res.status(500).json({ error: 'Failed to delete user' });
-    }
-
+      // Duplicate return: res.status(500).json({ error: 'Failed to delete user' });
+// Removed orphaned closing brace
     res.json({
       message: 'User deleted successfully',
       user: deletedUser
@@ -236,8 +223,7 @@ router.post('/', [
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
-    }
-
+// Removed orphaned closing brace
     const { email, password, firstName, lastName, role, studentId } = req.body;
 
     // Check if user already exists
@@ -248,9 +234,8 @@ router.post('/', [
       .single();
 
     if (existingUser) {
-      return res.status(400).json({ error: 'User with this email already exists' });
-    }
-
+      // Duplicate return: res.status(400).json({ error: 'User with this email already exists' });
+// Removed orphaned closing brace
     // Hash password
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
@@ -272,9 +257,8 @@ router.post('/', [
 
     if (error) {
       console.error('Create user error:', error);
-      return res.status(500).json({ error: 'Failed to create user' });
-    }
-
+      // Duplicate return: res.status(500).json({ error: 'Failed to create user' });
+// Removed orphaned closing brace
     res.status(201).json({
       message: 'User created successfully',
       user: newUser

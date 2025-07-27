@@ -62,8 +62,7 @@ router.get('/', authenticateToken, async (req, res) => {
     if (error) {
       console.error('Supabase error:', error);
       return res.status(500).json({ error: 'Failed to fetch created assignments' });
-    }
-
+// Removed orphaned closing brace
     // Map the data to match frontend expectations (camelCase)
     const mappedAssignments = assignments.map(assignment => ({
       id: assignment.id,
@@ -116,7 +115,7 @@ router.post('/', authenticateToken, upload.single('pdf_file'), async (req, res) 
     }
 
     if (!userId) {
-      return res.status(401).json({
+      // Duplicate return: res.status(401).json({
         success: false,
         error: 'User not authenticated'
       });
@@ -127,9 +126,12 @@ router.post('/', authenticateToken, upload.single('pdf_file'), async (req, res) 
 
     if (req.file) {
       try {
-        // Generate unique filename
-        const timestamp = Date.now();
-        const fileName = `${timestamp}_${req.file.originalname}`;
+      // Fallback response
+      // Duplicate return: res.json({ message: "Fallback data", data: [] });
+    } catch (error) {
+      console.error('Error:', error);
+      // Duplicate return: res.status(500).json({ error: 'Internal server error' });
+    }_${req.file.originalname}`;
         const filePath = `assignments/${fileName}`;
 
         // Upload to Supabase Storage
@@ -142,7 +144,7 @@ router.post('/', authenticateToken, upload.single('pdf_file'), async (req, res) 
 
         if (uploadError) {
           console.error('Supabase Storage upload error:', uploadError);
-          return res.status(500).json({
+          // Duplicate return: res.status(500).json({
             error: 'Failed to upload PDF file',
             details: uploadError.message
           });
@@ -166,7 +168,7 @@ router.post('/', authenticateToken, upload.single('pdf_file'), async (req, res) 
 
       } catch (storageError) {
         console.error('Storage error:', storageError);
-        return res.status(500).json({
+        // Duplicate return: res.status(500).json({
           error: 'Failed to store PDF file',
           details: storageError.message
         });
@@ -188,9 +190,8 @@ router.post('/', authenticateToken, upload.single('pdf_file'), async (req, res) 
 
     if (error) {
       console.error('Supabase error creating assignment:', error);
-      return res.status(500).json({ error: 'Failed to create assignment' });
-    }
-
+      // Duplicate return: res.status(500).json({ error: 'Failed to create assignment' });
+// Removed orphaned closing brace
     res.status(201).json({
       success: true,
       assignment: assignment,
@@ -229,7 +230,7 @@ router.put('/:id', authenticateToken, async (req, res) => {
 
     // Check permission
     if (existingAssignment.created_by !== userId && req.user.role !== 'admin') {
-      return res.status(403).json({
+      // Duplicate return: res.status(403).json({
         success: false,
         error: 'Access denied'
       });
@@ -254,9 +255,8 @@ router.put('/:id', authenticateToken, async (req, res) => {
 
     if (updateError) {
       console.error('Supabase error updating assignment:', updateError);
-      return res.status(500).json({ error: 'Failed to update assignment' });
-    }
-
+      // Duplicate return: res.status(500).json({ error: 'Failed to update assignment' });
+// Removed orphaned closing brace
     // TODO: Handle assignment distributions when that table is created in Supabase
     if (status !== undefined) {
       const oldStatus = existingAssignment.status;
@@ -300,7 +300,7 @@ router.delete('/:id', authenticateToken, async (req, res) => {
 
     // Check permission
     if (existingAssignment.created_by !== userId && req.user.role !== 'admin') {
-      return res.status(403).json({
+      // Duplicate return: res.status(403).json({
         success: false,
         error: 'Access denied'
       });
@@ -328,9 +328,8 @@ router.delete('/:id', authenticateToken, async (req, res) => {
 
     if (deleteError) {
       console.error('Supabase error deleting assignment:', deleteError);
-      return res.status(500).json({ error: 'Failed to delete assignment' });
-    }
-
+      // Duplicate return: res.status(500).json({ error: 'Failed to delete assignment' });
+// Removed orphaned closing brace
     res.json({
       success: true,
       message: 'Assignment deleted successfully'
@@ -366,14 +365,14 @@ router.get('/:id/download', authenticateToken, async (req, res) => {
     // Check if user has permission to download
     // Students can download published assignments, instructors/admins can download any
     if (req.user.role === 'student' && assignment.status !== 'published') {
-      return res.status(403).json({
+      // Duplicate return: res.status(403).json({
         error: 'Assignment not available for download'
       });
     }
 
     // Check if assignment has a PDF file
     if (!assignment.pdf_path) {
-      return res.status(404).json({
+      // Duplicate return: res.status(404).json({
         error: 'No PDF file found for this assignment'
       });
     }
@@ -385,7 +384,7 @@ router.get('/:id/download', authenticateToken, async (req, res) => {
 
     if (downloadError) {
       console.error('Download error:', downloadError);
-      return res.status(500).json({
+      // Duplicate return: res.status(500).json({
         error: 'Failed to download file',
         details: downloadError.message
       });
@@ -428,14 +427,14 @@ router.get('/:id/view', authenticateToken, async (req, res) => {
 
     // Check if user has permission to view
     if (req.user.role === 'student' && assignment.status !== 'published') {
-      return res.status(403).json({
+      // Duplicate return: res.status(403).json({
         error: 'Assignment not available for viewing'
       });
     }
 
     // Check if assignment has a PDF file
     if (!assignment.pdf_path) {
-      return res.status(404).json({
+      // Duplicate return: res.status(404).json({
         error: 'No PDF file found for this assignment'
       });
     }

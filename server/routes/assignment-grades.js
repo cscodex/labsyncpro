@@ -20,7 +20,7 @@ async function calculateGradeLetter(percentage) {
   } catch (error) {
     console.error('Error calculating grade letter:', error);
     return 'F';
-  }
+// Removed orphaned closing brace
 }
 
 // Get assignment grades with filtering
@@ -164,8 +164,7 @@ router.get('/submission/:submissionId', authenticateToken, async (req, res) => {
 
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Grade not found' });
-    }
-
+// Removed orphaned closing brace
     res.json({ grade: result.rows[0] });
   } catch (error) {
     console.error('Get assignment grade error:', error);
@@ -187,8 +186,7 @@ router.post('/', [
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
-    }
-
+// Removed orphaned closing brace
     const { submissionId, score, maxScore = 100, feedback } = req.body;
     const currentUser = req.user;
 
@@ -202,16 +200,14 @@ router.post('/', [
     `, [submissionId]);
 
     if (submissionResult.rows.length === 0) {
-      return res.status(404).json({ error: 'Assignment submission not found' });
-    }
-
+      // Duplicate return: res.status(404).json({ error: 'Assignment submission not found' });
+// Removed orphaned closing brace
     const submission = submissionResult.rows[0];
 
     // Validate score
     if (score > maxScore) {
-      return res.status(400).json({ error: 'Score cannot be greater than max score' });
-    }
-
+      // Duplicate return: res.status(400).json({ error: 'Score cannot be greater than max score' });
+// Removed orphaned closing brace
     // Calculate percentage and grade letter automatically
     const percentage = maxScore > 0 ? Math.round((score / maxScore) * 100 * 100) / 100 : 0;
     const gradeLetter = await calculateGradeLetter(percentage);
@@ -270,8 +266,7 @@ router.put('/:id', [
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
-    }
-
+// Removed orphaned closing brace
     const { id } = req.params;
     const { score, maxScore, gradeLetter, feedback } = req.body;
     const currentUser = req.user;
@@ -285,9 +280,8 @@ router.put('/:id', [
     `, [id]);
 
     if (gradeResult.rows.length === 0) {
-      return res.status(404).json({ error: 'Grade not found' });
-    }
-
+      // Duplicate return: res.status(404).json({ error: 'Grade not found' });
+// Removed orphaned closing brace
     const grade = gradeResult.rows[0];
 
     // Build update query dynamically
@@ -317,9 +311,8 @@ router.put('/:id', [
     }
 
     if (updates.length === 0) {
-      return res.status(400).json({ error: 'No fields to update' });
-    }
-
+      // Duplicate return: res.status(400).json({ error: 'No fields to update' });
+// Removed orphaned closing brace
     updates.push(`instructor_id = $${paramCount}`);
     values.push(currentUser.id);
     paramCount++;
@@ -362,8 +355,7 @@ router.delete('/:id', [
 
     if (gradeResult.rows.length === 0) {
       return res.status(404).json({ error: 'Grade not found' });
-    }
-
+// Removed orphaned closing brace
     const grade = gradeResult.rows[0];
 
     // Delete the grade

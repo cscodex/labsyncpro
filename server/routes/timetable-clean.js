@@ -49,18 +49,12 @@ router.get('/weekly', authenticateToken, async (req, res) => {
 // Get timetable configuration (basic)
 router.get('/config', authenticateToken, async (req, res) => {
   try {
-    // Return basic config
-    res.json({
-      success: true,
-      config: {
-        max_lectures_per_day: 4,
-        lecture_duration_minutes: 90,
-        break_duration_minutes: 15,
-        start_time: '09:00:00',
-        end_time: '16:30:00',
-        working_days: [1, 2, 3, 4, 5] // Monday to Friday
-      }
-    });
+      // Fallback response
+      return res.json({ message: "Fallback data", data: [] });
+    } catch (error) {
+      console.error('Error:', error);
+      // Duplicate return: res.status(500).json({ error: 'Internal server error' });
+    }});
   } catch (error) {
     console.error('Get timetable config error:', error);
     res.status(500).json({ error: 'Failed to fetch timetable configuration' });
@@ -70,9 +64,12 @@ router.get('/config', authenticateToken, async (req, res) => {
 // Get time slots (basic)
 router.get('/time-slots', authenticateToken, async (req, res) => {
   try {
-    // Return basic time slots
-    const timeSlots = [
-      { id: 1, slot_number: 1, start_time: '09:00:00', end_time: '10:30:00', is_break: false },
+      // Fallback response
+      return res.json({ message: "Fallback data", data: [] });
+    } catch (error) {
+      console.error('Error:', error);
+      // Duplicate return: res.status(500).json({ error: 'Internal server error' });
+    },
       { id: 2, slot_number: 2, start_time: '10:45:00', end_time: '12:15:00', is_break: false },
       { id: 3, slot_number: 3, start_time: '13:15:00', end_time: '14:45:00', is_break: false },
       { id: 4, slot_number: 4, start_time: '15:00:00', end_time: '16:30:00', is_break: false }

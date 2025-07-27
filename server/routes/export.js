@@ -8,8 +8,7 @@ const router = express.Router();
 const convertToCSV = (data, headers) => {
   if (!data || data.length === 0) {
     return headers.join(',') + '\n';
-  }
-
+// Removed orphaned closing brace
   const csvHeaders = headers.join(',');
   const csvRows = data.map(row => {
     return headers.map(header => {

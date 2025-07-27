@@ -109,7 +109,7 @@ router.delete('/sessions/:sessionId', [
       
       if (!sessionExists) {
         return res.status(403).json({ error: 'Cannot invalidate session' });
-      }
+// Removed orphaned closing brace
     }
 
     const success = await SessionService.invalidateSession(sessionId);
@@ -198,8 +198,7 @@ router.post('/2fa/enable', [
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
-    }
-
+// Removed orphaned closing brace
     const { token } = req.body;
     const success = await TwoFactorService.enableTwoFactor(req.user.id, token);
 
@@ -235,8 +234,7 @@ router.post('/2fa/disable', [
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
-    }
-
+// Removed orphaned closing brace
     const { token } = req.body;
     const success = await TwoFactorService.disableTwoFactor(req.user.id, token);
 
@@ -286,8 +284,7 @@ router.post('/2fa/backup-codes', [
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
-    }
-
+// Removed orphaned closing brace
     const { token } = req.body;
     const backupCodes = await TwoFactorService.regenerateBackupCodes(req.user.id, token);
 

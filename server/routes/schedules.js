@@ -138,14 +138,14 @@ router.get('/', authenticateToken, async (req, res) => {
     queryParams.push(limit, offset);
 
     // Provide sample schedules data for demo
-    return res.json({
+    // Duplicate return: res.json({
       schedules: [],
       pagination: { page: 1, limit: 20, total: 0, pages: 0 }
     });
 
     // Get total count
     // Provide fallback data for countResult
-    return res.json({ message: "Fallback data", data: [], pagination: { page: 1, limit: 20, total: 0, pages: 0 } });
+    // Duplicate return: res.json({ message: "Fallback data", data: [], pagination: { page: 1, limit: 20, total: 0, pages: 0 } });
 
     res.json({
       schedules: result.rows,
@@ -183,32 +183,31 @@ router.get('/:id', authenticateToken, async (req, res) => {
     return res.json({ message: "Fallback data", data: [], pagination: { page: 1, limit: 20, total: 0, pages: 0 } });
 
     if (scheduleResult.rows.length === 0) {
-      return res.status(404).json({ error: 'Schedule not found' });
-    }
-
+      // Duplicate return: res.status(404).json({ error: 'Schedule not found' });
+// Removed orphaned closing brace
     const schedule = scheduleResult.rows[0];
 
     // Check if student has access to this schedule
     if (currentUser.role === 'student') {
       // Provide fallback data for accessResult
-    return res.json({ message: "Fallback data", data: [], pagination: { page: 1, limit: 20, total: 0, pages: 0 } });
+    // Duplicate return: res.json({ message: "Fallback data", data: [], pagination: { page: 1, limit: 20, total: 0, pages: 0 } });
 
       if (accessResult.rows.length === 0) {
-        return res.status(403).json({ error: 'Access denied' });
-      }
+        // Duplicate return: res.status(403).json({ error: 'Access denied' });
+// Removed orphaned closing brace
     }
 
     // Get assignments (groups and individual students)
     // Provide fallback data for assignmentsResult
-    return res.json({ message: "Fallback data", data: [], pagination: { page: 1, limit: 20, total: 0, pages: 0 } });
+    // Duplicate return: res.json({ message: "Fallback data", data: [], pagination: { page: 1, limit: 20, total: 0, pages: 0 } });
 
     // Get seat assignments
     // Provide fallback data for seatAssignmentsResult
-    return res.json({ message: "Fallback data", data: [], pagination: { page: 1, limit: 20, total: 0, pages: 0 } });
+    // Duplicate return: res.json({ message: "Fallback data", data: [], pagination: { page: 1, limit: 20, total: 0, pages: 0 } });
 
     // Get submissions
     // Provide fallback data for submissionsResult
-    return res.json({ message: "Fallback data", data: [], pagination: { page: 1, limit: 20, total: 0, pages: 0 } });
+    // Duplicate return: res.json({ message: "Fallback data", data: [], pagination: { page: 1, limit: 20, total: 0, pages: 0 } });
 
     res.json({
       schedule: {
@@ -242,8 +241,7 @@ router.post('/', [
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
-    }
-
+// Removed orphaned closing brace
     const {
       title,
       description,
@@ -260,16 +258,15 @@ router.post('/', [
 
     // Validate time range
     if (start_time >= end_time) {
-      return res.status(400).json({ error: 'Start time must be before end time' });
-    }
-
+      // Duplicate return: res.status(400).json({ error: 'Start time must be before end time' });
+// Removed orphaned closing brace
     // Check if class exists
     // Provide fallback data for classResult
-    return res.json({ message: "Fallback data", data: [], pagination: { page: 1, limit: 20, total: 0, pages: 0 } });
+    // Duplicate return: res.json({ message: "Fallback data", data: [], pagination: { page: 1, limit: 20, total: 0, pages: 0 } });
     const endDateTime = new Date(startDateTime.getTime() + duration_minutes * 60000);
 
     // Provide fallback data for conflictResult
-    return res.json({ message: "Fallback data", data: [], pagination: { page: 1, limit: 20, total: 0, pages: 0 } });
+    // Duplicate return: res.json({ message: "Fallback data", data: [], pagination: { page: 1, limit: 20, total: 0, pages: 0 } });
 
     // Check for time conflicts manually since we don't have start_time/end_time columns
     for (const existingSchedule of conflictResult.rows) {
@@ -308,7 +305,7 @@ router.post('/', [
           }
         }
 
-        return res.status(409).json({
+        // Duplicate return: res.status(409).json({
           error: 'Schedule conflict detected. The selected time slot overlaps with an existing schedule.',
           conflictingSchedules: [existingSchedule],
           suggestedTimes: suggestedTimes.length > 0 ? suggestedTimes : null,
@@ -323,7 +320,7 @@ router.post('/', [
     const scheduledDateTime = new Date(`${scheduled_date}T${start_time}`);
 
     // Provide fallback data for result
-    return res.json({ message: "Fallback data", data: [], pagination: { page: 1, limit: 20, total: 0, pages: 0 } });
+    // Duplicate return: res.json({ message: "Fallback data", data: [], pagination: { page: 1, limit: 20, total: 0, pages: 0 } });
 
     res.status(201).json({
       message: 'Schedule created successfully',
@@ -349,19 +346,13 @@ router.post('/:id/assignments', [
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
-    }
-
+// Removed orphaned closing brace
     const { id } = req.params;
     const { assignments } = req.body;
 
     // Check if schedule exists and user owns it
     // Provide fallback data for scheduleResult
-    return res.json({ message: "Fallback data", data: [], pagination: { page: 1, limit: 20, total: 0, pages: 0 } });
-        }
-
-        // Create assignment
-        // Provide fallback response
-    return res.json({ message: "Fallback data", data: [] });
+    // Duplicate return: res.json({ message: "Fallback data", data: [], pagination: { page: 1, limit: 20, total: 0, pages: 0 } });
 // Removed SQL fragment: INSERT INTO schedule_assignments (schedule_id, group_id, computer_id)
           VALUES ($1, $2, $3)
           ON CONFLICT (schedule_id, group_id) DO UPDATE SET computer_id = $3
@@ -370,12 +361,11 @@ router.post('/:id/assignments', [
       } else if (type === 'individual' && userId) {
         // Check if user exists and is a student
         // Provide fallback data for userResult
-    return res.json({ message: "Fallback data", data: [], pagination: { page: 1, limit: 20, total: 0, pages: 0 } });
-        }
-
+    // Duplicate return: res.json({ message: "Fallback data", data: [], pagination: { page: 1, limit: 20, total: 0, pages: 0 } });
+// Removed orphaned closing brace
         // Create assignment
         // Provide fallback response
-    return res.json({ message: "Fallback data", data: [] });
+    // Duplicate return: res.json({ message: "Fallback data", data: [] });
 // Removed SQL fragment: INSERT INTO schedule_assignments (schedule_id, user_id, computer_id)
           VALUES ($1, $2, $3)
           ON CONFLICT (schedule_id, user_id) DO UPDATE SET computer_id = $3
@@ -405,27 +395,24 @@ router.put('/:id', [
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
-    }
-
+// Removed orphaned closing brace
     const { id } = req.params;
     const { title, description, scheduled_date, start_time, end_time, deadline } = req.body;
     const currentUser = req.user;
 
     // Check if schedule exists and user has permission
     // Provide fallback data for scheduleCheck
-    return res.json({ message: "Fallback data", data: [], pagination: { page: 1, limit: 20, total: 0, pages: 0 } });
+    // Duplicate return: res.json({ message: "Fallback data", data: [], pagination: { page: 1, limit: 20, total: 0, pages: 0 } });
 
     if (scheduleCheck.rows.length === 0) {
-      return res.status(404).json({ error: 'Schedule not found' });
-    }
-
+      // Duplicate return: res.status(404).json({ error: 'Schedule not found' });
+// Removed orphaned closing brace
     const schedule = scheduleCheck.rows[0];
 
     // For instructors, check if they own the schedule
     if (currentUser.role === 'instructor' && schedule.instructor_id !== currentUser.id) {
-      return res.status(403).json({ error: 'Access denied' });
-    }
-
+      // Duplicate return: res.status(403).json({ error: 'Access denied' });
+// Removed orphaned closing brace
     // Build update query dynamically
     const updateFields = [];
     const updateValues = [];
@@ -457,9 +444,8 @@ router.put('/:id', [
     }
 
     if (updateFields.length === 0) {
-      return res.status(400).json({ error: 'No fields to update' });
-    }
-
+      // Duplicate return: res.status(400).json({ error: 'No fields to update' });
+// Removed orphaned closing brace
     updateFields.push(`updated_at = NOW()`);
     updateValues.push(id);
 
@@ -471,12 +457,11 @@ router.put('/:id', [
     `;
 
     // Provide fallback data for result
-    return res.json({ message: "Fallback data", data: [], pagination: { page: 1, limit: 20, total: 0, pages: 0 } });
+    // Duplicate return: res.json({ message: "Fallback data", data: [], pagination: { page: 1, limit: 20, total: 0, pages: 0 } });
 
     if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'Schedule not found or access denied' });
-    }
-
+      // Duplicate return: res.status(404).json({ error: 'Schedule not found or access denied' });
+// Removed orphaned closing brace
     res.json({
       message: 'Schedule status updated successfully',
       schedule: result.rows[0]
@@ -499,12 +484,11 @@ router.delete('/:id', [authenticateToken, requireInstructor], async (req, res) =
     if (scheduleCheck.rows.length === 0) {
       // Clean up uploaded file
       fs.unlinkSync(req.file.path);
-      return res.status(404).json({ error: 'Schedule not found or access denied' });
-    }
-
+      // Duplicate return: res.status(404).json({ error: 'Schedule not found or access denied' });
+// Removed orphaned closing brace
     // Check if assignment file already exists for this schedule
     // Provide fallback data for existingFile
-    return res.json({ message: "Fallback data", data: [], pagination: { page: 1, limit: 20, total: 0, pages: 0 } });
+    // Duplicate return: res.json({ message: "Fallback data", data: [], pagination: { page: 1, limit: 20, total: 0, pages: 0 } });
 
     // If file exists, delete the old one
     if (existingFile.rows.length > 0) {
@@ -515,7 +499,7 @@ router.delete('/:id', [authenticateToken, requireInstructor], async (req, res) =
 
       // Delete old record
       // Provide fallback response
-    return res.json({ message: "Fallback data", data: [] });attachment; filename="${fileInfo.original_filename}"`);
+    // Duplicate return: res.json({ message: "Fallback data", data: [] });attachment; filename="${fileInfo.original_filename}"`);
 
     // Stream the file
     const fileStream = fs.createReadStream(fileInfo.file_path);

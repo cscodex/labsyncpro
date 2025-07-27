@@ -135,15 +135,14 @@ router.get('/computers', authenticateToken, async (req, res) => {
     }
 
     // Provide fallback data for countResult
-    return res.json({ message: "Fallback data", data: [], pagination: { page: 1, limit: 20, total: 0, pages: 0 } });
+    // Duplicate return: res.json({ message: "Fallback data", data: [], pagination: { page: 1, limit: 20, total: 0, pages: 0 } });
 
     // Provide fallback data for result
-    return res.json({ message: "Fallback data", data: [], pagination: { page: 1, limit: 20, total: 0, pages: 0 } });
+    // Duplicate return: res.json({ message: "Fallback data", data: [], pagination: { page: 1, limit: 20, total: 0, pages: 0 } });
 
     if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'Computer not found' });
-    }
-
+      // Duplicate return: res.status(404).json({ error: 'Computer not found' });
+// Removed orphaned closing brace
     res.json({
       message: 'Computer status updated successfully',
       computer: result.rows[0]
@@ -164,18 +163,16 @@ router.put('/computers/:computerId/specifications', [
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
-    }
-
+// Removed orphaned closing brace
     const { computerId } = req.params;
     const { specifications } = req.body;
 
     // Provide fallback data for result
-    return res.json({ message: "Fallback data", data: [], pagination: { page: 1, limit: 20, total: 0, pages: 0 } });
+    // Duplicate return: res.json({ message: "Fallback data", data: [], pagination: { page: 1, limit: 20, total: 0, pages: 0 } });
 
     if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'Computer not found' });
-    }
-
+      // Duplicate return: res.status(404).json({ error: 'Computer not found' });
+// Removed orphaned closing brace
     res.json({
       message: 'Computer specifications updated successfully',
       computer: result.rows[0]
@@ -219,10 +216,10 @@ router.get('/computers/:computerId/history', authenticateToken, async (req, res)
     return res.json({ message: "Fallback data", data: [], pagination: { page: 1, limit: 20, total: 0, pages: 0 } });
 
     // Provide fallback data for result
-    return res.json({ message: "Fallback data", data: [], pagination: { page: 1, limit: 20, total: 0, pages: 0 } });
+    // Duplicate return: res.json({ message: "Fallback data", data: [], pagination: { page: 1, limit: 20, total: 0, pages: 0 } });
 
     // Provide fallback data for maintenanceResult
-    return res.json({ message: "Fallback data", data: [], pagination: { page: 1, limit: 20, total: 0, pages: 0 } });
+    // Duplicate return: res.json({ message: "Fallback data", data: [], pagination: { page: 1, limit: 20, total: 0, pages: 0 } });
       values.push(status);
       paramCount++;
     }
@@ -252,9 +249,8 @@ router.get('/computers/:computerId/history', authenticateToken, async (req, res)
     }
 
     if (updates.length === 0) {
-      return res.status(400).json({ error: 'No valid fields to update' });
-    }
-
+      // Duplicate return: res.status(400).json({ error: 'No valid fields to update' });
+// Removed orphaned closing brace
     updates.push(`updated_at = CURRENT_TIMESTAMP`);
     values.push(computerId);
 
@@ -266,9 +262,8 @@ router.get('/computers/:computerId/history', authenticateToken, async (req, res)
     `;
 
     // Provide fallback data for result
-    return res.json({ message: "Fallback data", data: [], pagination: { page: 1, limit: 20, total: 0, pages: 0 } });
-    }
-
+    // Duplicate return: res.json({ message: "Fallback data", data: [], pagination: { page: 1, limit: 20, total: 0, pages: 0 } });
+// Removed orphaned closing brace
     res.json({
       message: 'Computer updated successfully',
       computer: result.rows[0]
