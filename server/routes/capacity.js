@@ -1,9 +1,57 @@
 const express = require('express');
 const { body, validationResult } = require('express-validator');
-const { query } = require('../config/database');
+const { supabase } = require('../config/supabase');
 const { authenticateToken, requireInstructor } = require('../middleware/auth');
 
 const router = express.Router();
+
+// Get capacity planning overview
+router.get('/', authenticateToken, async (req, res) => {
+  try {
+    // Provide sample capacity data for demo
+    const capacityData = {
+      labs: [
+        {
+          id: 'f202a2b2-08b0-41cf-8f97-c0160f247ad8',
+          name: 'Computer Lab 1',
+          total_computers: 15,
+          available_computers: 5,
+          occupied_computers: 10,
+          capacity_percentage: 67
+        },
+        {
+          id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+          name: 'Computer Lab 2',
+          total_computers: 19,
+          available_computers: 7,
+          occupied_computers: 12,
+          capacity_percentage: 63
+        }
+      ],
+      classes: [
+        {
+          id: 'e519c46b-7380-4ab4-9529-6bc258edbb8d',
+          name: '11 NM C',
+          total_students: 25,
+          assigned_students: 20,
+          lab_assignment: 'Computer Lab 2'
+        }
+      ],
+      overall_capacity: 65,
+      total_computers: 34,
+      available_computers: 12,
+      occupied_computers: 22
+    };
+
+    res.json({
+      message: 'Capacity data retrieved successfully',
+      data: capacityData
+    });
+  } catch (error) {
+    console.error('Get capacity overview error:', error);
+    res.status(500).json({ error: 'Failed to fetch capacity data' });
+  }
+});
 
 // Get lab computers with assignment status
 router.get('/labs/:labId/computers', authenticateToken, async (req, res) => {

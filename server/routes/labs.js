@@ -1,5 +1,5 @@
 const express = require('express');
-const { query } = require('../config/database');
+const { supabase } = require('../config/supabase');
 const { supabase } = require('../config/supabase');
 const { authenticateToken, requireInstructor } = require('../middleware/auth');
 

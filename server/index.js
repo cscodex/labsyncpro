@@ -175,6 +175,32 @@ app.get('/test-db', async (req, res) => {
 // API routes
 app.use('/api/auth', authRoutes);
 
+// Health check endpoint (before auth middleware)
+app.get('/health', (req, res) => {
+  res.json({
+    status: 'OK',
+    timestamp: new Date().toISOString(),
+    version: '1.0.0',
+    environment: process.env.NODE_ENV || 'development',
+    supabase_configured: !!(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY)
+  });
+});
+
+// Basic API info endpoint
+app.get('/api', (req, res) => {
+  res.json({
+    message: 'LabSyncPro API',
+    version: '1.0.0',
+    endpoints: [
+      '/api/classes',
+      '/api/labs',
+      '/api/users',
+      '/api/assignments',
+      '/api/capacity'
+    ]
+  });
+});
+
 // Apply student access restriction to all API routes except auth
 app.use('/api', restrictStudentAccess);
 app.use('/api/users', userRoutes);

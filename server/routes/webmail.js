@@ -2,7 +2,7 @@ const express = require('express');
 const { body, validationResult } = require('express-validator');
 const { authenticateToken, requireAdmin } = require('../middleware/auth');
 // const { applyRateLimit } = require('../middleware/rateLimiter');
-const { query } = require('../config/database');
+const { supabase } = require('../config/supabase');
 const { supabase } = require('../config/supabase');
 const {
   getEmails,
