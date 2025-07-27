@@ -2,7 +2,6 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const { body, validationResult } = require('express-validator');
 const { supabase } = require('../config/supabase');
-const { supabase } = require('../config/supabase');
 const { authenticateToken, requireInstructor, requireAdmin } = require('../middleware/auth');
 const {
   createEmailAccount,

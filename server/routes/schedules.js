@@ -5,7 +5,6 @@ const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
 const { body, validationResult } = require('express-validator');
 const { supabase } = require('../config/supabase');
-const { supabase } = require('../config/supabase');
 const { getRecords } = require('../utils/supabaseHelpers');
 const { authenticateToken, requireInstructor, requireStudentOrInstructor } = require('../middleware/auth');
 

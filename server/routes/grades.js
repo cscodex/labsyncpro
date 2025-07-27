@@ -1,7 +1,6 @@
 const express = require('express');
 const { body, validationResult } = require('express-validator');
 const { supabase } = require('../config/supabase');
-const { supabase } = require('../config/supabase');
 const { authenticateToken, requireInstructor, requireStudentOrInstructor } = require('../middleware/auth');
 
 const router = express.Router();

@@ -3,7 +3,6 @@ const router = express.Router();
 const multer = require('multer');
 const path = require('path');
 const { supabase } = require('../config/supabase');
-const { supabase } = require('../config/supabase');
 const { authenticateToken } = require('../middleware/auth');
 const FileUploadService = require('../services/fileUploadService');
 
