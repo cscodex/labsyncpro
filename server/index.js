@@ -16,7 +16,7 @@ const assignmentRoutes = require('./routes/assignments');
 // const createdAssignmentRoutes = require('./routes/created-assignments');
 // const assignmentDistributionRoutes = require('./routes/assignment-distributions');
 const submissionRoutes = require('./routes/submissions');
-// const gradeRoutes = require('./routes/grades');
+const gradeRoutes = require('./routes/grades');
 // const assignmentGradeRoutes = require('./routes/assignment-grades');
 // const gradeScalesRoutes = require('./routes/grade-scales');
 // const inventoryRoutes = require('./routes/inventory');
@@ -199,6 +199,7 @@ app.get('/api', (req, res) => {
       '/api/users',
       '/api/assignments',
       '/api/submissions',
+      '/api/grades',
       '/api/groups',
       '/api/capacity'
     ]
@@ -217,7 +218,7 @@ app.use('/api/schedules', scheduleRoutes);
 // app.use('/api/assignment-distributions', assignmentDistributionRoutes);
 app.use('/api/assignments', assignmentRoutes);
 app.use('/api/submissions', submissionRoutes);
-// app.use('/api/grades', gradeRoutes);
+app.use('/api/grades', gradeRoutes);
 // app.use('/api/assignment-grades', assignmentGradeRoutes);
 // app.use('/api/grade-scales', gradeScalesRoutes);
 // app.use('/api/inventory', inventoryRoutes);
