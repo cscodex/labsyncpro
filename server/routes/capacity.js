@@ -242,4 +242,27 @@ router.get('/labs/:labId/seat-assignments', authenticateToken, async (req, res) 
   }
 });
 
+// Get students and groups for capacity management
+router.get('/students-groups/:classId', authenticateToken, async (req, res) => {
+  try {
+    const { classId } = req.params;
+
+    // Return placeholder data for now
+    res.json({
+      message: 'Students and groups retrieved successfully',
+      data: {
+        class_id: classId,
+        students: [],
+        groups: [],
+        total_students: 0,
+        total_groups: 0
+      }
+    });
+
+  } catch (error) {
+    console.error('Get students and groups error:', error);
+    res.status(500).json({ error: 'Failed to fetch students and groups' });
+  }
+});
+
 module.exports = router;
