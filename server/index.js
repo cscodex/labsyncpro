@@ -17,7 +17,7 @@ const assignmentRoutes = require('./routes/assignments');
 // const assignmentDistributionRoutes = require('./routes/assignment-distributions');
 const submissionRoutes = require('./routes/submissions');
 const gradeRoutes = require('./routes/grades');
-// const assignmentGradeRoutes = require('./routes/assignment-grades');
+const assignmentGradeRoutes = require('./routes/assignment-grades');
 // const gradeScalesRoutes = require('./routes/grade-scales');
 // const inventoryRoutes = require('./routes/inventory');
 // Temporarily comment out enhanced security features
@@ -219,7 +219,7 @@ app.use('/api/schedules', scheduleRoutes);
 app.use('/api/assignments', assignmentRoutes);
 app.use('/api/submissions', submissionRoutes);
 app.use('/api/grades', gradeRoutes);
-// app.use('/api/assignment-grades', assignmentGradeRoutes);
+app.use('/api/assignment-grades', assignmentGradeRoutes);
 // app.use('/api/grade-scales', gradeScalesRoutes);
 // app.use('/api/inventory', inventoryRoutes);
 // Temporarily comment out broken route registrations

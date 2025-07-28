@@ -197,4 +197,49 @@ router.get('/:labId', authenticateToken, async (req, res) => {
   }
 });
 
+// Get student capacity data
+router.get('/student/:studentId', authenticateToken, async (req, res) => {
+  try {
+    const { studentId } = req.params;
+
+    // Return placeholder data for now
+    res.json({
+      message: 'Student capacity data retrieved successfully',
+      data: {
+        student_id: studentId,
+        assigned_lab: null,
+        assigned_seat: null,
+        current_session: null
+      }
+    });
+
+  } catch (error) {
+    console.error('Get student capacity data error:', error);
+    res.status(500).json({ error: 'Failed to fetch student capacity data' });
+  }
+});
+
+// Get lab seat assignments
+router.get('/labs/:labId/seat-assignments', authenticateToken, async (req, res) => {
+  try {
+    const { labId } = req.params;
+
+    // Return placeholder data for now
+    res.json({
+      message: 'Lab seat assignments retrieved successfully',
+      data: {
+        lab_id: labId,
+        assignments: [],
+        total_seats: 50,
+        occupied_seats: 0,
+        available_seats: 50
+      }
+    });
+
+  } catch (error) {
+    console.error('Get lab seat assignments error:', error);
+    res.status(500).json({ error: 'Failed to fetch lab seat assignments' });
+  }
+});
+
 module.exports = router;
