@@ -10,6 +10,12 @@ const getApiBaseUrl = () => {
     origin: window.location.origin
   });
 
+  // Force the correct API URL for production
+  if (window.location.hostname.includes('labsyncpro-frontend.onrender.com')) {
+    console.log('🔧 Forcing correct API URL for production');
+    return 'https://labsyncpro.onrender.com/api';
+  }
+
   // Check if we have a specific API URL set
   if (import.meta.env.VITE_API_URL) {
     console.log('✅ Using VITE_API_URL:', import.meta.env.VITE_API_URL);
