@@ -22,6 +22,7 @@ interface NotificationContextType {
   showError: (title: string, message: string, duration?: number) => void;
   showWarning: (title: string, message: string, duration?: number) => void;
   showInfo: (title: string, message: string, duration?: number) => void;
+  showNotification: (message: string, type: 'success' | 'error' | 'warning' | 'info', duration?: number) => void;
 }
 
 const NotificationContext = createContext<NotificationContextType | undefined>(undefined);
@@ -87,6 +88,10 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
     addNotification({ type: 'info', title, message, duration });
   };
 
+  const showNotification = (message: string, type: 'success' | 'error' | 'warning' | 'info', duration?: number) => {
+    addNotification({ type, title: type.charAt(0).toUpperCase() + type.slice(1), message, duration });
+  };
+
   const value: NotificationContextType = {
     notifications,
     addNotification,
@@ -96,6 +101,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
     showError,
     showWarning,
     showInfo,
+    showNotification,
   };
 
   return (
