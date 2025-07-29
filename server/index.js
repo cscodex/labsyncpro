@@ -29,7 +29,7 @@ const assignmentGradeRoutes = require('./routes/assignment-grades');
 // const exportRoutes = require('./routes/export');
 // const webmailRoutes = require('./routes/webmail');
 // const passwordResetRequestsRoutes = require('./routes/passwordResetRequests');
-// const adminRoutes = require('./routes/admin');
+const adminRoutes = require('./routes/admin');
 // const timetableRoutes = require('./routes/timetable');
 const { restrictStudentAccess } = require('./middleware/studentRestriction');
 
@@ -228,7 +228,7 @@ app.use('/api/assignment-grades', assignmentGradeRoutes);
 // app.use('/api/export', exportRoutes);
 // app.use('/api/webmail', webmailRoutes);
 // app.use('/api/password-reset-requests', passwordResetRequestsRoutes);
-// app.use('/api/admin', adminRoutes);
+app.use('/api/admin', adminRoutes);
 // app.use('/api/timetable', timetableRoutes);
 // app.use('/api/security', securityRoutes);
 
